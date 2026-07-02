@@ -3,9 +3,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { addDocument, deleteDocument, showToast, showConfirm } from "../store";
 import { DICTIONARY, autoTranslate } from "../data/initialData";
 import { 
-  FileText, Plus, Trash2, Folder, Download, Eye, X, UploadCloud, 
-  CheckCircle, Edit3, Save, Copy 
+  FileText, Search, Plus, X, Type, List, FileSignature, 
+  Trash2, Eye, Download, Copy, LayoutTemplate, Scale,
+  User, CheckCircle, AlertCircle, Folder, UploadCloud, Edit3, Save
 } from "lucide-react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 export default function DocumentsTab() {
   const dispatch = useDispatch();
@@ -182,43 +185,73 @@ export default function DocumentsTab() {
     }));
   };
 
-  const handleDownloadPDF = (doc) => {
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) {
+  const handleDownloadPDF = async (doc) => {
+    const documentObj = doc && doc.id ? doc : viewingDoc;
+    if (!documentObj) return;
+
+    // Create a temporary off-screen element for perfect formatting
+    const tempDiv = document.createElement("div");
+    tempDiv.style.position = "absolute";
+    tempDiv.style.left = "-9999px";
+    tempDiv.style.top = "0";
+    tempDiv.style.width = "800px";
+    tempDiv.style.padding = "40px";
+    tempDiv.style.backgroundColor = "white";
+    tempDiv.style.fontFamily = "serif";
+    tempDiv.style.fontSize = "14px";
+    tempDiv.style.lineHeight = "1.6";
+    tempDiv.style.whiteSpace = "pre-wrap";
+    tempDiv.style.color = "#1e293b";
+    
+    // Header
+    const header = document.createElement("h2");
+    header.style.fontSize = "24px";
+    header.style.fontWeight = "bold";
+    header.style.marginBottom = "20px";
+    header.style.borderBottom = "1px solid #e2e8f0";
+    header.style.paddingBottom = "10px";
+    header.style.color = "#1a237e";
+    header.innerText = documentObj.name;
+    
+    // Content
+    const content = document.createElement("div");
+    content.innerText = documentObj.content || (language === "TR" ? "İçerik bulunamadı." : "No content found.");
+    
+    // Footer
+    const footer = document.createElement("div");
+    footer.style.marginTop = "40px";
+    footer.style.paddingTop = "10px";
+    footer.style.borderTop = "1px solid #e2e8f0";
+    footer.style.fontSize = "12px";
+    footer.style.color = "#64748b";
+    footer.innerText = (language === "TR" ? "Oluşturulma Tarihi: " : "Created: ") + (documentObj.uploadedAt || "") + 
+                       (language === "TR" ? " | Oluşturan: " : " | Author: ") + (documentObj.uploadedBy || "Sistem");
+
+    tempDiv.appendChild(header);
+    tempDiv.appendChild(content);
+    tempDiv.appendChild(footer);
+    document.body.appendChild(tempDiv);
+
+    try {
+      const canvas = await html2canvas(tempDiv, { scale: 2, useCORS: true });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(documentObj.name.endsWith(".pdf") ? documentObj.name : `${documentObj.name}.pdf`);
+      
       dispatch(showToast({
-        message: language === "TR" ? "Açılır pencerelere izin verin." : "Please allow pop-ups.",
-        type: "error"
+        message: language === "TR" ? "PDF olarak indirildi" : "Downloaded as PDF",
+        type: "success"
       }));
-      return;
+    } catch (err) {
+      console.error("PDF generation error:", err);
+    } finally {
+      document.body.removeChild(tempDiv);
     }
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>${doc.name}</title>
-          <style>
-            body { font-family: 'Times New Roman', serif; padding: 40px; line-height: 1.6; white-space: pre-wrap; color: #000; }
-            .header { text-align: center; margin-bottom: 40px; }
-            .footer { margin-top: 50px; font-size: 12px; color: #555; border-top: 1px solid #ccc; padding-top: 10px; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h2>EDBM HUKUK BÜROSU</h2>
-            <hr />
-            <h3>${doc.name}</h3>
-          </div>
-          <div class="content">${doc.content || "Belge içeriği bulunamadı."}</div>
-          <div class="footer">
-            Oluşturulma Tarihi: ${doc.uploadedAt} | Oluşturan: ${doc.uploadedBy}
-          </div>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => {
-      printWindow.print();
-    }, 250);
   };
 
   // Filter list
@@ -450,7 +483,7 @@ export default function DocumentsTab() {
             </div>
 
             <div className="p-6 overflow-y-auto flex-1 bg-slate-50">
-              <div className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm font-serif text-sm leading-relaxed text-slate-800 whitespace-pre-wrap min-h-full">
+              <div id="admin-document-content" className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm font-serif text-sm leading-relaxed text-slate-800 whitespace-pre-wrap min-h-full">
                 {viewingDoc.content || at("Bu belgenin içeriği bulunmuyor.")}
               </div>
             </div>

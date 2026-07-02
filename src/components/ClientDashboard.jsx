@@ -5,9 +5,13 @@ import { DICTIONARY, autoTranslate } from "../data/initialData";
 import { 
   Scale, LogOut, FileText, Calendar, Landmark, MessageSquare, 
   User, Phone, Mail, MapPin, Clock, Send, Eye, X, Copy, 
-  LayoutDashboard, FileDigit, HelpCircle 
+  LayoutDashboard, FileDigit, HelpCircle, ChevronRight, Download, Video
 } from "lucide-react";
 import LanguageSelector from "./LanguageSelector";
+import ClientCaseDetail from "./ClientCaseDetail";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import VideoMeeting from "./VideoMeeting";
 
 export default function ClientDashboard() {
   const dispatch = useDispatch();
@@ -25,6 +29,9 @@ export default function ClientDashboard() {
 
   // Active navigation tab
   const [activeTab, setActiveTab] = useState("overview");
+  
+  // Selected case for details view
+  const [selectedCase, setSelectedCase] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -32,6 +39,7 @@ export default function ClientDashboard() {
 
   // Selected document viewer
   const [viewingDoc, setViewingDoc] = useState(null);
+  const [videoRoom, setVideoRoom] = useState(null);
 
   // Chat message input
   const [typedMessage, setTypedMessage] = useState("");
@@ -94,6 +102,76 @@ export default function ClientDashboard() {
     }));
   };
 
+  const handleDownloadPDF = async (doc) => {
+    // Determine which document to download (either passed doc or the currently viewing doc)
+    const documentObj = doc && doc.id ? doc : viewingDoc;
+    if (!documentObj) return;
+
+    // Create a temporary off-screen element for perfect formatting
+    const tempDiv = document.createElement("div");
+    tempDiv.style.position = "absolute";
+    tempDiv.style.left = "-9999px";
+    tempDiv.style.top = "0";
+    tempDiv.style.width = "800px"; // Fixed width for A4 aspect ratio approximation
+    tempDiv.style.padding = "40px";
+    tempDiv.style.backgroundColor = "white";
+    tempDiv.style.fontFamily = "serif";
+    tempDiv.style.fontSize = "14px";
+    tempDiv.style.lineHeight = "1.6";
+    tempDiv.style.whiteSpace = "pre-wrap";
+    tempDiv.style.color = "#1e293b";
+    
+    // Header
+    const header = document.createElement("h2");
+    header.style.fontSize = "24px";
+    header.style.fontWeight = "bold";
+    header.style.marginBottom = "20px";
+    header.style.borderBottom = "1px solid #e2e8f0";
+    header.style.paddingBottom = "10px";
+    header.style.color = "#1a237e";
+    header.innerText = documentObj.name;
+    
+    // Content
+    const content = document.createElement("div");
+    content.innerText = documentObj.content || (language === "TR" ? "İçerik bulunamadı." : "No content found.");
+    
+    // Footer
+    const footer = document.createElement("div");
+    footer.style.marginTop = "40px";
+    footer.style.paddingTop = "10px";
+    footer.style.borderTop = "1px solid #e2e8f0";
+    footer.style.fontSize = "12px";
+    footer.style.color = "#64748b";
+    footer.innerText = (language === "TR" ? "Oluşturulma Tarihi: " : "Created: ") + (documentObj.uploadedAt || "") + 
+                       (language === "TR" ? " | Oluşturan: " : " | Author: ") + (documentObj.uploadedBy || "Sistem");
+
+    tempDiv.appendChild(header);
+    tempDiv.appendChild(content);
+    tempDiv.appendChild(footer);
+    document.body.appendChild(tempDiv);
+
+    try {
+      const canvas = await html2canvas(tempDiv, { scale: 2, useCORS: true });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(documentObj.name.endsWith(".pdf") ? documentObj.name : `${documentObj.name}.pdf`);
+      
+      dispatch(showToast({
+        message: language === "TR" ? "PDF olarak indirildi" : "Downloaded as PDF",
+        type: "success"
+      }));
+    } catch (err) {
+      console.error("PDF generation error:", err);
+    } finally {
+      document.body.removeChild(tempDiv);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans animate-fade-in">
       
@@ -115,7 +193,7 @@ export default function ClientDashboard() {
           {/* Quick tab switch (Tablet/Desktop) */}
           <nav className="hidden md:flex gap-1.5 bg-white/5 p-1 rounded-lg border border-white/10 text-xs">
             <button
-              onClick={() => setActiveTab("overview")}
+              onClick={() => { setActiveTab("overview"); setSelectedCase(null); }}
               className={`px-3 py-1.5 rounded-md font-bold transition-all cursor-pointer ${
                 activeTab === "overview" ? "bg-[#d4af37] text-[#1a237e]" : "text-slate-300 hover:text-white"
               }`}
@@ -123,7 +201,7 @@ export default function ClientDashboard() {
               {t.tabOverview}
             </button>
             <button
-              onClick={() => setActiveTab("cases")}
+              onClick={() => { setActiveTab("cases"); setSelectedCase(null); }}
               className={`px-3 py-1.5 rounded-md font-bold transition-all cursor-pointer ${
                 activeTab === "cases" ? "bg-[#d4af37] text-[#1a237e]" : "text-slate-300 hover:text-white"
               }`}
@@ -131,7 +209,7 @@ export default function ClientDashboard() {
               {t.tabCases}
             </button>
             <button
-              onClick={() => setActiveTab("documents")}
+              onClick={() => { setActiveTab("documents"); setSelectedCase(null); }}
               className={`px-3 py-1.5 rounded-md font-bold transition-all cursor-pointer ${
                 activeTab === "documents" ? "bg-[#d4af37] text-[#1a237e]" : "text-slate-300 hover:text-white"
               }`}
@@ -139,7 +217,7 @@ export default function ClientDashboard() {
               {t.tabDocuments}
             </button>
             <button
-              onClick={() => setActiveTab("finances")}
+              onClick={() => { setActiveTab("finances"); setSelectedCase(null); }}
               className={`px-3 py-1.5 rounded-md font-bold transition-all cursor-pointer ${
                 activeTab === "finances" ? "bg-[#d4af37] text-[#1a237e]" : "text-slate-300 hover:text-white"
               }`}
@@ -147,7 +225,7 @@ export default function ClientDashboard() {
               {t.tabFinances}
             </button>
             <button
-              onClick={() => setActiveTab("messages")}
+              onClick={() => { setActiveTab("messages"); setSelectedCase(null); }}
               className={`px-3 py-1.5 rounded-md font-bold transition-all cursor-pointer ${
                 activeTab === "messages" ? "bg-[#d4af37] text-[#1a237e]" : "text-slate-300 hover:text-white"
               }`}
@@ -174,7 +252,7 @@ export default function ClientDashboard() {
       {/* 2. MOBILE NAVIGATION TABS (Visible only on small screens) */}
       <div className="md:hidden bg-white border-b border-slate-100 flex overflow-x-auto p-2 scrollbar-none gap-1 shrink-0">
         <button
-          onClick={() => setActiveTab("overview")}
+          onClick={() => { setActiveTab("overview"); setSelectedCase(null); }}
           className={`px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap cursor-pointer transition-colors ${
             activeTab === "overview" ? "bg-[#1a237e] text-white" : "text-slate-500 hover:text-slate-800"
           }`}
@@ -182,7 +260,7 @@ export default function ClientDashboard() {
           {t.tabOverview}
         </button>
         <button
-          onClick={() => setActiveTab("cases")}
+          onClick={() => { setActiveTab("cases"); setSelectedCase(null); }}
           className={`px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap cursor-pointer transition-colors ${
             activeTab === "cases" ? "bg-[#1a237e] text-white" : "text-slate-500 hover:text-slate-800"
           }`}
@@ -190,7 +268,7 @@ export default function ClientDashboard() {
           {t.tabCases}
         </button>
         <button
-          onClick={() => setActiveTab("documents")}
+          onClick={() => { setActiveTab("documents"); setSelectedCase(null); }}
           className={`px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap cursor-pointer transition-colors ${
             activeTab === "documents" ? "bg-[#1a237e] text-white" : "text-slate-500 hover:text-slate-800"
           }`}
@@ -198,7 +276,7 @@ export default function ClientDashboard() {
           {t.tabDocuments}
         </button>
         <button
-          onClick={() => setActiveTab("finances")}
+          onClick={() => { setActiveTab("finances"); setSelectedCase(null); }}
           className={`px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap cursor-pointer transition-colors ${
             activeTab === "finances" ? "bg-[#1a237e] text-white" : "text-slate-500 hover:text-slate-800"
           }`}
@@ -206,7 +284,7 @@ export default function ClientDashboard() {
           {t.tabFinances}
         </button>
         <button
-          onClick={() => setActiveTab("messages")}
+          onClick={() => { setActiveTab("messages"); setSelectedCase(null); }}
           className={`px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap cursor-pointer transition-colors ${
             activeTab === "messages" ? "bg-[#1a237e] text-white" : "text-slate-500 hover:text-slate-800"
           }`}
@@ -304,9 +382,17 @@ export default function ClientDashboard() {
                       return (
                         <div key={h.id} className="p-4 bg-slate-50 border border-slate-100 rounded-xl hover:border-[#1a237e]/20 transition-all flex justify-between items-start gap-4 text-xs">
                           <div className="space-y-1">
-                            <h4 className="font-bold text-slate-800">{h.title}</h4>
+                            <h4 className="font-bold text-slate-800 flex items-center gap-2">
+                              {h.title}
+                              {h.isVideoCall && (
+                                <span className="text-[9px] text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded font-bold flex items-center gap-1 border border-indigo-100">
+                                  <Video className="w-3 h-3" />
+                                  {t.videoCallTitle || "Görüntülü Görüşme"}
+                                </span>
+                              )}
+                            </h4>
                             <p className="text-[11px] text-[#d4af37] font-bold flex items-center gap-1.5">
-                              <MapPin className="w-3.5 h-3.5 shrink-0" />
+                              {h.isVideoCall ? <Video className="w-3.5 h-3.5 shrink-0 text-indigo-400" /> : <MapPin className="w-3.5 h-3.5 shrink-0" />}
                               <span>{h.location}</span>
                             </p>
                             {h.notes && (
@@ -322,6 +408,16 @@ export default function ClientDashboard() {
                               {formattedTime}
                             </span>
                             <p className="text-[10px] text-slate-500 font-bold mt-1">{formattedDate}</p>
+                            
+                            {h.isVideoCall && (
+                              <button
+                                onClick={() => setVideoRoom(`EDBM-${h.id}`)}
+                                className="mt-2 bg-[#1a237e] text-white hover:bg-[#12185c] px-3 py-1.5 rounded-lg text-[10px] font-bold transition-colors w-full flex justify-center items-center gap-1 cursor-pointer"
+                              >
+                                <Video className="w-3 h-3" />
+                                {t.joinVideoCall || "Katıl"}
+                              </button>
+                            )}
                           </div>
                         </div>
                       );
@@ -336,46 +432,64 @@ export default function ClientDashboard() {
 
         {/* MY CASES TAB */}
         {activeTab === "cases" && (
-          <div className="space-y-5">
-            <h3 className="font-serif text-lg font-bold text-[#1a237e]">{t.caseList}</h3>
-            {myCases.length === 0 ? (
-              <div className="py-12 text-center text-slate-400 bg-white rounded-xl border border-slate-100 text-xs shadow-sm font-bold">
-                {t.noData}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {myCases.map((c) => (
-                  <div key={c.id} className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm space-y-4">
-                    <div className="flex justify-between items-start border-b border-slate-50 pb-3">
-                      <span className="font-serif text-sm font-bold text-[#1a237e] bg-slate-100 px-2.5 py-1 rounded">
-                        {c.fileNo}
-                      </span>
-                      <span className={`text-[10px] font-bold uppercase px-2.5 py-1 rounded-full ${
-                        c.status === "active" ? "bg-blue-50 text-blue-700" : c.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-500"
-                      }`}>
-                        {c.status === "active" ? t.caseStatusActive.split(" (")[0] : c.status === "pending" ? t.caseStatusPending : t.caseStatusClosed.split(" (")[0]}
-                      </span>
-                    </div>
+          selectedCase ? (
+            <ClientCaseDetail caseId={selectedCase} onBack={() => setSelectedCase(null)} />
+          ) : (
+            <div className="space-y-5 animate-fade-in">
+              <h3 className="font-serif text-lg font-bold text-[#1a237e]">{t.caseList}</h3>
+              {myCases.length === 0 ? (
+                <div className="py-12 text-center text-slate-400 bg-white rounded-xl border border-slate-100 text-xs shadow-sm font-bold">
+                  {t.noData}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {myCases.map((c) => (
+                    <div key={c.id} className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm space-y-4 hover:shadow-md transition-shadow flex flex-col justify-between">
+                      <div>
+                        <div className="flex justify-between items-start border-b border-slate-50 pb-3 mb-3">
+                          <span className="font-serif text-sm font-bold text-[#1a237e] bg-slate-100 px-2.5 py-1 rounded">
+                            {c.fileNo}
+                          </span>
+                          <span className={`text-[10px] font-bold uppercase px-2.5 py-1 rounded-full ${
+                            c.status === "active" ? "bg-blue-50 text-blue-700" : c.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-500"
+                          }`}>
+                            {c.status === "active" ? t.caseStatusActive.split(" (")[0] : c.status === "pending" ? t.caseStatusPending : t.caseStatusClosed.split(" (")[0]}
+                          </span>
+                        </div>
 
-                    <div className="space-y-1 text-xs">
-                      <p className="text-slate-400 font-bold">{t.caseSubject}</p>
-                      <h4 className="font-bold text-slate-800">{c.subject}</h4>
-                      <p className="text-[11px] text-[#d4af37] font-bold">{c.court}</p>
-                    </div>
+                        <div className="space-y-1 text-xs">
+                          <p className="text-slate-400 font-bold">{t.caseSubject}</p>
+                          <h4 className="font-bold text-slate-800">{c.subject}</h4>
+                          <p className="text-[11px] text-[#d4af37] font-bold flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            {c.court}
+                          </p>
+                        </div>
 
-                    <p className="text-xs text-slate-500 bg-slate-50 p-3 rounded border border-slate-100 whitespace-pre-wrap leading-relaxed font-semibold">
-                      {c.description}
-                    </p>
+                        <p className="text-xs text-slate-500 bg-slate-50 p-3 rounded border border-slate-100 whitespace-pre-wrap leading-relaxed font-semibold mt-4 line-clamp-2">
+                          {c.description}
+                        </p>
+                      </div>
 
-                    <div className="pt-2 text-[11px] text-slate-400 border-t border-slate-50 flex justify-between items-center font-bold">
-                      <span>{language === "TR" ? "Dava Açılış: " : "Opened: "} {c.createdAt}</span>
-                      <span>{t.assignedLawyer}: {myLawyer.name}</span>
+                      <div className="pt-3 mt-3 border-t border-slate-50 flex justify-between items-center">
+                        <div className="text-[11px] text-slate-400 font-bold flex flex-col gap-0.5">
+                          <span>{language === "TR" ? "Dava Açılış: " : "Opened: "} {c.createdAt}</span>
+                          <span>{t.assignedLawyer}: {myLawyer.name}</span>
+                        </div>
+                        <button
+                          onClick={() => setSelectedCase(c.id)}
+                          className="px-3 py-1.5 bg-slate-50 hover:bg-[#1a237e] hover:text-white border border-slate-200 text-[#1a237e] text-[11px] font-bold rounded flex items-center gap-1 transition-colors cursor-pointer shrink-0"
+                        >
+                          <span>{language === "TR" ? "Detayları Gör" : "View Details"}</span>
+                          <ChevronRight className="w-3 h-3" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
         )}
 
         {/* MY DOCUMENTS TAB */}
@@ -422,12 +536,20 @@ export default function ClientDashboard() {
                           <td className="py-3.5 px-4 text-slate-500">
                             {d.uploadedAt}
                           </td>
-                          <td className="py-3.5 px-4 text-right">
+                          <td className="py-3 px-4 text-right space-x-0.5">
                             <button
                               onClick={() => setViewingDoc(d)}
                               className="p-1 hover:bg-slate-100 text-[#1a237e] rounded cursor-pointer animate-fade-in"
+                              title={language === "TR" ? "Görüntüle" : "View"}
                             >
                               <Eye className="w-4.5 h-4.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDownloadPDF(d)}
+                              className="p-1 hover:bg-green-50 text-green-600 rounded cursor-pointer animate-fade-in"
+                              title={language === "TR" ? "PDF İndir" : "Download PDF"}
+                            >
+                              <Download className="w-4.5 h-4.5" />
                             </button>
                           </td>
                         </tr>
@@ -603,7 +725,7 @@ export default function ClientDashboard() {
             </div>
 
             <div className="p-6 overflow-y-auto flex-1 bg-slate-50">
-              <div className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm font-serif text-sm leading-relaxed text-slate-800 whitespace-pre-wrap min-h-full">
+              <div id="document-content" className="bg-white p-6 rounded-xl border border-slate-200/60 shadow-sm font-serif text-sm leading-relaxed text-slate-800 whitespace-pre-wrap min-h-full">
                 {viewingDoc.content || at("Bu belgenin içeriği bulunmuyor.")}
               </div>
             </div>
@@ -611,6 +733,13 @@ export default function ClientDashboard() {
             <div className="px-6 py-4 bg-white border-t border-slate-100 flex justify-between items-center">
               <span className="text-[11px] text-slate-400 font-bold">{viewingDoc.uploadedAt}</span>
               <div className="flex gap-2">
+                <button
+                  onClick={handleDownloadPDF}
+                  className="px-3.5 py-1.5 border border-slate-200 hover:bg-slate-50 text-[#1a237e] rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>{language === "TR" ? "İndir (PDF)" : "Download (PDF)"}</span>
+                </button>
                 <button
                   onClick={() => handleCopyText(viewingDoc.content || "")}
                   className="px-3.5 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
@@ -628,6 +757,15 @@ export default function ClientDashboard() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Video Meeting */}
+      {videoRoom && (
+        <VideoMeeting 
+          roomName={videoRoom} 
+          onClose={() => setVideoRoom(null)} 
+          subject={t.videoCallTitle}
+        />
       )}
 
       {/* Corporate footer */}

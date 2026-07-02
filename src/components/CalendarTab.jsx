@@ -4,8 +4,9 @@ import { addHearing, deleteHearing, showConfirm } from "../store";
 import { DICTIONARY, autoTranslate } from "../data/initialData";
 import { 
   Plus, Trash2, Calendar, MapPin, Clock, X, AlertCircle, Check, 
-  ChevronLeft, ChevronRight, User, Scale 
+  ChevronLeft, ChevronRight, User, Scale, Video
 } from "lucide-react";
+import VideoMeeting from "./VideoMeeting";
 
 export default function CalendarTab() {
   const dispatch = useDispatch();
@@ -38,7 +39,10 @@ export default function CalendarTab() {
   const [location, setLocation] = useState("");
   const [notes, setNotes] = useState("");
   const [lawyerId, setLawyerId] = useState(currentUser?.id || "lawyer_1");
+  const [isVideoCall, setIsVideoCall] = useState(false);
   const [validationError, setValidationError] = useState(null);
+
+  const [videoRoom, setVideoRoom] = useState(null);
 
   // Navigation of mock calendar months
   const [currentDate, setCurrentDate] = useState(new Date(2026, 6, 1)); // July 2026
@@ -50,6 +54,7 @@ export default function CalendarTab() {
     setLocation("");
     setNotes("");
     setLawyerId(currentUser?.id || "lawyer_1");
+    setIsVideoCall(false);
     setValidationError(null);
     setIsModalOpen(true);
   };
@@ -72,9 +77,10 @@ export default function CalendarTab() {
       caseId,
       title,
       dateTime,
-      location,
+      location: isVideoCall ? "Online (Jitsi Meet)" : location,
       notes,
       lawyerId: isLawyer ? currentUser.id : lawyerId,
+      isVideoCall
     };
 
     dispatch(addHearing(newHr));
@@ -300,7 +306,7 @@ export default function CalendarTab() {
                         <h4 className="text-xs font-bold text-slate-800 line-clamp-1">{h.title}</h4>
                         
                         <div className="flex items-center gap-1 text-[10px] text-slate-500 font-semibold">
-                          <MapPin className="w-3 h-3 text-[#d4af37]" />
+                          {h.isVideoCall ? <Video className="w-3 h-3 text-indigo-500" /> : <MapPin className="w-3 h-3 text-[#d4af37]" />}
                           <span className="line-clamp-1">{h.location}</span>
                         </div>
                         
@@ -316,6 +322,15 @@ export default function CalendarTab() {
                         <span className="text-[9px] text-slate-400 font-bold">
                           {formattedDate}
                         </span>
+                        {h.isVideoCall && (
+                          <button
+                            onClick={() => setVideoRoom(`EDBM-${h.id}`)}
+                            className="bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white px-2 py-1 rounded text-[10px] font-bold transition-colors mt-1 flex items-center gap-1 cursor-pointer border border-indigo-200"
+                          >
+                            <Video className="w-3 h-3" />
+                            {t.joinVideoCall || "Katıl"}
+                          </button>
+                        )}
                         
                         {/* Delete button only if the lawyer is authorized */}
                         <button
@@ -414,18 +429,30 @@ export default function CalendarTab() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    {t.hearingLocation} *
+                  <label className="block text-xs font-bold text-slate-700 mb-1 flex justify-between items-center">
+                    <span>{t.hearingLocation} *</span>
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={isVideoCall}
+                        onChange={(e) => setIsVideoCall(e.target.checked)}
+                        className="w-3 h-3 rounded text-[#1a237e] focus:ring-[#1a237e]"
+                      />
+                      <span className="text-[10px] text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded font-bold">
+                        {t.videoCallTitle || "Görüntülü Görüşme"}
+                      </span>
+                    </label>
                   </label>
                   <div className="relative">
-                    <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                    {isVideoCall ? <Video className="absolute left-3 top-2.5 h-4 w-4 text-indigo-400" /> : <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />}
                     <input
                       type="text"
                       required
-                      value={location}
+                      disabled={isVideoCall}
+                      value={isVideoCall ? "Online (Jitsi Meet)" : location}
                       onChange={(e) => setLocation(e.target.value)}
                       placeholder="Kartal Adliyesi, Salon 4"
-                      className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e]"
+                      className={`w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] ${isVideoCall ? "bg-slate-100 text-slate-500 font-bold" : ""}`}
                     />
                   </div>
                 </div>
@@ -483,6 +510,15 @@ export default function CalendarTab() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Video Meeting Fullscreen View */}
+      {videoRoom && (
+        <VideoMeeting 
+          roomName={videoRoom} 
+          onClose={() => setVideoRoom(null)} 
+          subject={t.videoCallTitle}
+        />
       )}
     </div>
   );

@@ -136,6 +136,7 @@ export const INITIAL_HEARINGS = [
     location: "İstanbul Adliyesi, C Blok, 4. Kat, Salon 12",
     notes: "Bilirkişi raporuna karşı beyan dilekçemiz sunulacak. Davacının hazır bulunmasına gerek yoktur.",
     lawyerId: "lawyer_1",
+    isVideoCall: true,
   },
   {
     id: "hearing_2",
@@ -417,6 +418,8 @@ export const DICTIONARY = {
     hearingNotes: "Duruşma Notları / Hazırlık",
     addHearingBtn: "Duruşma Ekle",
     calendarTitle: "Hukuki Ajanda ve Duruşma Takvimi",
+    videoCallTitle: "Görüntülü Görüşme",
+    joinVideoCall: "Toplantıya Katıl",
 
     // Document section
     documentList: "Evrak ve Belgeler",
@@ -551,6 +554,8 @@ export const DICTIONARY = {
     hearingNotes: "Hearing Notes / Prep",
     addHearingBtn: "Add Hearing",
     calendarTitle: "Legal Calendar & Hearing Schedule",
+    videoCallTitle: "Online Video Call",
+    joinVideoCall: "Join Meeting",
 
     // Document section
     documentList: "Documents & Files",
@@ -787,7 +792,11 @@ export const autoTranslate = (text, language) => {
     "Cari Hareketler": "Financial Transactions",
     "Duruşma Takvimi": "Hearing Schedule",
     "Gözlemci": "Observer",
-    "Yönetim paneli tüm sistem hareketlerini kaydeder.": "The admin panel logs all system transactions."
+    "Yönetim paneli tüm sistem hareketlerini kaydeder.": "The admin panel logs all system transactions.",
+    "Görüntülü Görüşme (Jitsi Meet ile)": "Online Video Call (via Jitsi Meet)",
+    "Toplantıya Katıl": "Join Meeting",
+    "Görüntülü Görüşme": "Video Call",
+    "Bu görüşme online bir video konferanstır.": "This is an online video conference."
   };
   
   return mapping[textStr] || mapping[text] || text;
