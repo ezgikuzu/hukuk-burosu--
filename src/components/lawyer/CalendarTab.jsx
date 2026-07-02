@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addHearing, deleteHearing, showConfirm } from "../store";
-import { DICTIONARY, autoTranslate } from "../data/initialData";
+import { addHearing, deleteHearing, showConfirm } from "../../store";
+import { DICTIONARY, autoTranslate } from "../../data/initialData";
 import { 
   Plus, Trash2, Calendar, MapPin, Clock, X, AlertCircle, Check, 
   ChevronLeft, ChevronRight, User, Scale, Video

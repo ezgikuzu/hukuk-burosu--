@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addCase, updateCase, deleteCase, showConfirm } from "../store";
-import { DICTIONARY, autoTranslate } from "../data/initialData";
+import { addCase, updateCase, deleteCase, showConfirm } from "../../store";
+import { DICTIONARY, autoTranslate } from "../../data/initialData";
 import { 
   Plus, Edit, Trash2, Search, X, Scale, FileText, User, 
   MapPin, HelpCircle, CheckCircle, ShieldAlert, AlertCircle 

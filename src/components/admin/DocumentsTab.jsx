@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addDocument, deleteDocument, showToast, showConfirm } from "../store";
-import { DICTIONARY, autoTranslate } from "../data/initialData";
+import { addDocument, deleteDocument, showToast, showConfirm } from "../../store";
+import { DICTIONARY, autoTranslate } from "../../data/initialData";
 import { 
   FileText, Search, Plus, X, Type, List, FileSignature, 
   Trash2, Eye, Download, Copy, LayoutTemplate, Scale,

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addPayment, updatePaymentStatus, deletePayment, showToast, showConfirm } from "../store";
-import { DICTIONARY, autoTranslate } from "../data/initialData";
+import { addPayment, updatePaymentStatus, deletePayment, showToast, showConfirm } from "../../store";
+import { DICTIONARY, autoTranslate } from "../../data/initialData";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from "recharts";

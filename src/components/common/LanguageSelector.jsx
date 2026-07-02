@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleLanguage } from "../store";
+import { toggleLanguage } from "../../store";
 import { Globe } from "lucide-react";
 
 export default function LanguageSelector() {

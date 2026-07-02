@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ChevronLeft, Gavel, ArrowRight, Scale, BookOpen } from "lucide-react";
-import { toggleLanguage } from "../store";
+import { toggleLanguage } from "../../store";
 
 export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
   const language = useSelector((state) => state.ui.language) || "TR";

@@ -1,23 +1,23 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { logout, setActiveTab } from "../store";
-import { DICTIONARY, autoTranslate } from "../data/initialData";
-import { 
-  Scale, LogOut, LayoutDashboard, Users, FolderOpen, Calendar, 
+import { logout, setActiveTab } from "../../store";
+import { DICTIONARY, autoTranslate } from "../../data/initialData";
+import {
+  Scale, LogOut, LayoutDashboard, Users, FolderOpen, Calendar,
   FileText, Landmark, MessageCircle, Menu, X, Edit3, Mail
 } from "lucide-react";
-import LanguageSelector from "./LanguageSelector";
+import LanguageSelector from "../common/LanguageSelector";
 
 // Import tabs
-import OverviewTab from "./OverviewTab";
-import ClientsTab from "./ClientsTab";
+import OverviewTab from "../admin/OverviewTab";
+import ClientsTab from "../admin/ClientsTab";
 import CasesTab from "./CasesTab";
 import CalendarTab from "./CalendarTab";
-import DocumentsTab from "./DocumentsTab";
-import FinancesTab from "./FinancesTab";
+import DocumentsTab from "../admin/DocumentsTab";
+import FinancesTab from "../admin/FinancesTab";
 import MessagesTab from "./MessagesTab";
 import WebMessagesTab from "./WebMessagesTab";
-import BlogsTab from "./BlogsTab";
+import BlogsTab from "../landing/BlogsTab";
 
 export default function LawyerDashboard() {
   const dispatch = useDispatch();
@@ -81,7 +81,7 @@ export default function LawyerDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row font-sans">
-      
+
       {/* 1. SIDEBAR (Desktop) */}
       <aside className="hidden lg:flex flex-col w-64 bg-[#1a237e] text-white border-r border-[#d4af37]/20 shrink-0 sticky top-0 h-screen justify-between z-20">
         <div className="space-y-6 pt-6 flex-1 flex flex-col">
@@ -120,11 +120,10 @@ export default function LawyerDashboard() {
                 <button
                   key={item.id}
                   onClick={() => handleTabClick(item.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-300 cursor-pointer ${
-                    isActive 
-                      ? "bg-[#d4af37] text-[#1a237e] shadow-md border-b border-[#bfa032]" 
-                      : "text-slate-300 hover:bg-white/5 hover:text-white"
-                  }`}
+                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-300 cursor-pointer ${isActive
+                    ? "bg-[#d4af37] text-[#1a237e] shadow-md border-b border-[#bfa032]"
+                    : "text-slate-300 hover:bg-white/5 hover:text-white"
+                    }`}
                 >
                   <Icon className={`w-4 h-4 ${isActive ? "text-[#1a237e]" : "text-slate-300"}`} />
                   <span>{item.label}</span>
@@ -161,7 +160,7 @@ export default function LawyerDashboard() {
 
         <div className="flex items-center gap-3">
           <LanguageSelector />
-          <button 
+          <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-1 text-white hover:bg-white/10 rounded cursor-pointer"
           >
@@ -181,11 +180,10 @@ export default function LawyerDashboard() {
                 <button
                   key={item.id}
                   onClick={() => handleTabClick(item.id)}
-                  className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
-                    isActive 
-                      ? "bg-[#d4af37] text-[#1a237e]" 
-                      : "text-slate-300 hover:bg-white/5"
-                  }`}
+                  className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-lg text-sm font-semibold transition-all cursor-pointer ${isActive
+                    ? "bg-[#d4af37] text-[#1a237e]"
+                    : "text-slate-300 hover:bg-white/5"
+                    }`}
                 >
                   <Icon className="w-5 h-5" />
                   <span>{item.label}</span>
@@ -214,13 +212,13 @@ export default function LawyerDashboard() {
 
       {/* 3. MAIN WORKSPACE CONTENT */}
       <main className="flex-1 flex flex-col min-w-0">
-        
+
         {/* Desktop Top Nav Bar */}
         <div className="hidden lg:flex h-16 bg-white border-b border-slate-100 justify-between items-center px-8 z-10 sticky top-0 shadow-sm">
           <h2 className="font-serif text-base font-bold text-[#1a237e]">
             {menuItems.find(i => i.id === activeTab)?.label}
           </h2>
-          
+
           <div className="flex items-center gap-4">
             <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider font-mono">
               SECURE WORKSPACE

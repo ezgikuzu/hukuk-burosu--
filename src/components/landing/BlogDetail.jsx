@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ChevronLeft, Gavel, Calendar, User, Clock } from "lucide-react";
-import { toggleLanguage } from "../store";
+import { toggleLanguage } from "../../store";
 
 export default function BlogDetail({ blogId, onBack, onContactClick }) {
   const language = useSelector((state) => state.ui.language) || "TR";

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addMessage, addMemo, deleteMemo, showToast } from "../store";
-import { DICTIONARY, autoTranslate } from "../data/initialData";
+import { addMessage, addMemo, deleteMemo, showToast } from "../../store";
+import { DICTIONARY, autoTranslate } from "../../data/initialData";
 import { 
   Send, MessageSquare, Clipboard, User, Calendar, Plus, 
   Trash2, ShieldCheck, Mail, Pin, Paperclip, CheckCircle2 

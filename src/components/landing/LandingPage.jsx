@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleLanguage, addMessage, showToast, addClient } from "../store";
+import { toggleLanguage, addMessage, showToast, addClient } from "../../store";
 import { 
   Scale, Gavel, Briefcase, Users, CreditCard, Heart, FileText, Shield, 
   MapPin, Phone, Mail, Globe, ChevronLeft, ChevronRight, X, ArrowRight, Check, Send, Sparkles
 } from "lucide-react";
 import ServiceDetail from "./ServiceDetail";
-import LawyerDetail from "./LawyerDetail";
+import LawyerDetail from "../lawyer/LawyerDetail";
 import BlogDetail from "./BlogDetail";
 import AboutUs from "./AboutUs";
-import LegalDetail from "./LegalDetail";
+import LegalDetail from "../lawyer/LegalDetail";
 
 export default function LandingPage({ onLoginClick }) {
   const dispatch = useDispatch();

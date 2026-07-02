@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addMessage } from "../store";
-import { DICTIONARY, autoTranslate } from "../data/initialData";
+import { addMessage } from "../../store";
+import { DICTIONARY, autoTranslate } from "../../data/initialData";
 import { Send, Mail, User } from "lucide-react";
 
 export default function WebMessagesTab() {

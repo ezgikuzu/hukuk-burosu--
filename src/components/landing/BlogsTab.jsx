@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addBlog } from "../store";
+import { addBlog } from "../../store";
 import { PlusCircle, Image as ImageIcon, AlignLeft, CheckCircle } from "lucide-react";
-import { DICTIONARY } from "../data/initialData";
+import { DICTIONARY } from "../../data/initialData";
 
 export default function BlogsTab() {
   const dispatch = useDispatch();
@@ -49,7 +49,7 @@ export default function BlogsTab() {
 
     dispatch(addBlog(newBlog));
     setSuccess(true);
-    
+
     // Reset form
     setTitleTR(""); setTitleEN(""); setExcerptTR(""); setExcerptEN("");
     setContentTR(""); setContentEN(""); setImage("");

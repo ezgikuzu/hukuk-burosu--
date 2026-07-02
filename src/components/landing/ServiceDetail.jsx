@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ChevronLeft, Scale, Gavel, Briefcase, Users, CreditCard, Heart, FileText, Shield, ArrowRight, Phone, Mail, MapPin } from "lucide-react";
-import { toggleLanguage } from "../store";
+import { toggleLanguage } from "../../store";
 
 export default function ServiceDetail({ serviceId, onBack, onContactClick }) {
   const language = useSelector((state) => state.ui.language) || "TR";

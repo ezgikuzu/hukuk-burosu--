@@ -1,11 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { DICTIONARY, autoTranslate } from "../data/initialData";
-import { 
-  ArrowLeft, Scale, MapPin, User, FileText, 
+import { DICTIONARY, autoTranslate } from "../../data/initialData";
+import {
+  ArrowLeft, Scale, MapPin, User, FileText,
   Calendar, Landmark, Clock, CheckCircle, AlertCircle, Video
 } from "lucide-react";
-import VideoMeeting from "./VideoMeeting";
+import VideoMeeting from "../lawyer/VideoMeeting";
 
 export default function ClientCaseDetail({ caseId, onBack }) {
   const language = useSelector((state) => state.ui.language);
@@ -34,7 +34,7 @@ export default function ClientCaseDetail({ caseId, onBack }) {
     <div className="space-y-6 animate-fade-in">
       {/* Back Button & Header */}
       <div className="flex items-center gap-4">
-        <button 
+        <button
           onClick={onBack}
           className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-600 transition-colors cursor-pointer"
         >
@@ -59,11 +59,10 @@ export default function ClientCaseDetail({ caseId, onBack }) {
           <div className="space-y-6 flex-1">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                  isActive ? "bg-blue-50 text-blue-700 border border-blue-100" :
+                <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${isActive ? "bg-blue-50 text-blue-700 border border-blue-100" :
                   isClosed ? "bg-slate-100 text-slate-500 border border-slate-200" :
-                  "bg-amber-50 text-amber-700 border border-amber-100"
-                }`}>
+                    "bg-amber-50 text-amber-700 border border-amber-100"
+                  }`}>
                   {isActive && <Scale className="w-3 h-3" />}
                   {isClosed && <CheckCircle className="w-3 h-3" />}
                   {!isActive && !isClosed && <AlertCircle className="w-3 h-3" />}
@@ -73,9 +72,9 @@ export default function ClientCaseDetail({ caseId, onBack }) {
                   {language === "TR" ? "Açılış: " : "Opened: "} {caseData.createdAt}
                 </span>
               </div>
-              
+
               <h3 className="font-serif text-2xl font-bold text-slate-800 mb-2">{caseData.subject}</h3>
-              
+
               <div className="flex items-center gap-2 text-sm font-bold text-[#d4af37]">
                 <MapPin className="w-4 h-4" />
                 <span>{caseData.court}</span>
@@ -90,7 +89,7 @@ export default function ClientCaseDetail({ caseId, onBack }) {
                   <span>{caseData.opposingParty}</span>
                 </div>
               </div>
-              
+
               <div>
                 <p className="text-xs text-slate-400 font-bold mb-1">{t.assignedLawyer}</p>
                 <div className="flex items-center gap-2 font-semibold text-slate-700">
@@ -101,7 +100,7 @@ export default function ClientCaseDetail({ caseId, onBack }) {
                 </div>
               </div>
             </div>
-            
+
             <div className="pt-4 border-t border-slate-100">
               <p className="text-xs text-slate-400 font-bold mb-2">{t.caseDesc}</p>
               <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
@@ -121,7 +120,7 @@ export default function ClientCaseDetail({ caseId, onBack }) {
             <Calendar className="w-4 h-4 text-[#d4af37]" />
             <span>{t.recentHearings}</span>
           </h4>
-          
+
           {caseHearings.length === 0 ? (
             <div className="py-8 text-center text-slate-400 text-xs font-bold">
               {language === "TR" ? "Bu dosyaya ait duruşma bulunmuyor." : "No hearings found for this case."}
@@ -163,7 +162,7 @@ export default function ClientCaseDetail({ caseId, onBack }) {
                         {formattedTime}
                       </span>
                       <p className="text-[10px] text-slate-500 font-bold mt-1">{formattedDate}</p>
-                      
+
                       {h.isVideoCall && (
                         <button
                           onClick={() => setVideoRoom(`EDBM-${h.id}`)}
@@ -206,9 +205,8 @@ export default function ClientCaseDetail({ caseId, onBack }) {
                       <span className={`text-sm font-bold ${isPaid ? "text-emerald-600" : "text-amber-600"}`}>
                         {p.amount.toLocaleString("tr-TR")} ₺
                       </span>
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
-                        isPaid ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
-                      }`}>
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${isPaid ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+                        }`}>
                         {isPaid ? t.finStatusPaid : t.finStatusPending}
                       </span>
                     </div>
@@ -222,9 +220,9 @@ export default function ClientCaseDetail({ caseId, onBack }) {
 
       {/* Video Meeting */}
       {videoRoom && (
-        <VideoMeeting 
-          roomName={videoRoom} 
-          onClose={() => setVideoRoom(null)} 
+        <VideoMeeting
+          roomName={videoRoom}
+          onClose={() => setVideoRoom(null)}
           subject={t.videoCallTitle}
         />
       )}

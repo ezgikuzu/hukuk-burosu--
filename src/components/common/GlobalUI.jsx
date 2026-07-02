@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { hideToast, hideConfirm } from "../store";
+import { hideToast, hideConfirm } from "../../store";
 import { AlertCircle, CheckCircle2, Info, X, AlertTriangle } from "lucide-react";
 
 export default function GlobalUI() {

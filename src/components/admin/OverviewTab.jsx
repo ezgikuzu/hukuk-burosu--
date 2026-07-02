@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setActiveTab } from "../store";
-import { DICTIONARY, autoTranslate } from "../data/initialData";
+import { setActiveTab } from "../../store";
+import { DICTIONARY, autoTranslate } from "../../data/initialData";
 import { 
   Users, Scale, Calendar, Landmark, CreditCard, ChevronRight, 
   ArrowUpRight, Clock, Plus, UserPlus, FileText, AlertCircle 

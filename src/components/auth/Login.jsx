@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login, addClient } from "../store";
-import { INITIAL_LAWYERS, INITIAL_CLIENTS, DICTIONARY, autoTranslate } from "../data/initialData";
+import { login, addClient } from "../../store";
+import { INITIAL_LAWYERS, INITIAL_CLIENTS, DICTIONARY, autoTranslate } from "../../data/initialData";
 import { Scale, Lock, Mail, ShieldAlert, CheckCircle, ChevronRight, Users, UserCheck, ShieldCheck } from "lucide-react";
-import LanguageSelector from "./LanguageSelector";
+import LanguageSelector from "../common/LanguageSelector";
 
 export default function Login({ onBackToLanding }) {
   const dispatch = useDispatch();
@@ -213,7 +213,7 @@ export default function Login({ onBackToLanding }) {
           {/* Brand/Hero Section (Left Side) */}
           <div className="lg:col-span-5 bg-gradient-to-br from-[#1a237e] to-[#0a1045] p-8 lg:p-12 flex flex-col justify-between text-white relative">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full translate-x-12 -translate-y-12" />
-            
+
             <div className="space-y-6">
               <span className="inline-block px-3 py-1 rounded-full bg-[#d4af37]/20 border border-[#d4af37]/30 text-[#d4af37] text-xs font-semibold uppercase tracking-wider">
                 EST. 2026
@@ -280,16 +280,15 @@ export default function Login({ onBackToLanding }) {
                   setIsSignUpMode(false);
                   setError(null);
                 }}
-                className={`py-2 px-1 rounded-md text-[10px] sm:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer ${
-                  activeTab === "lawyer"
+                className={`py-2 px-1 rounded-md text-[10px] sm:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer ${activeTab === "lawyer"
                     ? "bg-[#1a237e] text-[#d4af37] shadow-sm"
                     : "text-slate-500 hover:text-slate-800"
-                }`}
+                  }`}
               >
                 <Users className="w-3.5 h-3.5" />
                 <span>{t.roleLawyer}</span>
               </button>
-              
+
               <button
                 type="button"
                 onClick={() => {
@@ -297,11 +296,10 @@ export default function Login({ onBackToLanding }) {
                   setIsSignUpMode(false);
                   setError(null);
                 }}
-                className={`py-2 px-1 rounded-md text-[10px] sm:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer ${
-                  activeTab === "client"
+                className={`py-2 px-1 rounded-md text-[10px] sm:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer ${activeTab === "client"
                     ? "bg-[#1a237e] text-[#d4af37] shadow-sm"
                     : "text-slate-500 hover:text-slate-800"
-                }`}
+                  }`}
               >
                 <UserCheck className="w-3.5 h-3.5" />
                 <span>{t.roleClient}</span>
@@ -314,11 +312,10 @@ export default function Login({ onBackToLanding }) {
                   setIsSignUpMode(false);
                   setError(null);
                 }}
-                className={`py-2 px-1 rounded-md text-[10px] sm:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer ${
-                  activeTab === "admin"
+                className={`py-2 px-1 rounded-md text-[10px] sm:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer ${activeTab === "admin"
                     ? "bg-[#1a237e] text-[#d4af37] shadow-sm"
                     : "text-slate-500 hover:text-slate-800"
-                }`}
+                  }`}
               >
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>{at("Yönetici Girişi")}</span>
@@ -458,7 +455,7 @@ export default function Login({ onBackToLanding }) {
                 <span>{activeTab === "client" && isSignUpMode ? (language === "TR" ? "Kayıt Ol" : "Sign Up") : t.signIn}</span>
                 <ChevronRight className="w-4 h-4 text-[#d4af37]" />
               </button>
-              
+
               {activeTab === "client" && (
                 <div className="text-center mt-4">
                   <button
@@ -466,7 +463,7 @@ export default function Login({ onBackToLanding }) {
                     onClick={() => setIsSignUpMode(!isSignUpMode)}
                     className="text-xs text-[#1a237e] font-bold hover:underline cursor-pointer"
                   >
-                    {isSignUpMode 
+                    {isSignUpMode
                       ? (language === "TR" ? "Zaten hesabınız var mı? Giriş Yapın" : "Already have an account? Sign In")
                       : (language === "TR" ? "Hesabınız yok mu? Kayıt Olun" : "Don't have an account? Sign Up")}
                   </button>

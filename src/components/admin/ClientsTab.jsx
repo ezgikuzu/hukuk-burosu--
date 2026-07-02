@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addClient, updateClient, deleteClient, showConfirm } from "../store";
-import { DICTIONARY, autoTranslate } from "../data/initialData";
+import { addClient, updateClient, deleteClient, showConfirm } from "../../store";
+import { DICTIONARY, autoTranslate } from "../../data/initialData";
 import { 
   Plus, Edit, Trash2, Search, X, User, Phone, Mail, MapPin, 
   ShieldAlert, Fingerprint, Lock, ShieldCheck 

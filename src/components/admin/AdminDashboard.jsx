@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout, addLawyer, deleteLawyer, addClient, updateClient, deleteClient, showToast, showConfirm } from "../store";
-import { DICTIONARY, autoTranslate } from "../data/initialData";
-import { 
-  Scale, LogOut, Users, Briefcase, Calendar, FileText, 
+import { logout, addLawyer, deleteLawyer, addClient, updateClient, deleteClient, showToast, showConfirm } from "../../store";
+import { DICTIONARY, autoTranslate } from "../../data/initialData";
+import {
+  Scale, LogOut, Users, Briefcase, Calendar, FileText,
   DollarSign, Landmark, Plus, Trash2, Eye, ShieldCheck, CheckCircle2, TrendingUp, RefreshCw, Layers,
   UserCheck, Edit, Lock, X
 } from "lucide-react";
-import LanguageSelector from "./LanguageSelector";
+import LanguageSelector from "../common/LanguageSelector";
 
 export default function AdminDashboard() {
   const dispatch = useDispatch();
   const language = useSelector((state) => state.ui.language);
   const currentUser = useSelector((state) => state.auth.currentUser);
-  
+
   // Select firm-wide lists from Redux store
   const lawyers = useSelector((state) => state.lawyers.list);
   const clients = useSelector((state) => state.clients.list);
@@ -33,7 +33,7 @@ export default function AdminDashboard() {
     window.scrollTo(0, 0);
   }, [activeTab]);
   const [showAddLawyerModal, setShowAddLawyerModal] = useState(false);
-  
+
   // Form states for new lawyer
   const [newLawyerName, setNewLawyerName] = useState("");
   const [newLawyerEmail, setNewLawyerEmail] = useState("");
@@ -66,7 +66,7 @@ export default function AdminDashboard() {
     };
 
     dispatch(addLawyer(newL));
-    
+
     // Reset form
     setNewLawyerName("");
     setNewLawyerEmail("");
@@ -325,11 +325,10 @@ export default function AdminDashboard() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-2 px-3.5 rounded-t-lg text-xs font-bold transition-all flex items-center gap-2 cursor-pointer border-t border-x ${
-                  activeTab === tab.id
+                className={`py-2 px-3.5 rounded-t-lg text-xs font-bold transition-all flex items-center gap-2 cursor-pointer border-t border-x ${activeTab === tab.id
                     ? "bg-white text-[#1a237e] border-slate-200 border-b-white -mb-px shadow-sm font-extrabold"
                     : "bg-slate-100 text-slate-500 border-transparent hover:bg-slate-200/60 hover:text-slate-800"
-                }`}
+                  }`}
               >
                 <Icon className={`w-4 h-4 ${activeTab === tab.id ? "text-[#d4af37]" : "text-slate-400"}`} />
                 <span>{tab.label}</span>
@@ -613,10 +612,9 @@ export default function AdminDashboard() {
                           </span>
                         </td>
                         <td className="p-3">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                            c.status === "active" ? "bg-emerald-50 text-emerald-700" :
-                            c.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-600"
-                          }`}>
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${c.status === "active" ? "bg-emerald-50 text-emerald-700" :
+                              c.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-600"
+                            }`}>
                             {c.status === "active" ? at("Aktif") : c.status === "pending" ? at("Beklemede") : at("Kapalı")}
                           </span>
                         </td>
@@ -692,9 +690,8 @@ export default function AdminDashboard() {
                         <td className="p-3 font-bold text-slate-900">{p.amount.toLocaleString('tr-TR')} TRY</td>
                         <td className="p-3 font-bold uppercase tracking-wider text-slate-500">{p.type}</td>
                         <td className="p-3">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            p.status === "paid" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
-                          }`}>
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${p.status === "paid" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+                            }`}>
                             {p.status === "paid" ? at("Aktif") : at("Beklemede")}
                           </span>
                         </td>
@@ -823,9 +820,8 @@ export default function AdminDashboard() {
                       key={color}
                       type="button"
                       onClick={() => setNewLawyerColor(color)}
-                      className={`w-7 h-7 rounded-full border-2 cursor-pointer transition-all ${
-                        newLawyerColor === color ? "border-slate-800 scale-110" : "border-transparent"
-                      }`}
+                      className={`w-7 h-7 rounded-full border-2 cursor-pointer transition-all ${newLawyerColor === color ? "border-slate-800 scale-110" : "border-transparent"
+                        }`}
                       style={{ backgroundColor: color }}
                     />
                   ))}
