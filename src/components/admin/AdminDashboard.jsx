@@ -5,9 +5,10 @@ import { DICTIONARY, autoTranslate } from "../../data/initialData";
 import {
   Scale, LogOut, Users, Briefcase, Calendar, FileText,
   DollarSign, Landmark, Plus, Trash2, Eye, ShieldCheck, CheckCircle2, TrendingUp, RefreshCw, Layers,
-  UserCheck, Edit, Lock, X
+  UserCheck, Edit, Lock, X, FileSignature
 } from "lucide-react";
 import LanguageSelector from "../common/LanguageSelector";
+import DocumentGenerator from "../documents/DocumentGenerator";
 
 export default function AdminDashboard() {
   const dispatch = useDispatch();
@@ -318,6 +319,7 @@ export default function AdminDashboard() {
             { id: "cases", label: at("Dosyalar"), icon: Briefcase },
             { id: "hearings", label: at("Duruşmalar / Randevular"), icon: Calendar },
             { id: "finances", label: at("Finansal Alacaklar"), icon: DollarSign },
+            { id: "document-generator", label: at("Evrak Oluştur"), icon: FileSignature },
             { id: "movements", label: at("Tüm Hareketler"), icon: RefreshCw },
           ].map((tab) => {
             const Icon = tab.icon;
@@ -998,6 +1000,11 @@ export default function AdminDashboard() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* TAB 8: DOCUMENT GENERATOR */}
+      {activeTab === "document-generator" && (
+        <DocumentGenerator />
       )}
     </div>
   );
