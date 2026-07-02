@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleLanguage } from "../store";
+import { toggleLanguage, addMessage, showToast, addClient } from "../store";
 import { 
   Scale, Gavel, Briefcase, Users, CreditCard, Heart, FileText, Shield, 
   MapPin, Phone, Mail, Globe, ChevronLeft, ChevronRight, X, ArrowRight, Check, Send, Sparkles
 } from "lucide-react";
+import ServiceDetail from "./ServiceDetail";
+import LawyerDetail from "./LawyerDetail";
+import BlogDetail from "./BlogDetail";
+import AboutUs from "./AboutUs";
+import LegalDetail from "./LegalDetail";
 
 export default function LandingPage({ onLoginClick }) {
   const dispatch = useDispatch();
   const language = useSelector((state) => state.ui.language) || "TR";
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const currentUser = useSelector((state) => state.auth.currentUser);
 
   // Slider State
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -46,24 +53,12 @@ export default function LandingPage({ onLoginClick }) {
   };
 
   // Contact Form State
-  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "", lawyer: "" });
   const [formSubmitted, setFormSubmitted] = useState(false);
-
-  const handleContactSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) {
-      alert(language === "TR" ? "Lütfen tüm zorunlu alanları doldurun." : "Please fill in all required fields.");
-      return;
-    }
-    setFormSubmitted(true);
-    setTimeout(() => {
-      setFormSubmitted(false);
-      setFormData({ name: "", email: "", subject: "", message: "" });
-    }, 4000);
-  };
 
   // Virtual Detail Router States (for Practice areas, Lawyers and Blogs)
   const [activeDetail, setActiveDetail] = useState(null); // { type: 'practice'|'lawyer'|'blog', id: string }
+  const [activeView, setActiveView] = useState("home"); // "home" | "contact" | "about"
 
   // Practice Areas Data
   const practiceAreas = [
@@ -179,55 +174,76 @@ export default function LandingPage({ onLoginClick }) {
       bioEN: "Att. Muhammet Gorkem Iskenceli graduated from Ankara University Faculty of Law. He has been serving his clients in Heavy Penalty cases, financial crimes, and IT law for over 15 years."
     },
     {
-      id: "deniz-ince",
-      name: "Av. Deniz İnce",
+      id: "dilek-ince",
+      name: "Av. Dilek İnce",
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA9D1XgnCCjehZYJVpiD-_bfL7Na66lbbTo445XHb4MGg8hK4NiPeDClDEn5ok9UoHFFgOKPTXfOEM2N-3cwZIMy8eB-WjSr_DsVOfr3QdTWpJlX-5yXCPdJK6hiiqkTGcbgkAXtz3FjhKmqDwG4TBp7108fJXT1vd0P3HJkzMI29ecqyqfr8ULxDVyNavx8yXe1PYhq-87b83WCHVBzAOJObgLeHLsjaTZ1tXKbin7spXUFWglCZwULagr4ZHQ3fdZhuPF6zFe1yE",
       roleTR: "Uzman Avukat / Aile ve Miras Hukuku",
       roleEN: "Expert Lawyer / Family & Inheritance Law",
-      bioTR: "Av. Deniz İnce, Marmara Üniversitesi Hukuk Fakültesi mezunudur. Aile hukuku, mal tasfiyeleri, vasiyetnameler ve miras paylaşımı konularındaki titiz çalışmalarıyla bilinir.",
-      bioEN: "Att. Deniz Ince graduated from Marmara University Faculty of Law. She is known for her meticulous work in family law, property liquidation, wills, and inheritance distribution."
+      bioTR: "Av. Dilek İnce, Marmara Üniversitesi Hukuk Fakültesi mezunudur. Aile hukuku, mal tasfiyeleri, vasiyetnameler ve miras paylaşımı konularındaki titiz çalışmalarıyla bilinir.",
+      bioEN: "Att. Dilek Ince graduated from Marmara University Faculty of Law. She is known for her meticulous work in family law, property liquidation, wills, and inheritance distribution."
     }
   ];
 
-  // Blog Posts Data
-  const blogPosts = [
-    {
-      id: "yeni-ticaret-kanunu-degisiklikleri",
-      titleTR: "Yeni Türk Ticaret Kanunu Değişiklikleri ve Şirketler Üzerindeki Etkileri",
-      titleEN: "Amendments to the New Turkish Commercial Code and Their Impacts on Companies",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBeFXkKO8n1_PBgj226tQkE7DF_0QuYkQVWaOpUVYIUWUvW4q_XufC6Msuc7l92VUY1C1dlSyK3IS53mDsCibPVLTVvwoeC9hJPRl0UoRo5bQlBFVIdPc-6_0RfXAAPf8mF51j8hrTgpFDEuhna0gkq5R3ZmNIJUjfk-ALKbz9oZ_NIgPAodff_3fu4PKSRo7xhD-DCtFuiceVaGGlX8ZhOmsAR_0wn7dEyUVkeLlYbaFMHSdd3fH6glezYwS6si-iIzdLDakX7A5k",
-      excerptTR: "2024 yılı itibarıyla yürürlüğe giren yeni düzenlemeler, anonim ve limited şirketlerin yönetim kurulu yapılarını kökten değiştiriyor...",
-      excerptEN: "The new regulations that entered into force as of 2024 radically change the board of directors structures of joint stock and limited liability companies...",
-      author: "Av. Beyza Mensur",
-      authorImg: "https://lh3.googleusercontent.com/aida-public/AB6AXuBs9fibzs9m7PxJlKu7yIMcCC6tfaZggoJSIzEy8gGOszun-fWvTJI54kIS18NVusIXJqt9tQSMJSV6a3Ad7fRAEPh90yAvWMTvErHaz5oWlH-sZ3cLAJVwff3hUO44vJaU2OfT6BTgvuFggOkHxqInHnNUN51_R11uIaocBCCdlIEXa8PBAUujVnkJFqG1chVFRfgEZeYm0Y09XtLVGWGM7lt-JZRFlce3wmtBl17gq6CQHB112JdpjhUt2hZUTXCBE8GIkYkU1p8",
-      contentTR: "Yeni mevzuat çerçevesinde, şirketlerin asgari sermaye tutarlarında artışa gidilmiş, yönetim kurulu toplantılarının elektronik ortamda yapılmasının önü açılmıştır. Şirketlerin kurumsal yönetim ilkelerine entegrasyonu adına atılan bu adımlar, ticari güvenliğin artırılması açısından son derece değerlidir.",
-      contentEN: "Under the new legislation, minimum capital amounts of companies have been increased, and path was cleared for board of directors meetings to be held electronically. These steps taken in the name of integrating companies with corporate governance principles are highly valuable for increasing commercial security."
-    },
-    {
-      id: "is-sozlesmelerinde-dikkat-edilmesi-gerekenler",
-      titleTR: "İş Sözleşmelerinde Cezai Şart ve Rekabet Yasağı Hükümleri",
-      titleEN: "Penalty Clauses and Non-Compete Provisions in Employment Contracts",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBWzQcEepf5CFpw8zQbaJrt7VlK3eydl9BwwCRlniZ2MD5v0MiOCcOIf5_h_XpOCO-f2PkZ0RSkwuIFvqPAF-WoBOr3Te0kSTkF_CrpD1tLVMBz_XhHszBM2hXhxhbGNQadvP7c4H0rhgzDlfHBn9fNT29sViqyAPvpEsnpcoOUzKywX7P0UtXwWrNsh6p2t5NgqdPVfk98y0nEYe9a92K95BEJA07qvU_dRPAWliLnO44CsVrQbDoZHQJEkpaLhMAgsJcm6b8fVN8",
-      excerptTR: "İşverenlerin en çok merak ettiği konuların başında gelen rekabet yasağı sözleşmelerinin geçerlilik şartlarını Yargıtay kararları ışığında inceliyoruz...",
-      excerptEN: "We analyze the validity requirements of non-compete agreements, which is one of the most curious topics for employers, in the light of Supreme Court decisions...",
-      author: "Av. Muhammet Görkem İşkenceli",
-      authorImg: "https://lh3.googleusercontent.com/aida-public/AB6AXuA2DdEHLb36QUhBDJK7EM7Q0DO5LDdec_rVeXOE1nZNKr8lAP3EUPDCO8yusNd3p5EgUmFUIJ2FOpLRlhQrZkC5ECmxhamnZIF5Q5ixL3e6aDJsSTQDUz9-1jXZbaA1gxv5TNxgJXNUlEtHwyFQQZvUJ59hOPtWxKJrf8vHo1lvOZ8IGjbINl0KNTP7Rc89sisJPAfS47WOVij4aBIrxIC8cmJSF_0vO6DXIrOQ4Fhz6nGEQTHsQWu2AKsMkY96YU7eb-Nvk_2Gy5E",
-      contentTR: "Rekabet yasağının geçerli olabilmesi için coğrafi yer, zaman ve işin konusu bakımından makul sınırlar içinde olması zorunludur. Aşırı geniş tutulan rekabet yasakları, mahkemelerce iptal edilmekte veya indirilmektedir.",
-      contentEN: "For the non-compete obligation to be valid, it must be within reasonable limits in terms of geographical location, time, and the subject of the work. Overly broad non-compete bans are annulled or mitigated by courts."
-    },
-    {
-      id: "miras-paylasiminda-sakli-pay-haklari-ve-tenkis-davaları",
-      titleTR: "Miras Paylaşımında Saklı Pay Hakları ve Tenkis Davaları",
-      titleEN: "Reserved Share Rights and Reduction Lawsuits in Inheritance Distribution",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA2DdEHLb36QUhBDJK7EM7Q0DO5LDdec_rVeXOE1nZNKr8lAP3EUPDCO8yusNd3p5EgUmFUIJ2FOpLRlhQrZkC5ECmxhamnZIF5Q5ixL3e6aDJsSTQDUz9-1jXZbaA1gxv5TNxgJXNUlEtHwyFQQZvUJ59hOPtWxKJrf8vHo1lvOZ8IGjbINl0KNTP7Rc89sisJPAfS47WOVij4aBIrxIC8cmJSF_0vO6DXIrOQ4Fhz6nGEQTHsQWu2AKsMkY96YU7eb-Nvk_2Gy5E",
-      excerptTR: "Mirasbırakanın sağlığında yaptığı tasarrufların mirasçıların saklı paylarını ihlal etmesi durumunda başvurulacak yasal yollar...",
-      excerptEN: "Legal remedies to be applied when the savings made by the legator during his lifetime violate the reserved shares of the heirs...",
-      author: "Av. Deniz İnce",
-      authorImg: "https://lh3.googleusercontent.com/aida-public/AB6AXuA9D1XgnCCjehZYJVpiD-_bfL7Na66lbbTo445XHb4MGg8hK4NiPeDClDEn5ok9UoHFFgOKPTXfOEM2N-3cwZIMy8eB-WjSr_DsVOfr3QdTWpJlX-5yXCPdJK6hiiqkTGcbgkAXtz3FjhKmqDwG4TBp7108fJXT1vd0P3HJkzMI29ecqyqfr8ULxDVyNavx8yXe1PYhq-87b83WCHVBzAOJObgLeHLsjaTZ1tXKbin7spXUFWglCZwULagr4ZHQ3fdZhuPF6zFe1yE",
-      contentTR: "Saklı pay mirasçıları; altsoy, ana-baba ve eşten oluşur. Mirasbırakan saklı payı zedeleyen bağışlamalar yaparsa, mirasın açılmasından itibaren kanuni süreler içinde tenkis davası açılarak hak iadesi istenebilir.",
-      contentEN: "Reserved share heirs consist of descendants, parents, and spouse. If the legator makes donations that damage the reserved share, a reduction lawsuit can be filed within legal periods after the inheritance is opened."
+  const handleContactSubmit = (e) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.email || !formData.message) {
+      dispatch(showToast({
+        message: language === "TR" ? "Lütfen tüm zorunlu alanları doldurun." : "Please fill in all required fields.",
+        type: "error"
+      }));
+      return;
     }
-  ];
+
+    let targetLawyerId = "all";
+    if (formData.lawyer) {
+      const targetLawyer = lawyers.find(l => l.name === formData.lawyer);
+      if (targetLawyer) targetLawyerId = targetLawyer.id;
+    }
+
+    let senderId = currentUser?.id;
+    let senderName = currentUser?.name || formData.name;
+    let senderRole = currentUser?.role || "client";
+
+    // If guest, create a temporary client profile so lawyers can reply
+    if (!isAuthenticated) {
+      senderId = `lead_${Date.now()}`;
+      dispatch(addClient({
+        id: senderId,
+        name: `${formData.name} (Web Form)`,
+        email: formData.email,
+        phone: "Belirtilmedi",
+        nationalId: "00000000000",
+        password: "form_lead_password",
+        address: "Web Sitesi İletişim Formundan Ulaştı",
+        lawyerId: targetLawyerId,
+        createdAt: new Date().toISOString()
+      }));
+    }
+
+    dispatch(addMessage({
+      id: `msg_ext_${Date.now()}`,
+      senderId: senderId,
+      senderName: senderName,
+      senderRole: senderRole,
+      receiverId: targetLawyerId,
+      content: `İletişim Formu:\nE-Posta: ${formData.email}\nKonu: ${formData.subject}\nMesaj: ${formData.message}`,
+      timestamp: new Date().toISOString()
+    }));
+
+    setFormSubmitted(true);
+    dispatch(showToast({
+      message: language === "TR" ? "Mesajınız başarıyla iletildi!" : "Your message has been sent successfully!",
+      type: "success"
+    }));
+    setTimeout(() => {
+      setFormSubmitted(false);
+      setFormData({ name: "", email: "", subject: "", message: "", lawyer: "" });
+    }, 4000);
+  };
+
+  // Blog Posts Data (Fetched from Redux)
+  const blogPosts = useSelector((state) => state.blogs?.list) || [];
 
   // Global translation function helper for static UI parts
   const tx = (key) => {
@@ -287,18 +303,71 @@ export default function LandingPage({ onLoginClick }) {
   };
 
   const handleConsultationClick = () => {
-    const contactSection = document.getElementById("contact");
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: "smooth" });
-    }
+    setActiveView("contact");
+    window.scrollTo(0, 0);
   };
+
+  if (activeDetail && activeDetail.type === "practice") {
+    return (
+      <ServiceDetail 
+        serviceId={activeDetail.id} 
+        onBack={() => setActiveDetail(null)} 
+        onContactClick={() => {
+          setActiveDetail(null);
+          setActiveView("contact");
+          window.scrollTo(0, 0);
+        }}
+      />
+    );
+  }
+
+  if (activeDetail && activeDetail.type === "lawyer") {
+    const lName = lawyers.find(l => l.id === activeDetail.id)?.name || "";
+    return (
+      <LawyerDetail 
+        lawyerId={activeDetail.id} 
+        onBack={() => setActiveDetail(null)} 
+        onContactClick={() => {
+          setActiveDetail(null);
+          setFormData(prev => ({ ...prev, lawyer: lName }));
+          setActiveView("contact");
+          window.scrollTo(0, 0);
+        }}
+      />
+    );
+  }
+
+  if (activeDetail && activeDetail.type === "blog") {
+    const authorName = blogPosts.find(b => b.id === activeDetail.id)?.author || "";
+    return (
+      <BlogDetail 
+        blogId={activeDetail.id} 
+        onBack={() => setActiveDetail(null)} 
+        onContactClick={() => {
+          setActiveDetail(null);
+          setFormData(prev => ({ ...prev, lawyer: authorName }));
+          setActiveView("contact");
+          window.scrollTo(0, 0);
+        }}
+      />
+    );
+  }
+
+  if (activeDetail && activeDetail.type === "legal") {
+    return (
+      <LegalDetail 
+        legalId={activeDetail.id} 
+        onBack={() => setActiveDetail(null)} 
+      />
+    );
+  }
 
   return (
     <div className="bg-slate-50 text-[#1b1c1c] font-sans min-h-screen relative overflow-x-hidden antialiased">
       {/* TopNavBar */}
       <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 h-20 shadow-sm transition-all">
         <nav className="max-w-7xl mx-auto px-6 lg:px-12 flex justify-between items-center h-full">
-          <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+          <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => { setActiveView("home"); setActiveDetail(null); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#1a237e] to-[#283593] flex items-center justify-center border border-[#d4af37]/30 shadow-md">
               <Gavel className="w-5 h-5 text-[#d4af37]" />
             </div>
@@ -309,8 +378,8 @@ export default function LandingPage({ onLoginClick }) {
           </div>
 
           <div className="hidden lg:flex items-center gap-8 h-full font-medium">
-            <a href="#home" className="text-sm text-slate-800 hover:text-[#1a237e] transition-colors py-2">{tx("nav-home")}</a>
-            <a href="#about" className="text-sm text-slate-800 hover:text-[#1a237e] transition-colors py-2">{tx("nav-about")}</a>
+            <button onClick={() => { setActiveView("home"); window.scrollTo(0, 0); }} className="text-sm text-slate-800 hover:text-[#1a237e] transition-colors py-2 cursor-pointer">{tx("nav-home")}</button>
+            <button onClick={() => { setActiveView("about"); window.scrollTo(0, 0); }} className="text-sm text-slate-800 hover:text-[#1a237e] transition-colors py-2 cursor-pointer">{tx("nav-about")}</button>
             
             {/* Mega Menu Toggle (Practice Areas) */}
             <div className="relative group h-full flex items-center">
@@ -359,7 +428,7 @@ export default function LandingPage({ onLoginClick }) {
               </div>
             </div>
 
-            <a href="#contact" className="text-sm text-slate-800 hover:text-[#1a237e] transition-colors py-2">{tx("nav-contact")}</a>
+            <button onClick={() => { setActiveView("contact"); window.scrollTo(0, 0); }} className="text-sm text-slate-800 hover:text-[#1a237e] transition-colors py-2 cursor-pointer">{tx("nav-contact")}</button>
           </div>
 
           <div className="flex items-center gap-4">
@@ -384,7 +453,9 @@ export default function LandingPage({ onLoginClick }) {
       </header>
 
       {/* Hero Slider Section */}
-      <section id="home" className="relative h-[85vh] sm:h-[90vh] flex items-center justify-center overflow-hidden pt-20">
+      {activeView === "home" && (
+        <>
+          <section id="home" className="relative h-[85vh] sm:h-[90vh] flex items-center justify-center overflow-hidden pt-20">
         <div className="absolute inset-0 z-0">
           <div className="h-full w-full relative">
             {slides.map((slide, idx) => (
@@ -625,9 +696,20 @@ export default function LandingPage({ onLoginClick }) {
           </div>
         </div>
       </section>
+      </>
+      )}
 
       {/* Contact & Map Section */}
-      <section id="contact" className="py-24 bg-white border-t border-slate-100">
+      {activeView === "contact" && (
+        <div className="pt-20 animate-fade-in min-h-[70vh]">
+          <div className="bg-[#1a237e] text-white py-16 text-center shadow-inner relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#1a237e] to-[#283593] opacity-90 z-0" />
+            <div className="relative z-10">
+              <h1 className="text-4xl font-serif font-bold tracking-tight mb-2">{tx("contact-tag")}</h1>
+              <div className="w-16 h-1 bg-[#d4af37] mx-auto rounded" />
+            </div>
+          </div>
+          <section id="contact" className="py-24 bg-white border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
             <div className="lg:col-span-5 space-y-8">
@@ -723,17 +805,34 @@ export default function LandingPage({ onLoginClick }) {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    {language === "TR" ? "Konu" : "Subject"}
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.subject}
-                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    placeholder={language === "TR" ? "Hukuki Danışmanlık Talebi" : "Legal Consultancy Request"}
-                    className="w-full px-3 py-2.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e]"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      {language === "TR" ? "Konu" : "Subject"}
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.subject}
+                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      placeholder={language === "TR" ? "Hukuki Danışmanlık Talebi" : "Legal Consultancy Request"}
+                      className="w-full px-3 py-2.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      {language === "TR" ? "İlgili Avukat (İsteğe Bağlı)" : "Related Lawyer (Optional)"}
+                    </label>
+                    <select
+                      value={formData.lawyer}
+                      onChange={(e) => setFormData({ ...formData, lawyer: e.target.value })}
+                      className="w-full px-3 py-2.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e]"
+                    >
+                      <option value="">{language === "TR" ? "Genel Danışmanlık" : "General Consultation"}</option>
+                      {lawyers.map(l => (
+                        <option key={l.id} value={l.name}>{l.name}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div>
@@ -762,6 +861,12 @@ export default function LandingPage({ onLoginClick }) {
           </div>
         </div>
       </section>
+      </div>
+      )}
+
+      {activeView === "about" && (
+        <AboutUs />
+      )}
 
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-300 border-t border-slate-800">
@@ -782,18 +887,18 @@ export default function LandingPage({ onLoginClick }) {
             <div>
               <h5 className="font-bold text-white text-xs uppercase tracking-wider mb-4">{tx("footer-links-title")}</h5>
               <ul className="space-y-2.5 text-xs">
-                <li><a href="#home" className="hover:text-[#d4af37] transition-colors">{tx("nav-home")}</a></li>
-                <li><a href="#about" className="hover:text-[#d4af37] transition-colors">{tx("nav-about")}</a></li>
-                <li><a href="#contact" className="hover:text-[#d4af37] transition-colors">{tx("nav-contact")}</a></li>
+                <li><button onClick={() => { setActiveView("home"); window.scrollTo(0,0); }} className="hover:text-[#d4af37] transition-colors">{tx("nav-home")}</button></li>
+                <li><button onClick={() => { setActiveView("about"); window.scrollTo(0,0); }} className="hover:text-[#d4af37] transition-colors">{tx("nav-about")}</button></li>
+                <li><button onClick={() => { setActiveView("contact"); window.scrollTo(0,0); }} className="hover:text-[#d4af37] transition-colors">{tx("nav-contact")}</button></li>
               </ul>
             </div>
 
             <div>
               <h5 className="font-bold text-white text-xs uppercase tracking-wider mb-4">{language === "TR" ? "Yasal" : "Legal"}</h5>
               <ul className="space-y-2.5 text-xs text-slate-400">
-                <li><a href="#home" className="hover:text-white transition-colors">{tx("footer-privacy")}</a></li>
-                <li><a href="#home" className="hover:text-white transition-colors">{tx("footer-terms")}</a></li>
-                <li><a href="#home" className="hover:text-white transition-colors">{tx("footer-kvkk")}</a></li>
+                <li><button onClick={() => { setActiveDetail({ type: "legal", id: "privacy" }); window.scrollTo(0,0); }} className="hover:text-white transition-colors">{tx("footer-privacy")}</button></li>
+                <li><button onClick={() => { setActiveDetail({ type: "legal", id: "terms" }); window.scrollTo(0,0); }} className="hover:text-white transition-colors">{tx("footer-terms")}</button></li>
+                <li><button onClick={() => { setActiveDetail({ type: "legal", id: "kvkk" }); window.scrollTo(0,0); }} className="hover:text-white transition-colors">{tx("footer-kvkk")}</button></li>
               </ul>
             </div>
           </div>
@@ -801,152 +906,15 @@ export default function LandingPage({ onLoginClick }) {
           <div className="pt-8 border-t border-slate-800/80 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-slate-500 font-medium">
             <p>{tx("footer-copy")}</p>
             <div className="flex gap-6">
-              <a href="#home" className="hover:underline">{tx("footer-privacy")}</a>
-              <a href="#home" className="hover:underline">{tx("footer-terms")}</a>
-              <a href="#home" className="hover:underline">KVKK</a>
+              <button onClick={() => { setActiveDetail({ type: "legal", id: "privacy" }); window.scrollTo(0,0); }} className="hover:underline">{tx("footer-privacy")}</button>
+              <button onClick={() => { setActiveDetail({ type: "legal", id: "terms" }); window.scrollTo(0,0); }} className="hover:underline">{tx("footer-terms")}</button>
+              <button onClick={() => { setActiveDetail({ type: "legal", id: "kvkk" }); window.scrollTo(0,0); }} className="hover:underline">KVKK</button>
             </div>
           </div>
         </div>
       </footer>
 
-      {/* Dynamic Detail Overlay/Modal (For Practice, Lawyer or Blog detail routing) */}
-      {activeDetail && (
-        <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh]">
-            
-            {/* Modal Header */}
-            <div className="px-6 py-4.5 bg-gradient-to-r from-[#1a237e] to-[#283593] text-white flex justify-between items-center border-b border-[#d4af37]/20 shrink-0">
-              <h3 className="font-serif text-sm sm:text-base font-bold flex items-center gap-2">
-                <Scale className="w-4.5 h-4.5 text-[#d4af37]" />
-                <span>
-                  {activeDetail.type === "practice" && (language === "TR" ? "Uzmanlık Alanı Detayları" : "Practice Area Details")}
-                  {activeDetail.type === "lawyer" && (language === "TR" ? "Avukat Profil Detayları" : "Lawyer Profile Details")}
-                  {activeDetail.type === "blog" && (language === "TR" ? "Blog Yazısı" : "Blog Post")}
-                </span>
-              </h3>
-              <button
-                onClick={() => setActiveDetail(null)}
-                className="text-white/80 hover:text-white hover:bg-white/10 p-1.5 rounded-full transition-colors cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
 
-            {/* Modal Body */}
-            <div className="p-6 overflow-y-auto space-y-6 flex-1 text-slate-700 text-sm leading-relaxed">
-              {activeDetail.type === "practice" && (() => {
-                const item = practiceAreas.find((x) => x.id === activeDetail.id);
-                if (!item) return null;
-                const IconC = item.icon;
-                return (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-[#1a237e]/10 rounded-lg flex items-center justify-center border border-[#1a237e]/15">
-                        <IconC className="w-5 h-5 text-[#1a237e]" />
-                      </div>
-                      <h4 className="font-serif font-bold text-lg text-[#1a237e]">
-                        {language === "TR" ? item.titleTR : item.titleEN}
-                      </h4>
-                    </div>
-                    <div className="p-4.5 bg-slate-50 border-l-4 border-[#d4af37] rounded-r-lg text-xs font-semibold text-slate-600">
-                      {language === "TR" ? item.descTR : item.descEN}
-                    </div>
-                    <p className="text-slate-600 whitespace-pre-line text-xs sm:text-sm pt-2">
-                      {language === "TR" ? item.detailTR : item.detailEN}
-                    </p>
-                    <div className="pt-6 border-t border-slate-100 flex justify-end">
-                      <button
-                        onClick={() => setActiveDetail(null)}
-                        className="px-5 py-2 bg-[#1a237e] text-white rounded-lg text-xs font-bold hover:bg-[#12185c] cursor-pointer"
-                      >
-                        {language === "TR" ? "Kapat" : "Close"}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {activeDetail.type === "lawyer" && (() => {
-                const item = lawyers.find((x) => x.id === activeDetail.id);
-                if (!item) return null;
-                return (
-                  <div className="space-y-4">
-                    <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start pb-4 border-b border-slate-100">
-                      <div className="w-28 h-36 rounded-xl overflow-hidden shadow border border-slate-150 shrink-0 bg-slate-50">
-                        <img alt={item.name} className="w-full h-full object-cover" src={item.image} referrerPolicy="no-referrer" />
-                      </div>
-                      <div className="space-y-2 text-center sm:text-left">
-                        <h4 className="font-serif font-bold text-xl text-[#1a237e]">{item.name}</h4>
-                        <span className="inline-block px-2.5 py-1 rounded bg-[#d4af37]/10 text-[#d4af37] text-[11px] font-bold uppercase tracking-wider">
-                          {language === "TR" ? item.roleTR : item.roleEN}
-                        </span>
-                        <p className="text-xs text-slate-400 font-medium">EDBM Law Firm Senior Legal Staff</p>
-                      </div>
-                    </div>
-                    <div>
-                      <h5 className="font-serif font-bold text-[#1a237e] text-sm mb-2">{language === "TR" ? "Biyografi" : "Biography"}</h5>
-                      <p className="text-slate-600 text-xs sm:text-sm whitespace-pre-line leading-relaxed">
-                        {language === "TR" ? item.bioTR : item.bioEN}
-                      </p>
-                    </div>
-                    <div className="pt-6 border-t border-slate-100 flex justify-end gap-2">
-                      <button
-                        onClick={() => {
-                          setActiveDetail(null);
-                          handleConsultationClick();
-                        }}
-                        className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-bold cursor-pointer"
-                      >
-                        {language === "TR" ? "Randevu Al" : "Request Appointment"}
-                      </button>
-                      <button
-                        onClick={() => setActiveDetail(null)}
-                        className="px-4 py-2 bg-[#1a237e] text-white rounded-lg text-xs font-bold hover:bg-[#12185c] cursor-pointer"
-                      >
-                        {language === "TR" ? "Kapat" : "Close"}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {activeDetail.type === "blog" && (() => {
-                const item = blogPosts.find((x) => x.id === activeDetail.id);
-                if (!item) return null;
-                return (
-                  <div className="space-y-4">
-                    <div className="rounded-xl overflow-hidden aspect-video border border-slate-100 shadow-sm bg-slate-100 shrink-0">
-                      <img alt={language === "TR" ? item.titleTR : item.titleEN} className="w-full h-full object-cover" src={item.image} referrerPolicy="no-referrer" />
-                    </div>
-                    <h4 className="font-serif font-bold text-lg text-[#1a237e] leading-snug">
-                      {language === "TR" ? item.titleTR : item.titleEN}
-                    </h4>
-                    <div className="flex items-center gap-3 py-2 border-y border-slate-100">
-                      <div className="w-7 h-7 rounded-full overflow-hidden border border-slate-150">
-                        <img alt={item.author} className="w-full h-full object-cover" src={item.authorImg} referrerPolicy="no-referrer" />
-                      </div>
-                      <span className="text-xs font-bold text-slate-700">{item.author}</span>
-                      <span className="text-[10px] text-slate-400">| EDBM Legal Editorial</span>
-                    </div>
-                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed pt-2">
-                      {language === "TR" ? item.contentTR : item.contentEN}
-                    </p>
-                    <div className="pt-6 border-t border-slate-100 flex justify-end">
-                      <button
-                        onClick={() => setActiveDetail(null)}
-                        className="px-5 py-2 bg-[#1a237e] text-white rounded-lg text-xs font-bold hover:bg-[#12185c] cursor-pointer"
-                      >
-                        {language === "TR" ? "Kapat" : "Close"}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })()}
-
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addDocument, deleteDocument } from "../store";
+import { addDocument, deleteDocument, showToast, showConfirm } from "../store";
 import { DICTIONARY, autoTranslate } from "../data/initialData";
 import { 
   FileText, Plus, Trash2, Folder, Download, Eye, X, UploadCloud, 
@@ -108,7 +108,10 @@ export default function DocumentsTab() {
     };
 
     dispatch(addDocument(newDoc));
-    alert(language === "TR" ? "Dosya başarıyla yüklendi!" : "File uploaded successfully!");
+    dispatch(showToast({
+      message: language === "TR" ? "Dosya başarıyla yüklendi!" : "File uploaded successfully!",
+      type: "success"
+    }));
   };
 
   const handleDrop = (e) => {
@@ -136,7 +139,10 @@ export default function DocumentsTab() {
   const handleSaveDraft = (e) => {
     e.preventDefault();
     if (!docName) {
-      alert(language === "TR" ? "Lütfen belge adı giriniz." : "Please enter document name.");
+      dispatch(showToast({
+        message: language === "TR" ? "Lütfen belge adı giriniz." : "Please enter document name.",
+        type: "error"
+      }));
       return;
     }
 
@@ -159,17 +165,60 @@ export default function DocumentsTab() {
   };
 
   const handleDeleteDoc = (id) => {
-    if (window.confirm(language === "TR" ? "Bu evrakı silmek istediğinize emin misiniz?" : "Are you sure you want to delete this document?")) {
-      dispatch(deleteDocument(id));
-      if (viewingDoc?.id === id) {
-        setViewingDoc(null);
-      }
+    dispatch(showConfirm({
+      message: language === "TR" ? "Bu evrakı silmek istediğinize emin misiniz?" : "Are you sure you want to delete this document?",
+      actionToDispatch: deleteDocument(id)
+    }));
+    if (viewingDoc?.id === id) {
+      setViewingDoc(null);
     }
   };
 
   const handleCopyText = () => {
     navigator.clipboard.writeText(editorContent || viewingDoc?.content || "");
-    alert(language === "TR" ? "Yazı panoya kopyalandı!" : "Text copied to clipboard!");
+    dispatch(showToast({
+      message: language === "TR" ? "Yazı panoya kopyalandı!" : "Text copied to clipboard!",
+      type: "success"
+    }));
+  };
+
+  const handleDownloadPDF = (doc) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      dispatch(showToast({
+        message: language === "TR" ? "Açılır pencerelere izin verin." : "Please allow pop-ups.",
+        type: "error"
+      }));
+      return;
+    }
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>${doc.name}</title>
+          <style>
+            body { font-family: 'Times New Roman', serif; padding: 40px; line-height: 1.6; white-space: pre-wrap; color: #000; }
+            .header { text-align: center; margin-bottom: 40px; }
+            .footer { margin-top: 50px; font-size: 12px; color: #555; border-top: 1px solid #ccc; padding-top: 10px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h2>EDBM HUKUK BÜROSU</h2>
+            <hr />
+            <h3>${doc.name}</h3>
+          </div>
+          <div class="content">${doc.content || "Belge içeriği bulunamadı."}</div>
+          <div class="footer">
+            Oluşturulma Tarihi: ${doc.uploadedAt} | Oluşturan: ${doc.uploadedBy}
+          </div>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+    }, 250);
   };
 
   // Filter list
@@ -305,6 +354,13 @@ export default function DocumentsTab() {
                               <Eye className="w-4 h-4" />
                             </button>
                             <button
+                              onClick={() => handleDownloadPDF(d)}
+                              className="p-1 hover:bg-green-50 text-green-600 rounded cursor-pointer"
+                              title={language === "TR" ? "PDF İndir" : "Download PDF"}
+                            >
+                              <Download className="w-4 h-4" />
+                            </button>
+                            <button
                               onClick={() => handleDeleteDoc(d.id)}
                               className="p-1 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded cursor-pointer"
                               title={t.delete}
@@ -404,6 +460,13 @@ export default function DocumentsTab() {
                 {language === "TR" ? "Oluşturan: " : "Author: "} {viewingDoc.uploadedBy} | {viewingDoc.uploadedAt}
               </span>
               <div className="flex gap-2">
+                <button
+                  onClick={() => handleDownloadPDF(viewingDoc)}
+                  className="px-3.5 py-1.5 border border-slate-200 hover:bg-green-50 text-green-700 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer transition-all"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>{language === "TR" ? "PDF İndir" : "Download PDF"}</span>
+                </button>
                 <button
                   onClick={handleCopyText}
                   className="px-3.5 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer transition-all"

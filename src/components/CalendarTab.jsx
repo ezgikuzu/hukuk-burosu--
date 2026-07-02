@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addHearing, deleteHearing } from "../store";
+import { addHearing, deleteHearing, showConfirm } from "../store";
 import { DICTIONARY, autoTranslate } from "../data/initialData";
 import { 
   Plus, Trash2, Calendar, MapPin, Clock, X, AlertCircle, Check, 
@@ -25,9 +25,7 @@ export default function CalendarTab() {
     ? rawCases.filter((c) => c.lawyerId === currentUser.id)
     : rawCases;
 
-  const hearings = isLawyer
-    ? rawHearings.filter((h) => h.lawyerId === currentUser.id)
-    : rawHearings;
+  const hearings = rawHearings; // Allow all lawyers to view the global calendar pool
 
   // Filter
   const [selectedLawyerId, setSelectedLawyerId] = useState(isLawyer ? currentUser.id : "all");
@@ -84,9 +82,10 @@ export default function CalendarTab() {
   };
 
   const handleDelete = (id) => {
-    if (window.confirm(language === "TR" ? "Bu duruşma kaydını silmek istediğinize emin misiniz?" : "Are you sure you want to delete this hearing?")) {
-      dispatch(deleteHearing(id));
-    }
+    dispatch(showConfirm({
+      message: language === "TR" ? "Bu duruşma kaydını silmek istediğinize emin misiniz?" : "Are you sure you want to delete this hearing?",
+      actionToDispatch: deleteHearing(id)
+    }));
   };
 
   // Mock Calendar Grid construction (July 2026)
@@ -134,7 +133,7 @@ export default function CalendarTab() {
     const dayStr = String(day).padStart(2, "0");
     const datePrefix = `${year}-${month}-${dayStr}`;
 
-    return hearings.filter(h => h.dateTime.startsWith(datePrefix));
+    return filteredHearings.filter(h => h.dateTime.startsWith(datePrefix));
   };
 
   return (
@@ -257,7 +256,6 @@ export default function CalendarTab() {
 
               {/* Lawyer Filter Selector */}
               <select
-                disabled={isLawyer}
                 value={selectedLawyerId}
                 onChange={(e) => setSelectedLawyerId(e.target.value)}
                 className="px-2 py-1 text-[10px] border border-slate-200 rounded focus:outline-none font-semibold bg-slate-50"

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../store";
+import { login, addClient } from "../store";
 import { INITIAL_LAWYERS, INITIAL_CLIENTS, DICTIONARY, autoTranslate } from "../data/initialData";
 import { Scale, Lock, Mail, ShieldAlert, CheckCircle, ChevronRight, Users, UserCheck, ShieldCheck } from "lucide-react";
 import LanguageSelector from "./LanguageSelector";
@@ -12,6 +12,11 @@ export default function Login({ onBackToLanding }) {
 
   // Tabs: "lawyer" | "client" | "admin"
   const [activeTab, setActiveTab] = useState("admin");
+  const [isSignUpMode, setIsSignUpMode] = useState(false);
+  const [signupName, setSignupName] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPhone, setSignupPhone] = useState("");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nationalId, setNationalId] = useState("");
@@ -137,6 +142,36 @@ export default function Login({ onBackToLanding }) {
     }
   };
 
+  const handleSignUpSubmit = (e) => {
+    e.preventDefault();
+    setError(null);
+    if (!signupName || !signupEmail || !nationalId || !password) {
+      setError(language === "TR" ? "Lütfen tüm zorunlu alanları doldurun." : "Please fill in all required fields.");
+      return;
+    }
+    const clientsList = JSON.parse(localStorage.getItem("edbm_clients") || "[]");
+    const combinedClients = clientsList.length > 0 ? clientsList : INITIAL_CLIENTS;
+
+    if (combinedClients.find((c) => c.nationalId === nationalId)) {
+      setError(language === "TR" ? "Bu T.C. numarası ile kayıtlı bir müvekkil zaten var." : "A client with this National ID already exists.");
+      return;
+    }
+
+    const newClient = {
+      id: `client_new_${Date.now()}`,
+      name: signupName,
+      email: signupEmail,
+      phone: signupPhone || "+90 555 000 0000",
+      address: "Türkiye",
+      nationalId: nationalId,
+      password: password,
+      lawyerId: null,
+    };
+
+    dispatch(addClient(newClient));
+    dispatch(login({ ...newClient, role: "client" }));
+  };
+
   return (
     <div className="min-h-screen flex flex-col justify-between bg-slate-50 relative overflow-hidden font-sans">
       {/* Background Decorative Patterns */}
@@ -242,6 +277,7 @@ export default function Login({ onBackToLanding }) {
                 type="button"
                 onClick={() => {
                   setActiveTab("lawyer");
+                  setIsSignUpMode(false);
                   setError(null);
                 }}
                 className={`py-2 px-1 rounded-md text-[10px] sm:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer ${
@@ -258,6 +294,7 @@ export default function Login({ onBackToLanding }) {
                 type="button"
                 onClick={() => {
                   setActiveTab("client");
+                  setIsSignUpMode(false);
                   setError(null);
                 }}
                 className={`py-2 px-1 rounded-md text-[10px] sm:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer ${
@@ -274,6 +311,7 @@ export default function Login({ onBackToLanding }) {
                 type="button"
                 onClick={() => {
                   setActiveTab("admin");
+                  setIsSignUpMode(false);
                   setError(null);
                 }}
                 className={`py-2 px-1 rounded-md text-[10px] sm:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer ${
@@ -294,7 +332,7 @@ export default function Login({ onBackToLanding }) {
               </div>
             )}
 
-            <form onSubmit={handleLoginSubmit} className="space-y-4">
+            <form onSubmit={activeTab === "client" && isSignUpMode ? handleSignUpSubmit : handleLoginSubmit} className="space-y-4">
               {activeTab === "lawyer" ? (
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -330,23 +368,70 @@ export default function Login({ onBackToLanding }) {
                   </div>
                 </div>
               ) : (
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    {t.nationalIdLabel}
-                  </label>
-                  <div className="relative">
-                    <Users className="absolute left-3 top-2.5 h-4.5 w-4.5 text-slate-400" />
-                    <input
-                      type="text"
-                      required
-                      maxLength={11}
-                      value={nationalId}
-                      onChange={(e) => setNationalId(e.target.value)}
-                      placeholder="12345678901"
-                      className="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-colors"
-                    />
+                <>
+                  {isSignUpMode && (
+                    <>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          {language === "TR" ? "Ad Soyad" : "Full Name"}
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            required
+                            value={signupName}
+                            onChange={(e) => setSignupName(e.target.value)}
+                            className="w-full px-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-colors"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          {t.emailLabel}
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="email"
+                            required
+                            value={signupEmail}
+                            onChange={(e) => setSignupEmail(e.target.value)}
+                            className="w-full px-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-colors"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          {language === "TR" ? "Telefon" : "Phone"}
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={signupPhone}
+                            onChange={(e) => setSignupPhone(e.target.value)}
+                            className="w-full px-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-colors"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      {t.nationalIdLabel}
+                    </label>
+                    <div className="relative">
+                      <Users className="absolute left-3 top-2.5 h-4.5 w-4.5 text-slate-400" />
+                      <input
+                        type="text"
+                        required
+                        maxLength={11}
+                        value={nationalId}
+                        onChange={(e) => setNationalId(e.target.value)}
+                        placeholder="12345678901"
+                        className="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a237e]/20 focus:border-[#1a237e] transition-colors"
+                      />
+                    </div>
                   </div>
-                </div>
+                </>
               )}
 
               <div>
@@ -370,9 +455,23 @@ export default function Login({ onBackToLanding }) {
                 type="submit"
                 className="w-full py-2.5 px-4 bg-[#1a237e] hover:bg-[#12185c] text-white rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-all duration-300 shadow-md border-b-2 border-indigo-950 cursor-pointer"
               >
-                <span>{t.signIn}</span>
+                <span>{activeTab === "client" && isSignUpMode ? (language === "TR" ? "Kayıt Ol" : "Sign Up") : t.signIn}</span>
                 <ChevronRight className="w-4 h-4 text-[#d4af37]" />
               </button>
+              
+              {activeTab === "client" && (
+                <div className="text-center mt-4">
+                  <button
+                    type="button"
+                    onClick={() => setIsSignUpMode(!isSignUpMode)}
+                    className="text-xs text-[#1a237e] font-bold hover:underline cursor-pointer"
+                  >
+                    {isSignUpMode 
+                      ? (language === "TR" ? "Zaten hesabınız var mı? Giriş Yapın" : "Already have an account? Sign In")
+                      : (language === "TR" ? "Hesabınız yok mu? Kayıt Olun" : "Don't have an account? Sign Up")}
+                  </button>
+                </div>
+              )}
             </form>
 
             {/* Quick Login Helper Panel */}

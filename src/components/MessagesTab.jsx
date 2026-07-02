@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addMessage, addMemo, deleteMemo } from "../store";
+import { addMessage, addMemo, deleteMemo, showToast } from "../store";
 import { DICTIONARY, autoTranslate } from "../data/initialData";
 import { 
   Send, MessageSquare, Clipboard, User, Calendar, Plus, 
@@ -20,10 +20,10 @@ export default function MessagesTab() {
 
   const isLawyer = currentUser?.role === "lawyer";
 
-  // Filter clients list for lawyers
+  // Filter clients list for lawyers (Excluding leads/visitors)
   const clients = isLawyer 
-    ? rawClients.filter((cl) => cl.lawyerId === currentUser.id)
-    : rawClients;
+    ? rawClients.filter((cl) => cl.lawyerId === currentUser.id && !cl.id.startsWith("lead_"))
+    : rawClients.filter((cl) => !cl.id.startsWith("lead_"));
 
   // Chat States
   const [selectedClientId, setSelectedClientId] = useState(clients[0]?.id || "");
@@ -76,7 +76,10 @@ export default function MessagesTab() {
     }));
 
     setTypedMemo("");
-    alert(language === "TR" ? "Duyuru ilan panosunda yayınlandı!" : "Announcement posted on notice board!");
+    dispatch(showToast({
+      message: language === "TR" ? "Duyuru ilan panosunda yayınlandı!" : "Announcement posted on notice board!",
+      type: "success"
+    }));
   };
 
   const handleDeleteMemo = (id) => {

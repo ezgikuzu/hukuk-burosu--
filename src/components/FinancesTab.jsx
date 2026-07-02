@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addPayment, updatePaymentStatus, deletePayment } from "../store";
+import { addPayment, updatePaymentStatus, deletePayment, showToast, showConfirm } from "../store";
 import { DICTIONARY, autoTranslate } from "../data/initialData";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
@@ -64,13 +64,19 @@ export default function FinancesTab() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (!clientId) {
-      alert(language === "TR" ? "Lütfen bir müvekkil seçiniz." : "Please select a client.");
+      dispatch(showToast({
+        message: language === "TR" ? "Lütfen bir müvekkil seçiniz." : "Please select a client.",
+        type: "error"
+      }));
       return;
     }
 
     const value = parseFloat(amount);
     if (isNaN(value) || value <= 0) {
-      alert(language === "TR" ? "Lütfen geçerli bir tutar giriniz." : "Please enter a valid amount.");
+      dispatch(showToast({
+        message: language === "TR" ? "Lütfen geçerli bir tutar giriniz." : "Please enter a valid amount.",
+        type: "error"
+      }));
       return;
     }
 
@@ -94,9 +100,10 @@ export default function FinancesTab() {
   };
 
   const handleDelete = (id) => {
-    if (window.confirm(language === "TR" ? "Bu cari hareketi silmek istediğinize emin misiniz?" : "Are you sure you want to delete this financial ledger?")) {
-      dispatch(deletePayment(id));
-    }
+    dispatch(showConfirm({
+      message: language === "TR" ? "Bu cari hareketi silmek istediğinize emin misiniz?" : "Are you sure you want to delete this financial ledger?",
+      actionToDispatch: deletePayment(id)
+    }));
   };
 
   // Compute Metrics

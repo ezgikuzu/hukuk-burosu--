@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addCase, updateCase, deleteCase } from "../store";
+import { addCase, updateCase, deleteCase, showConfirm } from "../store";
 import { DICTIONARY, autoTranslate } from "../data/initialData";
 import { 
   Plus, Edit, Trash2, Search, X, Scale, FileText, User, 
@@ -124,9 +124,10 @@ export default function CasesTab() {
   };
 
   const handleDelete = (id) => {
-    if (window.confirm(t.deleteCaseConfirm)) {
-      dispatch(deleteCase(id));
-    }
+    dispatch(showConfirm({
+      message: t.deleteCaseConfirm,
+      actionToDispatch: deleteCase(id)
+    }));
   };
 
   // Filtering Logic

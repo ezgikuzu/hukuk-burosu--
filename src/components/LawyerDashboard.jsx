@@ -4,7 +4,7 @@ import { logout, setActiveTab } from "../store";
 import { DICTIONARY, autoTranslate } from "../data/initialData";
 import { 
   Scale, LogOut, LayoutDashboard, Users, FolderOpen, Calendar, 
-  FileText, Landmark, MessageCircle, Menu, X 
+  FileText, Landmark, MessageCircle, Menu, X, Edit3, Mail
 } from "lucide-react";
 import LanguageSelector from "./LanguageSelector";
 
@@ -16,6 +16,8 @@ import CalendarTab from "./CalendarTab";
 import DocumentsTab from "./DocumentsTab";
 import FinancesTab from "./FinancesTab";
 import MessagesTab from "./MessagesTab";
+import WebMessagesTab from "./WebMessagesTab";
+import BlogsTab from "./BlogsTab";
 
 export default function LawyerDashboard() {
   const dispatch = useDispatch();
@@ -39,6 +41,8 @@ export default function LawyerDashboard() {
     { id: "documents", label: t.tabDocuments, icon: FileText },
     { id: "finances", label: t.tabFinances, icon: Landmark },
     { id: "messages", label: t.tabMessages, icon: MessageCircle },
+    { id: "web_messages", label: language === "TR" ? "Web Mesajları" : "Web Messages", icon: Mail },
+    { id: "blogs", label: language === "TR" ? "Blog Yönetimi" : "Blog Management", icon: Edit3 },
   ];
 
   const renderActiveTab = () => {
@@ -57,6 +61,10 @@ export default function LawyerDashboard() {
         return <FinancesTab />;
       case "messages":
         return <MessagesTab />;
+      case "web_messages":
+        return <WebMessagesTab />;
+      case "blogs":
+        return <BlogsTab />;
       default:
         return <OverviewTab />;
     }

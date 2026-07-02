@@ -1,6 +1,6 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { 
-  INITIAL_CLIENTS, INITIAL_CASES, INITIAL_HEARINGS, INITIAL_DOCUMENTS, INITIAL_PAYMENTS, INITIAL_MESSAGES, INITIAL_LAWYERS 
+  INITIAL_CLIENTS, INITIAL_CASES, INITIAL_HEARINGS, INITIAL_DOCUMENTS, INITIAL_PAYMENTS, INITIAL_MESSAGES, INITIAL_LAWYERS, INITIAL_BLOGS
 } from "./data/initialData";
 
 // Helper to load state from localStorage
@@ -62,6 +62,8 @@ const initialUIState = {
   language: loadState("language", "TR"),
   activeTab: "overview",
   selectedClientId: null,
+  toast: { message: "", type: "info", isVisible: false },
+  confirmDialog: { message: "", actionToDispatch: null, isVisible: false },
 };
 
 const uiSlice = createSlice({
@@ -81,6 +83,26 @@ const uiSlice = createSlice({
     },
     setSelectedClient: (state, action) => {
       state.selectedClientId = action.payload;
+    },
+    showToast: (state, action) => {
+      state.toast = {
+        message: action.payload.message,
+        type: action.payload.type || "info",
+        isVisible: true
+      };
+    },
+    hideToast: (state) => {
+      state.toast.isVisible = false;
+    },
+    showConfirm: (state, action) => {
+      state.confirmDialog = {
+        message: action.payload.message,
+        actionToDispatch: action.payload.actionToDispatch,
+        isVisible: true
+      };
+    },
+    hideConfirm: (state) => {
+      state.confirmDialog.isVisible = false;
     }
   },
 });
@@ -278,6 +300,35 @@ const messagesSlice = createSlice({
   },
 });
 
+// 10. Blogs Slice
+const loadedBlogs = loadState("blogs", INITIAL_BLOGS);
+const mergedBlogs = loadedBlogs.map(blog => {
+  const newInitial = INITIAL_BLOGS.find(ib => ib.id === blog.id);
+  if (newInitial) {
+    return { ...blog, contentTR: newInitial.contentTR, contentEN: newInitial.contentEN };
+  }
+  return blog;
+});
+
+const initialBlogsState = {
+  list: mergedBlogs,
+};
+
+const blogsSlice = createSlice({
+  name: "blogs",
+  initialState: initialBlogsState,
+  reducers: {
+    addBlog: (state, action) => {
+      state.list.unshift(action.payload);
+      saveState("blogs", state.list);
+    },
+    deleteBlog: (state, action) => {
+      state.list = state.list.filter(b => b.id !== action.payload);
+      saveState("blogs", state.list);
+    }
+  },
+});
+
 // Configure Store
 export const store = configureStore({
   reducer: {
@@ -290,12 +341,13 @@ export const store = configureStore({
     documents: documentsSlice.reducer,
     payments: paymentsSlice.reducer,
     messages: messagesSlice.reducer,
+    blogs: blogsSlice.reducer,
   },
 });
 
 // Export actions
 export const { login, logout } = authSlice.actions;
-export const { toggleLanguage, setLanguage, setActiveTab, setSelectedClient } = uiSlice.actions;
+export const { toggleLanguage, setLanguage, setActiveTab, setSelectedClient, showToast, hideToast, showConfirm, hideConfirm } = uiSlice.actions;
 export const { addLawyer, deleteLawyer } = lawyersSlice.actions;
 export const { addClient, updateClient, deleteClient } = clientsSlice.actions;
 export const { addCase, updateCase, deleteCase } = casesSlice.actions;
@@ -303,3 +355,4 @@ export const { addHearing, updateHearing, deleteHearing } = hearingsSlice.action
 export const { addDocument, updateDocument, deleteDocument } = documentsSlice.actions;
 export const { addPayment, updatePaymentStatus, deletePayment } = paymentsSlice.actions;
 export const { addMessage, addMemo, deleteMemo } = messagesSlice.actions;
+export const { addBlog, deleteBlog } = blogsSlice.actions;

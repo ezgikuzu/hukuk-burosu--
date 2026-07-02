@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout, addLawyer, addClient, updateClient, deleteClient } from "../store";
+import { logout, addLawyer, deleteLawyer, addClient, updateClient, deleteClient, showToast, showConfirm } from "../store";
 import { DICTIONARY, autoTranslate } from "../data/initialData";
 import { 
   Scale, LogOut, Users, Briefcase, Calendar, FileText, 
@@ -49,7 +49,10 @@ export default function AdminDashboard() {
   const handleAddLawyerSubmit = (e) => {
     e.preventDefault();
     if (!newLawyerName || !newLawyerEmail || !newLawyerPhone || !newLawyerSpec) {
-      alert(at("Lütfen tüm alanları doldurunuz."));
+      dispatch(showToast({
+        message: at("Lütfen tüm alanları doldurunuz."),
+        type: "error"
+      }));
       return;
     }
 
@@ -111,22 +114,27 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteClientClick = (id) => {
-    if (window.confirm(at("Bu müvekkili silmek istediğinize emin misiniz?"))) {
-      dispatch(deleteClient(id));
-      setSuccessMsg(at("Müvekkil başarıyla silindi!"));
-      setTimeout(() => setSuccessMsg(""), 3000);
-    }
+    dispatch(showConfirm({
+      message: at("Bu müvekkili silmek istediğinize emin misiniz?"),
+      actionToDispatch: deleteClient(id)
+    }));
   };
 
   const handleClientSubmit = (e) => {
     e.preventDefault();
     if (!clientName || !clientEmail || !clientPhone || !clientNationalId || !clientPassword) {
-      alert(at("Lütfen zorunlu alanları doldurunuz."));
+      dispatch(showToast({
+        message: at("Lütfen zorunlu alanları doldurunuz."),
+        type: "error"
+      }));
       return;
     }
 
     if (clientNationalId.length !== 11 || !/^\d+$/.test(clientNationalId)) {
-      alert(at("T.C. Kimlik Numarası tam 11 haneli ve sadece rakamlardan oluşmalıdır."));
+      dispatch(showToast({
+        message: at("T.C. Kimlik Numarası tam 11 haneli ve sadece rakamlardan oluşmalıdır."),
+        type: "error"
+      }));
       return;
     }
 
@@ -152,6 +160,7 @@ export default function AdminDashboard() {
         nationalId: clientNationalId,
         password: clientPassword,
         lawyerId: clientLawyerId,
+        createdAt: new Date().toISOString(),
       }));
       setSuccessMsg(at("Müvekkil başarıyla eklendi!"));
     }
@@ -167,6 +176,29 @@ export default function AdminDashboard() {
 
   // Generate All Movements Log across lawyers and clients (sorted chronologically)
   const systemMovements = [
+    ...clients.map(cl => {
+      const assignedLawyer = lawyers.find(l => l.id === cl.lawyerId)?.name || "Avukat / Form";
+      // Try to extract timestamp from ID if createdAt is missing
+      let timestamp = cl.createdAt;
+      if (!timestamp) {
+        const idTime = parseInt(cl.id.split('_').pop());
+        if (!isNaN(idTime) && idTime > 1600000000000) {
+          timestamp = new Date(idTime).toISOString();
+        } else {
+          timestamp = "2026-06-01T10:00:00.000Z"; // Fallback for initial mock data
+        }
+      }
+      return {
+        id: `move_client_${cl.id}`,
+        type: "client",
+        title: at("Yeni Müvekkil Kaydı"),
+        detail: `${cl.name} (${cl.nationalId || 'Misafir'})`,
+        actor: assignedLawyer,
+        target: cl.name,
+        date: timestamp,
+        badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-100"
+      };
+    }),
     ...cases.map(c => {
       const assignedLawyer = lawyers.find(l => l.id === c.lawyerId)?.name || "Avukat";
       const affectedClient = clients.find(cl => cl.id === c.clientId)?.name || "Müvekkil";

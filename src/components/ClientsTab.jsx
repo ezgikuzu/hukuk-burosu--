@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addClient, updateClient, deleteClient } from "../store";
+import { addClient, updateClient, deleteClient, showConfirm } from "../store";
 import { DICTIONARY, autoTranslate } from "../data/initialData";
 import { 
   Plus, Edit, Trash2, Search, X, User, Phone, Mail, MapPin, 
@@ -102,6 +102,7 @@ export default function ClientsTab() {
         nationalId,
         password,
         lawyerId: isLawyer ? currentUser.id : lawyerId,
+        createdAt: new Date().toISOString(),
       };
       dispatch(addClient(newCl));
     }
@@ -110,9 +111,10 @@ export default function ClientsTab() {
   };
 
   const handleDelete = (id) => {
-    if (window.confirm(t.deleteClientConfirm)) {
-      dispatch(deleteClient(id));
-    }
+    dispatch(showConfirm({
+      message: t.deleteClientConfirm,
+      actionToDispatch: deleteClient(id)
+    }));
   };
 
   // Filter clients based on search

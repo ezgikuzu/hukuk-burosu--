@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { logout, addMessage } from "../store";
+import { logout, addMessage, showToast } from "../store";
 import { DICTIONARY, autoTranslate } from "../data/initialData";
 import { 
   Scale, LogOut, FileText, Calendar, Landmark, MessageSquare, 
@@ -88,7 +88,10 @@ export default function ClientDashboard() {
 
   const handleCopyText = (text) => {
     navigator.clipboard.writeText(text);
-    alert(language === "TR" ? "Metni Kopyala" : "Copy Text");
+    dispatch(showToast({
+      message: language === "TR" ? "Metni Kopyala" : "Copy Text",
+      type: "success"
+    }));
   };
 
   return (
