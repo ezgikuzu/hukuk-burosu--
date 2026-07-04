@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { logout, addMessage, showToast } from "../../store";
+import { logout, addMessage, showToast, updatePaymentStatus } from "../../store";
 import { DICTIONARY, autoTranslate } from "../../data/initialData";
 import {
   Scale, LogOut, FileText, Calendar, Landmark, MessageSquare,
   User, Phone, Mail, MapPin, Clock, Send, Eye, X, Copy,
-  LayoutDashboard, FileDigit, HelpCircle, ChevronRight, Download, Video
+  LayoutDashboard, FileDigit, HelpCircle, ChevronRight, Download, Video, CreditCard
 } from "lucide-react";
 import LanguageSelector from "../common/LanguageSelector";
 import ClientCaseDetail from "./ClientCaseDetail";
@@ -40,6 +40,33 @@ export default function ClientDashboard() {
   // Selected document viewer
   const [viewingDoc, setViewingDoc] = useState(null);
   const [videoRoom, setVideoRoom] = useState(null);
+
+  // Payment States
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [cardData, setCardData] = useState({ name: "", number: "", exp: "", cvv: "" });
+
+  const handlePayClick = (payment) => {
+    setSelectedPayment(payment);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handleProcessPayment = (e) => {
+    e.preventDefault();
+    setIsProcessing(true);
+    setTimeout(() => {
+      dispatch(updatePaymentStatus({ id: selectedPayment.id, status: "paid" }));
+      dispatch(showToast({
+        message: language === "TR" ? "Ödemeniz başarıyla tamamlandı!" : "Payment completed successfully!",
+        type: "success"
+      }));
+      setIsProcessing(false);
+      setIsPaymentModalOpen(false);
+      setSelectedPayment(null);
+      setCardData({ name: "", number: "", exp: "", cvv: "" });
+    }, 1500);
+  };
 
   // Chat message input
   const [typedMessage, setTypedMessage] = useState("");
@@ -591,6 +618,7 @@ export default function ClientDashboard() {
                     <th className="py-3 px-4">{t.finType}</th>
                     <th className="py-3 px-4">{t.finAmount}</th>
                     <th className="py-3 px-4">{t.finStatus}</th>
+                    <th className="py-3 px-4 text-right">{language === "TR" ? "İşlem" : "Action"}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-xs text-slate-600 font-bold">
@@ -614,6 +642,16 @@ export default function ClientDashboard() {
                             }`}>
                             {isPaid ? t.finStatusPaid : t.finStatusPending}
                           </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-right">
+                          {!isPaid && (
+                            <button
+                              onClick={() => handlePayClick(p)}
+                              className="px-3 py-1.5 bg-[#1a237e] hover:bg-[#12185c] text-white rounded-lg text-[10px] font-bold uppercase transition-colors cursor-pointer"
+                            >
+                              {language === "TR" ? "Ödeme Yap" : "Pay Now"}
+                            </button>
+                          )}
                         </td>
                       </tr>
                     );
@@ -741,6 +779,71 @@ export default function ClientDashboard() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Payment Modal */}
+      {isPaymentModalOpen && selectedPayment && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-scale-in">
+            <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-[#1a237e]/10 flex items-center justify-center">
+                  <CreditCard className="w-4 h-4 text-[#1a237e]" />
+                </div>
+                <h3 className="font-bold text-slate-800">{language === "TR" ? "Güvenli Ödeme" : "Secure Payment"}</h3>
+              </div>
+              <button onClick={() => setIsPaymentModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleProcessPayment} className="p-6 space-y-4">
+              <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 mb-6">
+                <p className="text-xs text-blue-600 font-bold uppercase mb-1">{language === "TR" ? "Ödenecek Tutar" : "Amount to Pay"}</p>
+                <p className="text-2xl font-bold text-slate-800">{selectedPayment.amount.toLocaleString("tr-TR")} ₺</p>
+                <p className="text-[10px] text-slate-500 mt-1">{selectedPayment.description}</p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">{language === "TR" ? "Kart Üzerindeki İsim" : "Name on Card"}</label>
+                <input required type="text" value={cardData.name} onChange={e => setCardData({...cardData, name: e.target.value})} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-[#1a237e] focus:ring-1 focus:ring-[#1a237e]" placeholder="John Doe" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">{language === "TR" ? "Kart Numarası" : "Card Number"}</label>
+                <input required type="text" maxLength="19" value={cardData.number} onChange={e => setCardData({...cardData, number: e.target.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim()})} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-[#1a237e] focus:ring-1 focus:ring-[#1a237e]" placeholder="0000 0000 0000 0000" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">{language === "TR" ? "Son Kullanma" : "Expiry"}</label>
+                  <input required type="text" maxLength="5" value={cardData.exp} onChange={e => {
+                    let val = e.target.value.replace(/\D/g, '');
+                    if (val.length >= 2) val = val.slice(0,2) + '/' + val.slice(2);
+                    setCardData({...cardData, exp: val});
+                  }} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-[#1a237e] focus:ring-1 focus:ring-[#1a237e]" placeholder="MM/YY" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">CVV</label>
+                  <input required type="password" maxLength="3" value={cardData.cvv} onChange={e => setCardData({...cardData, cvv: e.target.value.replace(/\D/g, '')})} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-[#1a237e] focus:ring-1 focus:ring-[#1a237e]" placeholder="***" />
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={isProcessing || !cardData.name || cardData.number.length < 19 || cardData.exp.length < 5 || cardData.cvv.length < 3}
+                className="w-full mt-6 py-3 bg-[#1a237e] hover:bg-[#12185c] disabled:bg-slate-300 text-white rounded-xl text-sm font-bold shadow-md transition-all flex justify-center items-center gap-2 cursor-pointer"
+              >
+                {isProcessing ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    {language === "TR" ? "İşleniyor..." : "Processing..."}
+                  </>
+                ) : (
+                  <>{language === "TR" ? "Ödemeyi Tamamla" : "Complete Payment"}</>
+                )}
+              </button>
+            </form>
           </div>
         </div>
       )}
