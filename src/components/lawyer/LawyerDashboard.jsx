@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { logout, setActiveTab } from "../../store";
+fix: resolve lawyer web message routingimport { logout, setActiveTab } from "../../store";
 import { DICTIONARY, autoTranslate } from "../../data/initialData";
 import {
   Scale, LogOut, LayoutDashboard, Users, FolderOpen, Calendar,
