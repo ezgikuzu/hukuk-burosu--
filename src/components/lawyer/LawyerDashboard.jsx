@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { logout, setActiveTab } from "../../store"; //"çıkış yap" ve "aktif sekmeyi değiştir" aksiyonları.  
-import { DICTIONARY, autoTranslate } from "../../data/initialData"; //çoklu dil desteği için dictionaryi kullandık (sabiy çeviriler). autoTranslate ise metni otomatik çevirmeye yarayan fonskiyon 
+import { logout, setActiveTab } from "../../store";
+import { DICTIONARY, autoTranslate } from "../../data/initialData";
 import {
   Scale, LogOut, LayoutDashboard, Users, FolderOpen, Calendar,
   FileText, Landmark, MessageCircle, Menu, X, Edit3, Mail, FileSignature
@@ -25,17 +25,16 @@ export default function LawyerDashboard() {
   const language = useSelector((state) => state.ui.language);
   const currentUser = useSelector((state) => state.auth.currentUser);
   const activeTab = useSelector((state) => state.ui.activeTab);
-  const t = DICTIONARY[language]; // o dile ailt hazır çeviri sözlüğü. 
-  const at = (text) => autoTranslate(text, language); //tek metni anlık çevirmek için kısayol fonskiyon. 
+  const t = DICTIONARY[language];
+  const at = (text) => autoTranslate(text, language);
 
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
   }, [activeTab]);
-  // sekme her değiştiğinde sayfayı en üste kaydırır yani kullanıcı aşağıdaysa yeni sekmede yukarıdan başlasın diye. 
 
-  const menuItems = [ //sol menüde gösterilecek sekmelerin listesi. 
+  const menuItems = [
     { id: "overview", label: t.tabOverview, icon: LayoutDashboard },
     { id: "clients", label: t.tabClients, icon: Users },
     { id: "cases", label: t.tabCases, icon: FolderOpen },
@@ -48,7 +47,7 @@ export default function LawyerDashboard() {
     { id: "blogs", label: language === "TR" ? "Blog Yönetimi" : "Blog Management", icon: Edit3 },
   ];
 
-  const renderActiveTab = () => { //activetab değerine bakıp hangi alt bileşeni gsötericeğine karar verilir. sayfa yönlendirmesini switch-case ile yaptık. 
+  const renderActiveTab = () => {
     switch (activeTab) {
       case "overview":
         return <OverviewTab />;
@@ -75,7 +74,7 @@ export default function LawyerDashboard() {
     }
   };
 
-  const handleTabClick = (tabId) => { //bir menü öğesine tıklayınca redux'ta aktif sekme değişmesine yardımcı olur. çıkış butonuna basıncada redux'ta logout aksiyonuna gönderir. 
+  const handleTabClick = (tabId) => {
     dispatch(setActiveTab(tabId));
     setMobileMenuOpen(false);
   };
@@ -118,9 +117,9 @@ export default function LawyerDashboard() {
 
           {/* Navigation Menu */}
           <nav className="flex-1 px-3 space-y-1">
-            {menuItems.map((item) => { //her menü öğesi için buton oluşyuruyor.
+            {menuItems.map((item) => {
               const Icon = item.icon;
-              const isActive = activeTab === item.id; //isactive ile ise seçili olan sekme belirtiliyor. seçiliyse arka plan değişiyor. 
+              const isActive = activeTab === item.id;
               return (
                 <button
                   key={item.id}
