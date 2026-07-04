@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-fix: resolve lawyer web message routingimport { logout, setActiveTab } from "../../store";
+import { logout, setActiveTab } from "../../store";
 import { DICTIONARY, autoTranslate } from "../../data/initialData";
 import {
   Scale, LogOut, LayoutDashboard, Users, FolderOpen, Calendar,
@@ -105,7 +105,7 @@ export default function LawyerDashboard() {
           {/* Active Lawyer Mini profile */}
           <div className="px-4 py-3 mx-4 rounded-xl bg-white/5 border border-white/10 flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-[#d4af37]/20 text-[#d4af37] flex items-center justify-center font-bold border border-[#d4af37]/30 text-sm">
-              {currentUser?.name.charAt(0)} // kullanıcının isminin başharfini alıp avatar olarak gösteriyor.
+              {currentUser?.name.charAt(0)}
             </div>
             <div className="overflow-hidden">
               <p className="text-xs font-semibold truncate text-slate-100">{currentUser?.name}</p>
