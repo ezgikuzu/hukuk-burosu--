@@ -58,17 +58,25 @@ export default function WebMessagesTab() {
     setTypedMessage("");
   };
 
+  const activeLead = leads.find(c => c.id === selectedLeadId);
+
   // Filter messages for current selected lead
   const activeChatMessages = messages.filter((m) => {
-    return (
-      (m.senderId === selectedLeadId && (m.receiverId === currentUser?.id || m.receiverId === "all")) ||
-      (m.senderId === currentUser?.id && m.receiverId === selectedLeadId) ||
-      (m.senderId === selectedLeadId && m.receiverId === "lawyer_1" && currentUser?.id === "lawyer_1") ||
-      (m.senderId === "lawyer_1" && m.receiverId === selectedLeadId && currentUser?.id === "lawyer_1")
-    );
+    // If the message is from the lead
+    if (m.senderId === selectedLeadId) {
+      return m.receiverId === currentUser?.id || m.receiverId === "all";
+    }
+    // If the message is to the lead
+    if (m.receiverId === selectedLeadId) {
+      // If the lead is assigned to "all", ANY lawyer can see ANY lawyer's reply to this lead
+      if (activeLead?.lawyerId === "all") {
+        return true;
+      }
+      // Otherwise, only the assigned lawyer sees their own replies
+      return m.senderId === currentUser?.id;
+    }
+    return false;
   });
-
-  const activeLead = leads.find(c => c.id === selectedLeadId);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in">
