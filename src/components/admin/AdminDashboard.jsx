@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import LanguageSelector from "../common/LanguageSelector";
 import DocumentGenerator from "../documents/DocumentGenerator";
+import CalendarTab from "../lawyer/CalendarTab";
 
 export default function AdminDashboard() {
   const dispatch = useDispatch();
@@ -631,37 +632,8 @@ export default function AdminDashboard() {
 
         {/* TAB 5: HEARINGS */}
         {activeTab === "hearings" && (
-          <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm space-y-6">
-            <h3 className="font-serif font-bold text-lg text-[#1a237e]">{at("Hukuki Ajanda ve Duruşma Takvimi")} ({hearings.length})</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {hearings.map(h => {
-                const assignedLawyer = lawyers.find(l => l.id === h.lawyerId);
-                const relatedCase = cases.find(c => c.id === h.caseId);
-                return (
-                  <div key={h.id} className="p-4 border border-slate-200 rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors flex flex-col justify-between">
-                    <div>
-                      <div className="flex justify-between items-start">
-                        <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded font-mono">
-                          {relatedCase?.fileNo || at("Dosya Yok (Danışmanlık)")}
-                        </span>
-                        <span className="text-[10px] font-mono font-bold text-slate-500">{h.dateTime.replace("T", " ")}</span>
-                      </div>
-                      <p className="text-xs font-bold text-slate-800 mt-2.5 h-10 line-clamp-2">{h.title}</p>
-                      <p className="text-[10px] text-slate-500 mt-1 leading-relaxed font-semibold">📍 {h.location}</p>
-                      <p className="text-[11px] text-slate-600 mt-2 italic bg-white p-2 rounded border border-slate-100 line-clamp-3">
-                        {h.notes}
-                      </p>
-                    </div>
-                    <div className="mt-4 pt-3 border-t border-slate-100/80 flex justify-between items-center text-[10px] font-bold">
-                      <span className="text-slate-400">{at("Sorumlu")}</span>
-                      <span className="text-slate-700" style={{ color: assignedLawyer?.color }}>
-                        👤 {assignedLawyer?.name}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <CalendarTab />
           </div>
         )}
 
@@ -1004,7 +976,9 @@ export default function AdminDashboard() {
 
       {/* TAB 8: DOCUMENT GENERATOR */}
       {activeTab === "document-generator" && (
-        <DocumentGenerator />
+        <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm">
+          <DocumentGenerator />
+        </div>
       )}
     </div>
   );
