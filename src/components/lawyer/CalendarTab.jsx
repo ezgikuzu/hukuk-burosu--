@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addHearing, deleteHearing, showConfirm } from "../../store";
 import { DICTIONARY, autoTranslate } from "../../data/initialData";
-import { 
-  Plus, Trash2, Calendar, MapPin, Clock, X, AlertCircle, Check, 
+import {
+  Plus, Trash2, Calendar, MapPin, Clock, X, AlertCircle, Check,
   ChevronLeft, ChevronRight, User, Scale, Video
 } from "lucide-react";
 import VideoMeeting from "./VideoMeeting";
@@ -22,7 +22,7 @@ export default function CalendarTab() {
   const isLawyer = currentUser?.role === "lawyer";
 
   // Filter cases and hearings for active lawyer
-  const cases = isLawyer 
+  const cases = isLawyer
     ? rawCases.filter((c) => c.lawyerId === currentUser.id)
     : rawCases;
 
@@ -31,16 +31,7 @@ export default function CalendarTab() {
   // Filter
   const [selectedLawyerId, setSelectedLawyerId] = useState(isLawyer ? currentUser.id : "all");
 
-  // Form states
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [caseId, setCaseId] = useState("");
-  const [title, setTitle] = useState("");
-  const [dateTime, setDateTime] = useState("");
-  const [location, setLocation] = useState("");
-  const [notes, setNotes] = useState("");
-  const [lawyerId, setLawyerId] = useState(currentUser?.id || "lawyer_1");
-  const [isVideoCall, setIsVideoCall] = useState(false);
-  const [validationError, setValidationError] = useState(null);
+
 
   const [videoRoom, setVideoRoom] = useState(null);
 
@@ -65,8 +56,8 @@ export default function CalendarTab() {
 
     if (!caseId) {
       setValidationError(
-        language === "TR" 
-          ? "Duruşmayı ilişkilendirmek için bir dava dosyası seçmelisiniz." 
+        language === "TR"
+          ? "Duruşmayı ilişkilendirmek için bir dava dosyası seçmelisiniz."
           : "You must select a case to associate this hearing with."
       );
       return;
@@ -105,18 +96,18 @@ export default function CalendarTab() {
 
   const daysInMonth = getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth());
   const firstDayIndex = getFirstDayOfMonth(currentDate.getFullYear(), currentDate.getMonth());
-  
+
   // Format Month Title
   const monthNamesTR = [
-    "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", 
+    "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
     "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
   ];
   const monthNamesEN = [
-    "January", "February", "March", "April", "May", "June", 
+    "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
-  const monthName = language === "TR" 
-    ? monthNamesTR[currentDate.getMonth()] 
+  const monthName = language === "TR"
+    ? monthNamesTR[currentDate.getMonth()]
     : monthNamesEN[currentDate.getMonth()];
 
   const prevMonth = () => {
@@ -149,12 +140,12 @@ export default function CalendarTab() {
         <div>
           <h2 className="font-serif text-lg font-bold text-[#1a237e]">{t.calendarTitle}</h2>
           <p className="text-xs text-slate-500 mt-1 font-medium">
-            {language === "TR" 
-              ? "Duruşma günlerini, keşifleri ve müvekkil görüşmelerini takvim üzerinden renk kodlu olarak yönetin." 
+            {language === "TR"
+              ? "Duruşma günlerini, keşifleri ve müvekkil görüşmelerini takvim üzerinden renk kodlu olarak yönetin."
               : "Manage hearing days, discoveries, and client appointments on the calendar via color-coded blocks."}
           </p>
         </div>
-        
+
         <button
           onClick={openAddModal}
           className="px-4 py-2 bg-[#1a237e] hover:bg-[#12185c] text-[#d4af37] font-bold rounded-lg text-xs flex items-center gap-2 shadow-sm border border-[#d4af37]/30 transition-all cursor-pointer shrink-0 animate-fade-in"
@@ -173,15 +164,15 @@ export default function CalendarTab() {
               <Calendar className="w-4 h-4 text-[#d4af37]" />
               <span>{monthName} {currentDate.getFullYear()}</span>
             </h3>
-            
+
             <div className="flex items-center gap-1.5">
-              <button 
+              <button
                 onClick={prevMonth}
                 className="p-1 hover:bg-slate-100 rounded text-slate-600 transition-colors cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <button 
+              <button
                 onClick={nextMonth}
                 className="p-1 hover:bg-slate-100 rounded text-slate-600 transition-colors cursor-pointer"
               >
@@ -211,11 +202,10 @@ export default function CalendarTab() {
               const isToday = day === 30 && currentDate.getMonth() === 5; // June 30, 2026
 
               return (
-                <div 
-                  key={`day-${day}`} 
-                  className={`h-14 rounded-lg border border-slate-100 flex flex-col justify-between p-1.5 transition-all relative group hover:border-[#1a237e]/30 hover:bg-slate-50/40 ${
-                    isToday ? "bg-amber-50/50 border-amber-300 ring-1 ring-amber-200" : ""
-                  }`}
+                <div
+                  key={`day-${day}`}
+                  className={`h-14 rounded-lg border border-slate-100 flex flex-col justify-between p-1.5 transition-all relative group hover:border-[#1a237e]/30 hover:bg-slate-50/40 ${isToday ? "bg-amber-50/50 border-amber-300 ring-1 ring-amber-200" : ""
+                    }`}
                 >
                   <span className={`text-[10px] font-bold ${isToday ? "text-amber-800 font-bold" : "text-slate-600"}`}>
                     {day}
@@ -226,9 +216,9 @@ export default function CalendarTab() {
                       {dayHearings.slice(0, 3).map((h) => {
                         const law = lawyers.find(l => l.id === h.lawyerId);
                         return (
-                          <span 
-                            key={h.id} 
-                            className="w-2.5 h-2.5 rounded-full inline-block animate-pulse" 
+                          <span
+                            key={h.id}
+                            className="w-2.5 h-2.5 rounded-full inline-block animate-pulse"
                             style={{ backgroundColor: law?.color || "#1a237e" }}
                             title={h.title}
                           />
@@ -294,8 +284,8 @@ export default function CalendarTab() {
                   const formattedTime = dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
                   return (
-                    <div 
-                      key={h.id} 
+                    <div
+                      key={h.id}
                       className="p-3 bg-slate-50 rounded-lg border-l-4 border-slate-200 hover:bg-slate-100/60 transition-all flex justify-between items-start"
                       style={{ borderLeftColor: lawyerObj?.color || "#1a237e" }}
                     >
@@ -304,12 +294,12 @@ export default function CalendarTab() {
                           {rCase?.fileNo || at("Genel Randevu")}
                         </p>
                         <h4 className="text-xs font-bold text-slate-800 line-clamp-1">{h.title}</h4>
-                        
+
                         <div className="flex items-center gap-1 text-[10px] text-slate-500 font-semibold">
                           {h.isVideoCall ? <Video className="w-3 h-3 text-indigo-500" /> : <MapPin className="w-3 h-3 text-[#d4af37]" />}
                           <span className="line-clamp-1">{h.location}</span>
                         </div>
-                        
+
                         <p className="text-[9px] text-slate-400 font-bold italic">
                           {language === "TR" ? "Sorumlu: " : "In Charge: "} {lawyerObj?.name}
                         </p>
@@ -331,7 +321,7 @@ export default function CalendarTab() {
                             {t.joinVideoCall || "Katıl"}
                           </button>
                         )}
-                        
+
                         {/* Delete button only if the lawyer is authorized */}
                         <button
                           onClick={() => handleDelete(h.id)}
@@ -432,8 +422,8 @@ export default function CalendarTab() {
                   <label className="block text-xs font-bold text-slate-700 mb-1 flex justify-between items-center">
                     <span>{t.hearingLocation} *</span>
                     <label className="flex items-center gap-1.5 cursor-pointer">
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         checked={isVideoCall}
                         onChange={(e) => setIsVideoCall(e.target.checked)}
                         className="w-3 h-3 rounded text-[#1a237e] focus:ring-[#1a237e]"
@@ -514,9 +504,9 @@ export default function CalendarTab() {
 
       {/* Video Meeting Fullscreen View */}
       {videoRoom && (
-        <VideoMeeting 
-          roomName={videoRoom} 
-          onClose={() => setVideoRoom(null)} 
+        <VideoMeeting
+          roomName={videoRoom}
+          onClose={() => setVideoRoom(null)}
           subject={t.videoCallTitle}
         />
       )}

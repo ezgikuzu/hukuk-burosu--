@@ -11,9 +11,9 @@ export default function LanguageSelector() {
     <button
       id="language-selector-btn"
       onClick={() => dispatch(toggleLanguage())}
-      className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#d4af37]/40 bg-[#1a237e]/10 hover:bg-[#1a237e]/20 hover:border-[#d4af37] text-slate-800 transition-all duration-300 font-sans text-xs font-semibold uppercase tracking-wider"
+      className="flex items-center gap-2 px-4 py-2 rounded-full bg-black hover:bg-slate-800 text-white shadow-md hover:shadow-lg transition-all duration-300 font-sans text-xs font-semibold uppercase tracking-wider"
     >
-      <Globe className="w-3.5 h-3.5 text-[#d4af37]" />
+      <Globe className="w-4 h-4 text-[#d4af37]" />
       <span>{language === "TR" ? "English" : "Türkçe"}</span>
     </button>
   );
