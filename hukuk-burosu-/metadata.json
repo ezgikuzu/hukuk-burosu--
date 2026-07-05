@@ -1,6 +1,0 @@
-{
-  "name": "EDBM Hukuk Bürosu",
-  "description": "Profesyonel Hukuk Bürosu ve Müvekkil Yönetim Platformu",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
