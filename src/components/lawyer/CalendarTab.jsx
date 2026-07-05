@@ -45,7 +45,9 @@ export default function CalendarTab() {
 
   // Navigation of mock calendar months
   const [currentDate, setCurrentDate] = useState(new Date(2026, 6, 1)); // July 2026
+  const [selectedDate, setSelectedDate] = useState(null);
 
+  // Yeni Duruşma penceresini temiz bir şekilde açmak ve tüm alanları başlangıç değerlerine döndürmektir.
   const openAddModal = () => {
     setCaseId(cases[0]?.id || "");
     setTitle("");
@@ -54,10 +56,11 @@ export default function CalendarTab() {
     setNotes("");
     setLawyerId(currentUser?.id || "lawyer_1");
     setIsVideoCall(false);
-    setValidationError(null);
+    setValidationError(null); // bir önceki formdan kalan hata silinir. 
     setIsModalOpen(true);
   };
 
+  // form kaydet 
   const handleFormSubmit = (e) => {
     e.preventDefault();
     setValidationError(null);
@@ -71,6 +74,7 @@ export default function CalendarTab() {
       return;
     }
 
+    //yeni duruşma oluştur. 
     const newHr = {
       id: `hearing_${Date.now()}`,
       caseId,
@@ -82,9 +86,11 @@ export default function CalendarTab() {
       isVideoCall
     };
 
-    dispatch(addHearing(newHr));
-    setIsModalOpen(false);
+    dispatch(addHearing(newHr)); // sisteme yeni duruşma eklendi. 
+    setIsModalOpen(false); // kayıt oluştu form kapandı. 
   };
+
+  // silme
 
   const handleDelete = (id) => {
     dispatch(showConfirm({
@@ -93,7 +99,7 @@ export default function CalendarTab() {
     }));
   };
 
-  // Mock Calendar Grid construction (July 2026)
+  // takvim oluşturulması 
   const getDaysInMonth = (year, month) => {
     return new Date(year, month + 1, 0).getDate();
   };
@@ -118,20 +124,25 @@ export default function CalendarTab() {
     ? monthNamesTR[currentDate.getMonth()]
     : monthNamesEN[currentDate.getMonth()];
 
+
+  // sol oka tıklanınca bir önceki aya geçer.
   const prevMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    setSelectedDate(null);
   };
 
+  // sağ oka tıklanınca bir sonraki aya geçer.
   const nextMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    setSelectedDate(null);
   };
 
-  // Filter hearings
+  // Hangi Duruşmaların Listelenmesi Gerektiğini Bulma
   const filteredHearings = hearings
     .filter((h) => selectedLawyerId === "all" || h.lawyerId === selectedLawyerId)
     .sort((a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime());
 
-  // Check if a specific calendar day has hearings
+  // Belirli bir takvim gününde duruşma olup olmadığını kontrol etme
   const getDayHearings = (day) => {
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, "0");
@@ -140,6 +151,10 @@ export default function CalendarTab() {
 
     return filteredHearings.filter(h => h.dateTime.startsWith(datePrefix));
   };
+
+  const displayedAgendaHearings = selectedDate 
+    ? getDayHearings(selectedDate) 
+    : filteredHearings;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -208,12 +223,16 @@ export default function CalendarTab() {
               const day = idx + 1;
               const dayHearings = getDayHearings(day);
               const isToday = day === 30 && currentDate.getMonth() === 5; // June 30, 2026
+              const isSelected = selectedDate === day;
 
               return (
                 <div
                   key={`day-${day}`}
-                  className={`h-14 rounded-lg border border-slate-100 flex flex-col justify-between p-1.5 transition-all relative group hover:border-[#1a237e]/30 hover:bg-slate-50/40 ${isToday ? "bg-amber-50/50 border-amber-300 ring-1 ring-amber-200" : ""
-                    }`}
+                  onClick={() => setSelectedDate(day)}
+                  className={`h-14 cursor-pointer rounded-lg border flex flex-col justify-between p-1.5 transition-all relative group hover:border-[#1a237e]/30 hover:bg-slate-50/40 
+                    ${isSelected ? "border-[#1a237e] bg-indigo-50/50 ring-1 ring-[#1a237e]/50 shadow-sm" : "border-slate-100"}
+                    ${isToday && !isSelected ? "bg-amber-50/50 border-amber-300 ring-1 ring-amber-200" : ""}
+                  `}
                 >
                   <span className={`text-[10px] font-bold ${isToday ? "text-amber-800 font-bold" : "text-slate-600"}`}>
                     {day}
@@ -254,9 +273,20 @@ export default function CalendarTab() {
         <div className="lg:col-span-5 bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex flex-col justify-between">
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-50 pb-2">
-              <h3 className="font-serif text-sm font-bold text-[#1a237e]">
-                {language === "TR" ? "Günlük Ajanda Akışı" : "Agenda Flow"}
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-serif text-sm font-bold text-[#1a237e]">
+                  {language === "TR" ? "Günlük Ajanda Akışı" : "Agenda Flow"}
+                  {selectedDate && <span className="ml-1 text-xs font-sans text-indigo-500">({selectedDate} {monthName})</span>}
+                </h3>
+                {selectedDate && (
+                  <button 
+                    onClick={() => setSelectedDate(null)}
+                    className="text-[10px] text-slate-400 hover:text-slate-600 underline cursor-pointer font-semibold"
+                  >
+                    {language === "TR" ? "Tümünü Gör" : "See All"}
+                  </button>
+                )}
+              </div>
 
               {/* Lawyer Filter Selector */}
               <select
@@ -275,13 +305,13 @@ export default function CalendarTab() {
               </select>
             </div>
 
-            {filteredHearings.length === 0 ? (
+            {displayedAgendaHearings.length === 0 ? (
               <div className="py-12 text-center text-slate-400 text-xs font-bold">
                 {language === "TR" ? "Planlanmış duruşma veya randevu bulunmuyor." : "No hearings or meetings scheduled."}
               </div>
             ) : (
               <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1">
-                {filteredHearings.map((h) => {
+                {displayedAgendaHearings.map((h) => {
                   const rCase = cases.find((c) => c.id === h.caseId);
                   const lawyerObj = lawyers.find((l) => l.id === h.lawyerId);
                   const dt = new Date(h.dateTime);
