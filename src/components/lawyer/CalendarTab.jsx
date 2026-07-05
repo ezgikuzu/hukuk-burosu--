@@ -31,8 +31,16 @@ export default function CalendarTab() {
   // Filter
   const [selectedLawyerId, setSelectedLawyerId] = useState(isLawyer ? currentUser.id : "all");
 
-
-
+  // Form states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [caseId, setCaseId] = useState("");
+  const [title, setTitle] = useState("");
+  const [dateTime, setDateTime] = useState("");
+  const [location, setLocation] = useState("");
+  const [notes, setNotes] = useState("");
+  const [lawyerId, setLawyerId] = useState(currentUser?.id || "lawyer_1");
+  const [isVideoCall, setIsVideoCall] = useState(false);
+  const [validationError, setValidationError] = useState(null);
   const [videoRoom, setVideoRoom] = useState(null);
 
   // Navigation of mock calendar months
