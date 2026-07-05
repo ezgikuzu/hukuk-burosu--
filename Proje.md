@@ -71,10 +71,71 @@ Uygulama bileşenleri roller bazında klasörlenmiştir:
 
 ---
 
-## 6. Sunum Akışı İçin Tavsiyeler (Senaryo Önerisi)
+## 6. Sunum Akışı ve Ekip Görev Dağılımı
 
-1. **Karşılama & Landing Page:** Uygulamanın anasayfasını gösterin. Güven veren renk tonlarını ve tasarım şıklığını vurgulayın. "Ücretsiz Danışmanlık Alın" formunu doldurarak mesajın arka plana nasıl düştüğünü anlatın.
-2. **Avukat Girişi:** Bir avukat (Örn: Ezgi Kuzu) rolüyle giriş yapın. Atanmış olan "1 aktif davayı", "duruşmaları" ve "gelen mesajları" gösterin.
-3. **Evrak Oluşturma:** Avukat panelinden "Evrak Üretici" kısmına girin ve saniyeler içinde yeni bir "İhtarname" üretip PDF olarak çıktı almanın ne kadar kolay olduğunu sergileyin.
-4. **Müvekkil Girişi & Ödeme:** Avukat hesabından çıkıp Müvekkil hesabıyla girin. Müvekkilin, davasının durumunu gördüğünü, avukatıyla şifreli chat yapabildiğini gösterin. Ardından **Finans** sekmesine gelip bekleyen bir borcu "Kredi Kartı Modalı" ile ödeyin.
-5. **Kapanış:** Bu ekosistemin, klasik bir avukatlık ofisini dijital, şeffaf, anında takip edilebilir ve kurumsal bir yapıya dönüştürdüğünü, React ve Redux tabanlı modern altyapısı sayesinde ileride istenilen her modülün kolayca eklenebileceğini vurgulayarak sunumu tamamlayın.
+Projenin kapsamlı yapısını en iyi şekilde aktarabilmek için sunum dört ana bölüme ayrılmış ve takım üyelerine paylaştırılmıştır. Aşağıdaki akış, projenin hem teknik altyapısını hem de kullanıcı deneyimini mantıksal bir sırayla izleyicilere sunmayı hedefler.
+
+### 👤 1. Kısım: Proje Tanıtımı, Giriş Sistemi ve Genel Arayüz – **Dilek**
+**Odak Noktası:** Projenin genel vizyonunun aktarılması, dışarıya dönük yüzünün (Landing Page) ve ziyaretçi iletişiminin tanıtılması.
+
+**Anlatılacak Dosyalar:**
+- **`components/auth/`**: `Login.jsx`
+- **`components/common/`**: `GlobalUI.jsx`, `LanguageSelector.jsx`
+- **`components/landing/`**: `LandingPage.jsx`, `AboutUs.jsx`, `ServiceDetail.jsx`, `BlogsTab.jsx`, `BlogDetail.jsx`
+
+**Anlatılacak Konular:**
+- Projenin amacı ve EDBM Hukuk Bürosu yönetim sisteminin genel vizyonu
+- Sistemdeki kullanıcı rolleri (Admin, Avukat, Müvekkil)
+- Giriş (Login) sistemi ve kimlik doğrulama
+- Dinamik dil desteği (TR/EN)
+- Landing Page (Anasayfa), Hakkımızda ve Hizmetler bölümleri
+- Blog sistemi ve ziyaretçi arayüzü
+
+---
+
+### 👤 2. Kısım: Admin Paneli ve Büro Yönetimi – **Muhammed**
+**Odak Noktası:** Hukuk bürosunun tepe yönetiminin (Admin) sistemi nasıl kontrol ettiğinin ve genel istatistiklerin nasıl işlediğinin gösterilmesi.
+
+**Anlatılacak Dosyalar:**
+- **`components/admin/`**: `AdminDashboard.jsx`, `OverviewTab.jsx`, `ClientsTab.jsx`, `DocumentsTab.jsx`, `FinancesTab.jsx`
+
+**Anlatılacak Konular:**
+- Admin Dashboard genel yapısı ve modüler sekmeler
+- Dashboard kartları ve genel istatistiklerin okunması
+- Müvekkil yönetimi (Yeni müvekkil/avukat ekleme işlemleri)
+- Büronun genel evrak ve global şablon yönetimi
+- Finans yönetimi (Gelir/gider dengesi, tahsilat ve alacak takibi)
+
+---
+
+### 👤 3. Kısım: Avukat Paneli, Dava Yönetimi ve İletişim – **Ezgi**
+**Odak Noktası:** Projenin en teknik ve kapsamlı kısmıdır. Bir avukatın günlük operasyonlarını (dava, müvekkil iletişimi, duruşma takibi) dijitalde nasıl yürüttüğünün detaylı bir şekilde aktarılması.
+
+**Anlatılacak Dosyalar:**
+- **`components/lawyer/`**: `LawyerDashboard.jsx`, `LawyerDetail.jsx`, `CasesTab.jsx`, `CalendarTab.jsx`, `MessagesTab.jsx`, `WebMessagesTab.jsx`, `LegalDetail.jsx`, `VideoMeeting.jsx`
+- **`components/client/`**: `ClientCaseDetail.jsx` *(Müvekkil gözünden dava detay ekranı ile entegrasyonu)*
+
+**Anlatılacak Konular:**
+- Avukat paneline genel bakış ve özelleştirilmiş çalışma alanı
+- Dava yönetimi, dava detaylarının güncellenmesi ve aşamaların takibi
+- Müvekkil dava detay ekranı
+- Duruşma takvimi yönetimi
+- Sistem içi güvenli mesajlaşma ve dışarıdan gelen web mesajlarının yanıtlanması
+- **Jitsi Meet** altyapısı ile anlık görüntülü görüşme (Online Danışmanlık)
+
+---
+
+### 👤 4. Kısım: Müvekkil Paneli ve Evrak Oluşturma Sistemi (Kapanış) – **Beyza**
+**Odak Noktası:** Projenin en inovatif özelliklerinden olan otomatik dilekçe üretiminin ve müvekkilin sisteme dahil olduğu interaktif kısımların (kredi kartı ödemesi vb.) vurgulanması. Sunumun akılda kalıcı, güçlü bir finalle bitirilmesi.
+
+**Anlatılacak Dosyalar:**
+- **`components/client/`**: `ClientDashboard.jsx`
+- **`components/documents/`**: `DocumentGenerator.jsx`, `DocumentTemplatePreview.jsx`, `documentTemplates.js`
+
+**Anlatılacak Konular:**
+- Müvekkil panelinin kullanıcı dostu yapısı ve davasını şeffaf takip edebilmesi
+- Avukatın paylaştığı belgeleri görüntüleme ve sistemin işleyişi
+- **Entegre Ödeme Sistemi** ile müvekkilin avukata borçlarını ödemesi
+- **Evrak / Dilekçe Oluşturma Sistemi:** Hukuk alanlarına (Ceza, İcra, vb.) göre şablonlar
+- Girilen form verileriyle anında düzenlenebilir dilekçe taslağı oluşturma, avukat onayı mantığı
+- PDF üretme ve yazdırma (Print) işlemleri
