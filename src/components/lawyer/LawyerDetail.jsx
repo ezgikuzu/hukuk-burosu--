@@ -16,7 +16,7 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
 
   const lawyers = [
     {
-      id: "beyza-mensur",
+      id: "lawyer_1",
       name: "Av. Beyza Mensur",
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBs9fibzs9m7PxJlKu7yIMcCC6tfaZggoJSIzEy8gGOszun-fWvTJI54kIS18NVusIXJqt9tQSMJSV6a3Ad7fRAEPh90yAvWMTvErHaz5oWlH-sZ3cLAJVwff3hUO44vJaU2OfT6BTgvuFggOkHxqInHnNUN51_R11uIaocBCCdlIEXa8PBAUujVnkJFqG1chVFRfgEZeYm0Y09XtLVGWGM7lt-JZRFlce3wmtBl17gq6CQHB112JdpjhUt2hZUTXCBE8GIkYkU1p8",
       roleTR: "Kurucu Ortak / Kıdemli Avukat",
@@ -25,7 +25,7 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
       bioEN: "Att. Beyza Mensur is the founding partner of EDBM Law Firm. She graduated from Galatasaray University Faculty of Law. She has over 25 years of experience in Corporate Law, Mergers and Acquisitions.\n\nPractice Areas:\n- Corporate Law & Governance\n- International Trade Agreements\n- Mergers and Acquisitions (M&A)\n\nEducation:\n- Galatasaray University, Faculty of Law (LL.B)\n- London School of Economics, Corporate Law (LL.M)"
     },
     {
-      id: "ezgi-kuzu",
+      id: "lawyer_2",
       name: "Av. Ezgi Kuzu",
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBrkKfYlDQ35O6xTQ98CEkqB1OQFU_ez0cfczUuK4JAc11cI7H2tL8N5M0cYkE5OWMxSczfAE2YPLFysAp0AoW0fHbwDR4CT8Bz31Fjwe8qPGlug_XX26gDXSmlGbuKyNaBo4gdkR3skLuLpHFOoLrwHdjDeBH-qR-UtVr0viY5fos_1LsC0pI7ia1TdgiqahpqJuzFEc71t-SInWunHUtYo1eIhNdb5G4lNqtkg4NGY82WBy35HtDsoRDdmXIumOb7yVrWq7ibcss",
       roleTR: "Yönetici Ortak / İş Hukuku Uzmanı",
@@ -34,7 +34,7 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
       bioEN: "Att. Ezgi Kuzu graduated from Istanbul University Faculty of Law. She has extensive expertise in Labor Law, union disputes, and corporate contracts.\n\nPractice Areas:\n- Individual and Collective Labor Law\n- Contracts Law\n- Employee - Employer Disputes\n\nEducation:\n- Istanbul University, Faculty of Law (LL.B)\n- Bahcesehir University, Private Law (LL.M)"
     },
     {
-      id: "gorkem-iskenceli",
+      id: "lawyer_3",
       name: "Av. Muhammet Görkem İşkenceli",
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA2DdEHLb36QUhBDJK7EM7Q0DO5LDdec_rVeXOE1nZNKr8lAP3EUPDCO8yusNd3p5EgUmFUIJ2FOpLRlhQrZkC5ECmxhamnZIF5Q5ixL3e6aDJsSTQDUz9-1jXZbaA1gxv5TNxgJXNUlEtHwyFQQZvUJ59hOPtWxKJrf8vHo1lvOZ8IGjbINl0KNTP7Rc89sisJPAfS47WOVij4aBIrxIC8cmJSF_0vO6DXIrOQ4Fhz6nGEQTHsQWu2AKsMkY96YU7eb-Nvk_2Gy5E",
       roleTR: "Kıdemli Avukat / Ceza Hukuku Uzmanı",
@@ -43,7 +43,7 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
       bioEN: "Att. Muhammet Gorkem Iskenceli graduated from Ankara University Faculty of Law. He has been serving his clients in Heavy Penalty cases, financial crimes, and IT law for over 15 years.\n\nPractice Areas:\n- Heavy Penal Trials\n- Financial and Cyber Crimes\n- Appeals and Objections\n\nEducation:\n- Ankara University, Faculty of Law (LL.B)"
     },
     {
-      id: "dilek-ince",
+      id: "lawyer_4",
       name: "Av. Dilek İnce",
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA9D1XgnCCjehZYJVpiD-_bfL7Na66lbbTo445XHb4MGg8hK4NiPeDClDEn5ok9UoHFFgOKPTXfOEM2N-3cwZIMy8eB-WjSr_DsVOfr3QdTWpJlX-5yXCPdJK6hiiqkTGcbgkAXtz3FjhKmqDwG4TBp7108fJXT1vd0P3HJkzMI29ecqyqfr8ULxDVyNavx8yXe1PYhq-87b83WCHVBzAOJObgLeHLsjaTZ1tXKbin7spXUFWglCZwULagr4ZHQ3fdZhuPF6zFe1yE",
       roleTR: "Uzman Avukat / Aile ve Miras Hukuku",
