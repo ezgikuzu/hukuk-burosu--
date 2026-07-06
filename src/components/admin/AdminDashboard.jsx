@@ -703,6 +703,7 @@ export default function AdminDashboard() {
               ))}
             </div>
           </div>
+        )}
         
         {activeTab === "document-generator" && (
           <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm">
