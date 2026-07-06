@@ -21,66 +21,69 @@ import BlogsTab from "../landing/BlogsTab";
 import DocumentGenerator from "../documents/DocumentGenerator";
 
 export default function LawyerDashboard() {
-  const dispatch = useDispatch();
-  const language = useSelector((state) => state.ui.language);
-  const currentUser = useSelector((state) => state.auth.currentUser);
-  const activeTab = useSelector((state) => state.ui.activeTab);
-  const t = DICTIONARY[language];
-  const at = (text) => autoTranslate(text, language);
+  const dispatch = useDispatch(); // store'a müdahale etmek için kullanılır. 
+  const language = useSelector((state) => state.ui.language); // seçilen dili tutar. 
+  const currentUser = useSelector((state) => state.auth.currentUser); // giriş yapan kullanıcıyı tutar. 
+  const activeTab = useSelector((state) => state.ui.activeTab); // şu an hangi sekmedeyiz onu tutar. 
+  const t = DICTIONARY[language]; // seçilen dile ait metinleri çevirir. 
+  const at = (text) => autoTranslate(text, language); // yazıları otomatik çevirir. 
 
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false); // mobil menünün açık olup olmadığını tutar. 
 
-  React.useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [activeTab]);
+  React.useEffect(() => { // her sayfaya giriş yapıldığında sayfanın en üstüne kaydırır. 
+    window.scrollTo(0, 0); // sayfa en üstü 
+  }, [activeTab]); // aktif sekmeye göre çalışır.  
 
-  const menuItems = [
-    { id: "overview", label: t.tabOverview, icon: LayoutDashboard },
-    { id: "clients", label: t.tabClients, icon: Users },
-    { id: "cases", label: t.tabCases, icon: FolderOpen },
-    { id: "calendar", label: t.tabCalendar, icon: Calendar },
-    { id: "documents", label: t.tabDocuments, icon: FileText },
-    { id: "finances", label: t.tabFinances, icon: Landmark },
-    { id: "document-generator", label: at("Evrak Oluştur"), icon: FileSignature },
-    { id: "messages", label: t.tabMessages, icon: MessageCircle },
-    { id: "web_messages", label: language === "TR" ? "Web Mesajları" : "Web Messages", icon: Mail },
-    { id: "blogs", label: language === "TR" ? "Blog Yönetimi" : "Blog Management", icon: Edit3 },
+  // kullanıcı sekme değiştirdiğinde sayfanın en üstüne çık. 
+
+  const menuItems = [ // sol taraftaki menü 
+    { id: "overview", label: t.tabOverview, icon: LayoutDashboard }, // ana sayfa 
+    { id: "clients", label: t.tabClients, icon: Users }, // müvekkiller 
+    { id: "cases", label: t.tabCases, icon: FolderOpen }, // davalar 
+    { id: "calendar", label: t.tabCalendar, icon: Calendar }, // takvim 
+    { id: "documents", label: t.tabDocuments, icon: FileText }, // dökümanlar 
+    { id: "finances", label: t.tabFinances, icon: Landmark }, // finans
+    { id: "document-generator", label: at("Evrak Oluştur"), icon: FileSignature }, // evrak oluşturma 
+    { id: "messages", label: t.tabMessages, icon: MessageCircle }, // mesajlar 
+    { id: "web_messages", label: language === "TR" ? "Web Mesajları" : "Web Messages", icon: Mail }, // web mesajları 
+    { id: "blogs", label: language === "TR" ? "Blog Yönetimi" : "Blog Management", icon: Edit3 }, // blog yönetimi 
   ];
 
-  const renderActiveTab = () => {
-    switch (activeTab) {
-      case "overview":
+  const renderActiveTab = () => { // hangi sekmeye tıklandıysa o sekmeyi render eder.
+    switch (activeTab) { // sekmeleri kontrol eder. 
+      case "overview": // ana sayfa 
         return <OverviewTab />;
-      case "clients":
+      case "clients": // müvekkiller 
         return <ClientsTab />;
-      case "cases":
+      case "cases": // davalar
         return <CasesTab />;
-      case "calendar":
+      case "calendar": // takvim
         return <CalendarTab />;
-      case "documents":
+      case "documents": // dökümanlar
         return <DocumentsTab />;
-      case "finances":
+      case "finances": // finans
         return <FinancesTab />;
-      case "document-generator":
+      case "document-generator": // evrak oluşturma 
         return <DocumentGenerator />;
-      case "messages":
+      case "messages": // mesajlar
         return <MessagesTab />;
-      case "web_messages":
+      case "web_messages": // web mesajları 
         return <WebMessagesTab />;
-      case "blogs":
+      case "blogs": // blog yönetimi 
         return <BlogsTab />;
-      default:
+      default: // ana sayfa 
         return <OverviewTab />;
     }
   };
 
-  const handleTabClick = (tabId) => {
-    dispatch(setActiveTab(tabId));
-    setMobileMenuOpen(false);
+  const handleTabClick = (tabId) => { // kullanıcı menüde bir sekmeye tıkladığında çalışan fonskiyondur. 
+    dispatch(setActiveTab(tabId)); // tıklanan sekmeyi reduxtaki activetaba kaydeder. böylece uygulama hangi sayfanın açılacağını bilir.  
+    setMobileMenuOpen(false); //eğer uygulama mobilde açıksa, sekme seçildikten sonra yan menüyü kapatır ve kullanıcı seçtiği sayfayı görür. 
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = () => { // çıkış yap butonu tıklandığında çalışır. 
+    dispatch(logout()); // çıkış yap 
+    setMobileMenuOpen(false); // mobil menüyü kapatır.  ve giriş ekranına yönlendirir. 
   };
 
   return (

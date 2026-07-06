@@ -7,7 +7,7 @@ export default function LegalDetail({ legalId, onBack }) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [legalId]);
+  }, [legalId]); // Yeni bir hukuki metin açıldığında sayfayı en üste götürmektir.
 
   const tx = (tr, en) => (language === "TR" ? tr : en);
 
@@ -35,16 +35,16 @@ export default function LegalDetail({ legalId, onBack }) {
     }
   };
 
-  const data = legalContent[legalId];
-  if (!data) return null;
+  const data = legalContent[legalId]; //legalContent içindeki ilgili metni seçer.
+  if (!data) return null; // metin yoksa hiçbir şey döndürmez.
 
-  const IconComp = data.icon;
+  const IconComp = data.icon; // ikon componentini seçer. 
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 flex flex-col">
       <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-50 h-20 shadow-sm flex items-center">
         <div className="max-w-4xl mx-auto px-6 w-full flex justify-between items-center">
-          <button 
+          <button
             onClick={onBack}
             className="flex items-center gap-2 text-[#1a237e] font-semibold hover:bg-[#1a237e]/5 px-3 py-2 rounded-lg transition-colors"
           >
@@ -78,8 +78,8 @@ export default function LegalDetail({ legalId, onBack }) {
             {tx(data.contentTR, data.contentEN).split('\n').map((paragraph, idx) => (
               paragraph.trim() !== '' ? (
                 <p key={idx} className={
-                  paragraph.match(/^[0-9]+\./) || paragraph.includes("Son Güncelleme:") 
-                    ? "font-bold text-slate-800 mt-8 mb-3" 
+                  paragraph.match(/^[0-9]+\./) || paragraph.includes("Son Güncelleme:")
+                    ? "font-bold text-slate-800 mt-8 mb-3"
                     : "mb-4"
                 }>
                   {paragraph}

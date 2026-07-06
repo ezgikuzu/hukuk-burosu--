@@ -8,10 +8,13 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
   const messages = useSelector((state) => state.messages?.list || []);
   const dispatch = useDispatch();
 
-  const lawyerMessages = messages.filter(m => m.receiverId === lawyerId && m.senderId === "guest");
+  //onBack -> geri butonuna bastığında çalışacak fonskiyondur. tıklanınca ana sayfaya geri döner.
+  //onContactClick ->  kişiye ulaş butonuna basıldıüında çalışıcak fonskiyondur. 
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
+  const lawyerMessages = messages.filter(m => m.receiverId === lawyerId && m.senderId === "guest"); //Bu kod, tüm mesajların içinden sadece ilgili avukata ziyaretçiler (guest) tarafından gönderilen mesajları seçer.
+
+  useEffect(() => { // sayfa her yüklendiğinde çalışır.
+    window.scrollTo(0, 0); // sayfanın en üstüne kaydırır.
   }, []);
 
   const lawyers = [
@@ -64,14 +67,14 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
       {/* Header */}
       <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-50 h-20 shadow-sm transition-all flex items-center">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full flex justify-between items-center">
-          <button 
+          <button
             onClick={onBack}
             className="flex items-center gap-2 text-[#1a237e] font-semibold hover:bg-[#1a237e]/5 px-3 py-2 rounded-lg transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
             <span>{tx("Geri Dön", "Go Back")}</span>
           </button>
-          
+
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#1a237e] to-[#283593] flex items-center justify-center border border-[#d4af37]/30 shadow-md">
               <Gavel className="w-5 h-5 text-[#d4af37]" />
@@ -86,13 +89,13 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
       {/* Hero Section */}
       <section className="relative pt-24 pb-16 overflow-hidden bg-[#1a237e]">
         <div className="absolute inset-0 bg-gradient-to-r from-[#1a237e] to-[#283593] z-0" />
-        
+
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 flex flex-col md:flex-row items-center gap-12">
           <div className="w-48 h-64 md:w-64 md:h-80 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/10 shrink-0">
-            <img 
-              src={lawyer.image} 
-              alt={lawyer.name} 
-              className="w-full h-full object-cover" 
+            <img
+              src={lawyer.image}
+              alt={lawyer.name}
+              className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
             />
           </div>
@@ -108,12 +111,12 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
               {tx(lawyer.roleTR, lawyer.roleEN)}
             </p>
             <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-               <button 
-                  onClick={onContactClick}
-                  className="bg-[#d4af37] text-[#1a237e] hover:bg-amber-400 font-extrabold text-sm uppercase tracking-wider px-6 py-3 rounded-xl shadow-lg transition-all"
-                >
-                  {tx("Danışmanlık Talep Et", "Request Consultation")}
-                </button>
+              <button
+                onClick={onContactClick}
+                className="bg-[#d4af37] text-[#1a237e] hover:bg-amber-400 font-extrabold text-sm uppercase tracking-wider px-6 py-3 rounded-xl shadow-lg transition-all"
+              >
+                {tx("Danışmanlık Talep Et", "Request Consultation")}
+              </button>
             </div>
           </div>
         </div>
@@ -127,7 +130,7 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
               {tx("Biyografi", "Biography")}
             </h2>
             <div className="w-12 h-1 bg-[#d4af37] rounded mb-8" />
-            
+
             <div className="prose prose-slate prose-lg max-w-none text-slate-600 leading-relaxed">
               {tx(lawyer.bioTR, lawyer.bioEN).split('\n').map((paragraph, idx) => (
                 paragraph.startsWith('-') ? (
@@ -151,7 +154,7 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
                 {tx("Gelen Ziyaretçi Mesajları", "Incoming Visitor Messages")}
               </h2>
               <div className="w-12 h-1 bg-[#d4af37] rounded mb-8" />
-              
+
               <div className="space-y-6">
                 {lawyerMessages.map((msg) => (
                   <div key={msg.id} className="bg-slate-50 border border-slate-200 rounded-xl p-6 shadow-sm">
@@ -174,16 +177,16 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
           )}
         </div>
       </section>
-      
+
       {/* Footer (Simplified) */}
       <footer className="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center flex flex-col items-center gap-6">
           <div className="flex items-center gap-2 text-white">
-             <Gavel className="w-5 h-5 text-[#d4af37]" />
-             <span className="font-serif text-lg font-bold tracking-tight">EDBM Law Firm</span>
+            <Gavel className="w-5 h-5 text-[#d4af37]" />
+            <span className="font-serif text-lg font-bold tracking-tight">EDBM Law Firm</span>
           </div>
           <div className="text-xs text-slate-500 font-medium pt-6 border-t border-slate-800/80 w-full max-w-sm">
-             © 2026 EDBM {tx("Hukuk Bürosu", "Law Firm")}. {tx("Tüm Hakları Saklıdır", "All Rights Reserved")}.
+            © 2026 EDBM {tx("Hukuk Bürosu", "Law Firm")}. {tx("Tüm Hakları Saklıdır", "All Rights Reserved")}.
           </div>
         </div>
       </footer>

@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addMessage, addMemo, deleteMemo, showToast } from "../../store";
 import { DICTIONARY, autoTranslate } from "../../data/initialData";
-import { 
-  Send, MessageSquare, Clipboard, User, Calendar, Plus, 
-  Trash2, ShieldCheck, Mail, Pin, Paperclip, CheckCircle2 
+import {
+  Send, MessageSquare, Clipboard, User, Calendar, Plus,
+  Trash2, ShieldCheck, Mail, Pin, Paperclip, CheckCircle2
 } from "lucide-react";
 
 export default function MessagesTab() {
@@ -13,15 +13,15 @@ export default function MessagesTab() {
   const t = DICTIONARY[language];
   const at = (text) => autoTranslate(text, language);
 
-  const messages = useSelector((state) => state.messages.list);
-  const memos = useSelector((state) => state.messages.memos);
-  const rawClients = useSelector((state) => state.clients.list);
-  const currentUser = useSelector((state) => state.auth.currentUser);
+  const messages = useSelector((state) => state.messages.list); // tüm mesajları alır. 
+  const memos = useSelector((state) => state.messages.memos); // duyuruları alır.
+  const rawClients = useSelector((state) => state.clients.list); // tüm müvekkilleri alır. 
+  const currentUser = useSelector((state) => state.auth.currentUser); // giriş yapan avukatı alır.
 
-  const isLawyer = currentUser?.role === "lawyer";
+  const isLawyer = currentUser?.role === "lawyer"; // giriş yapan kullanıcının avukat olup olmadığını kontrol eder.
 
   // Filter clients list for lawyers (Excluding leads/visitors)
-  const clients = isLawyer 
+  const clients = isLawyer
     ? rawClients.filter((cl) => cl.lawyerId === currentUser.id && !cl.id.startsWith("lead_"))
     : rawClients.filter((cl) => !cl.id.startsWith("lead_"));
 
@@ -101,7 +101,7 @@ export default function MessagesTab() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in">
-      
+
       {/* LEFT SECTION: Secure Client Chat (7 Cols) */}
       <div className="lg:col-span-7 bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden flex flex-col h-[560px]">
         {/* Chat Header */}
@@ -147,8 +147,8 @@ export default function MessagesTab() {
             <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-1.5 text-xs font-bold">
               <Mail className="w-8 h-8 text-slate-300" />
               <p>
-                {language === "TR" 
-                  ? `${activeClient?.name || "Müvekkil"} ile henüz mesajlaşma bulunmuyor.` 
+                {language === "TR"
+                  ? `${activeClient?.name || "Müvekkil"} ile henüz mesajlaşma bulunmuyor.`
                   : `No messages with ${activeClient?.name || "client"} yet.`}
               </p>
               <p className="text-[10px] text-slate-400 font-bold">
@@ -161,15 +161,14 @@ export default function MessagesTab() {
               const time = new Date(m.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
               return (
-                <div 
-                  key={m.id} 
+                <div
+                  key={m.id}
                   className={`flex ${isMe ? "justify-end" : "justify-start"}`}
                 >
-                  <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 shadow-sm border ${
-                    isMe 
-                      ? "bg-[#1a237e] text-white border-[#1a237e]/10 rounded-tr-none" 
+                  <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 shadow-sm border ${isMe
+                      ? "bg-[#1a237e] text-white border-[#1a237e]/10 rounded-tr-none"
                       : "bg-white text-slate-800 border-slate-100 rounded-tl-none"
-                  }`}>
+                    }`}>
                     {!isMe && (
                       <p className="text-[9px] font-bold text-[#d4af37] uppercase tracking-wider mb-0.5">
                         {m.senderName}
@@ -257,7 +256,7 @@ export default function MessagesTab() {
                   <p className="text-xs text-slate-700 leading-relaxed font-bold">
                     {m.content}
                   </p>
-                  
+
                   <div className="pt-2 flex justify-between items-center text-[10px] text-slate-400 font-bold border-t border-slate-100">
                     <span>{timeFormatted}</span>
                     <button

@@ -152,8 +152,8 @@ export default function CalendarTab() {
     return filteredHearings.filter(h => h.dateTime.startsWith(datePrefix));
   };
 
-  const displayedAgendaHearings = selectedDate 
-    ? getDayHearings(selectedDate) 
+  const displayedAgendaHearings = selectedDate
+    ? getDayHearings(selectedDate)
     : filteredHearings;
 
   return (
@@ -173,7 +173,7 @@ export default function CalendarTab() {
           onClick={openAddModal}
           className="px-4 py-2 bg-[#1a237e] hover:bg-[#12185c] text-[#d4af37] font-bold rounded-lg text-xs flex items-center gap-2 shadow-sm border border-[#d4af37]/30 transition-all cursor-pointer shrink-0 animate-fade-in"
         >
-          <Plus className="w-4 h-4 text-[#d4af37]" />
+          <Plus className="w-4 h-4 text-[#d4af37]" /> //artı butonunu ekrana çizer.
           <span>{t.newHearing}</span>
         </button>
       </div>
@@ -279,7 +279,7 @@ export default function CalendarTab() {
                   {selectedDate && <span className="ml-1 text-xs font-sans text-indigo-500">({selectedDate} {monthName})</span>}
                 </h3>
                 {selectedDate && (
-                  <button 
+                  <button
                     onClick={() => setSelectedDate(null)}
                     className="text-[10px] text-slate-400 hover:text-slate-600 underline cursor-pointer font-semibold"
                   >
@@ -486,6 +486,8 @@ export default function CalendarTab() {
                 </div>
               </div>
 
+
+//sorumlu avukat seçemi
               <div className="grid grid-cols-1 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
@@ -493,37 +495,41 @@ export default function CalendarTab() {
                   </label>
                   <select
                     disabled={isLawyer}
-                    value={isLawyer ? currentUser.id : lawyerId}
-                    onChange={(e) => setLawyerId(e.target.value)}
+                    value={isLawyer ? currentUser.id : lawyerId} // Giriş yapan kişi avukat mı?
+                    //isLawyer = true → Liste pasif olur, değiştirilemez.
+                    //isLawyer = false → Liste aktif olur, seçim yapılabilir.
+                    onChange={(e) => setLawyerId(e.target.value)} // kullanıcı listeden başka bir avukat seçtiğinde çalışır. 
                     className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] bg-slate-50 disabled:text-slate-500 font-semibold"
                   >
-                    {lawyers.map((l) => (
-                      <option key={l.id} value={l.id}>
-                        {l.name}
+                    {lawyers.map((l) => ( // listedeki avukatları tek tek dolaşır. "l" her seferinde bir avukatı temsil eder. 
+                      <option key={l.id} value={l.id}> //Her avukat için bir seçenek oluşturur.  React'in her elemanı birbirinden ayırt etmesini sağlar.
+                        {l.name} // kullanıcının açılır pencerede gördüğü Avukatın adıdır.
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
 
+//duruşma notlarının yazıldığı metin alanıdır.
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
                   {t.hearingNotes}
-                </label>
+                </label> // başlık
                 <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Duruşma öncesi teslim edilecek dilekçeler..."
-                  rows={2}
+                  value={notes}  // textarea'nın içinde görünen değer
+                  onChange={(e) => setNotes(e.target.value)} // kullanıcı yazı yazdığında //setNotes( dizideki 'notes' değerini günceller)
+                  placeholder="Duruşma öncesi teslim edilecek dilekçeler..." // kullanıcı yazı yazmadığında görünen yazı 
+                  rows={2} // metin alanının satır sayısı 
                   className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e] resize-none"
                 />
               </div>
 
+//Modalın alt kısmı (Footer) iptal /kaydet
               {/* Modal Footer */}
               <div className="pt-4 border-t border-slate-100 flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => setIsModalOpen(false)} // iptal butonunu çalıştırır. 
                   className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold cursor-pointer"
                 >
                   {t.cancel}
@@ -541,11 +547,11 @@ export default function CalendarTab() {
       )}
 
       {/* Video Meeting Fullscreen View */}
-      {videoRoom && (
-        <VideoMeeting
-          roomName={videoRoom}
-          onClose={() => setVideoRoom(null)}
-          subject={t.videoCallTitle}
+      {videoRoom && ( // videoRoom && (...) → Eğer bir görüntülü görüşme odası varsa, görüşme ekranını göster.
+        <VideoMeeting //<VideoMeeting /> → Görüntülü görüşme ekranını açar.
+          roomName={videoRoom} // roomName={videoRoom} → Bağlanılacak toplantı odasını gönderir.
+          onClose={() => setVideoRoom(null)} //Kullanıcı görüşmeyi kapatınca videoRoom sıfırlanır ve görüşme ekranı kapanır.
+          subject={t.videoCallTitle}  // topSubject={t.videoCallTitle} → Toplantının başlığını gönderir.
         />
       )}
     </div>

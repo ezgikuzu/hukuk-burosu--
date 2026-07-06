@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addCase, updateCase, deleteCase, showConfirm } from "../../store";
 import { DICTIONARY, autoTranslate } from "../../data/initialData";
-import { 
-  Plus, Edit, Trash2, Search, X, Scale, FileText, User, 
-  MapPin, HelpCircle, CheckCircle, ShieldAlert, AlertCircle 
+import {
+  Plus, Edit, Trash2, Search, X, Scale, FileText, User,
+  MapPin, HelpCircle, CheckCircle, ShieldAlert, AlertCircle
 } from "lucide-react";
 
 export default function CasesTab() {
@@ -20,71 +20,85 @@ export default function CasesTab() {
 
   const isLawyer = currentUser?.role === "lawyer";
 
-  // Filter cases and clients for active lawyer
-  const cases = isLawyer 
+  // davalar ve müvekkiller filtrelenir. 
+  const cases = isLawyer
     ? rawCases.filter((c) => c.lawyerId === currentUser.id)
     : rawCases;
 
+  // giriş yapan avukat mı değil mi? avukatsa true olur ve o avukata ait davalar alınır. 
+  // eğer yöneticiyse filtre uygulama 
+  // kullanıcı avukatsa sadece kendi davalarını görür.
+
+  // müvekkil filtreleme
   const clients = isLawyer
     ? rawClients.filter((cl) => cl.lawyerId === currentUser.id)
     : rawClients;
 
-  // Search & Filter state
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [lawyerFilter, setLawyerFilter] = useState(isLawyer ? currentUser.id : "all");
+  // buradada davalar yerine müvekkiller filtreleniyor. 
+  // avukatsa yalnızca kendi müvekkillerini görür. 
+  // yöneticiyse tüm müvekkilleri görür. 
+  // yetkilendirme sağlanır. 
 
-  // Form states
+  // arama ve filtreleme için kullanılan stateleri oluşturur. yani kullanıcı sayfada arama yaptığında veya filtre seçtiğinde bu değişkenler güncellenir. 
+  const [searchTerm, setSearchTerm] = useState(""); // kullanıcının arama kutusuna yazdığı metni saklar. 
+  const [statusFilter, setStatusFilter] = useState("all"); // davanın durumunu filtreler. 
+  const [lawyerFilter, setLawyerFilter] = useState(isLawyer ? currentUser.id : "all"); // avukatı filtreler. 
+
+  // "Dava Ekle / Dava Düzenle" modalının açılıp kapanmasını ve formdaki tüm bilgileri yönetmektir.
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCase, setEditingCase] = useState(null);
+  const [editingCase, setEditingCase] = useState(null); // hangi davanın düzenlendiğini tutar. 
 
-  // Form Fields
-  const [fileNo, setFileNo] = useState("");
-  const [court, setCourt] = useState("");
-  const [opposingParty, setOpposingParty] = useState("");
-  const [subject, setSubject] = useState("");
-  const [status, setStatus] = useState("active");
-  const [lawyerId, setLawyerId] = useState(currentUser?.id || "lawyer_1");
-  const [clientId, setClientId] = useState("");
-  const [description, setDescription] = useState("");
-  const [validationError, setValidationError] = useState(null);
+  // Formdaki giriş alanlarının değerlerini tutar.
+  const [fileNo, setFileNo] = useState(""); // dosya numarası
+  const [court, setCourt] = useState(""); // mahkeme adı
+  const [opposingParty, setOpposingParty] = useState(""); // karşı tarafın adı 
+  const [subject, setSubject] = useState(""); // davanın konusu 
+  const [status, setStatus] = useState("active"); // davanın durumu 
+  const [lawyerId, setLawyerId] = useState(currentUser?.id || "lawyer_1"); // avukatın kim olduğu 
+  const [clientId, setClientId] = useState(""); // müvekkilin kim olduğu 
+  const [description, setDescription] = useState(""); // davanın açıklaması 
+  const [validationError, setValidationError] = useState(null); // doğrulama hatası 
 
+  // yeni dava ekle butonuna basıldığında formu sıfırlayıp modelı açmak için kullanılır. 
   const openAddModal = () => {
-    setEditingCase(null);
-    setFileNo("");
-    setCourt("");
-    setOpposingParty("");
-    setSubject("");
-    setStatus("active");
-    setLawyerId(currentUser?.id || "lawyer_1");
-    setClientId(clients[0]?.id || "");
-    setDescription("");
-    setValidationError(null);
-    setIsModalOpen(true);
+    setEditingCase(null); // düzenlenecek dava yok. 
+    setFileNo(""); // dosya numarasını sıfırla 
+    setCourt(""); // mahkeme adını sıfırla 
+    setOpposingParty(""); // karşı tarafın adını sıfırla
+    setSubject(""); // davanın konusunu sıfırla 
+    setStatus("active"); // davanın durumunu sıfırla 
+    setLawyerId(currentUser?.id || "lawyer_1"); // avukatın kim olduğunu sıfırla 
+    setClientId(clients[0]?.id || ""); // müvekkilin kim olduğunu sıfırla 
+    setDescription(""); // davanın açıklamasını sıfırla 
+    setValidationError(null); // doğrulama hatasını sıfırla
+    setIsModalOpen(true); // modelı aç
   };
 
+  // dava düzenle butonuna basıldığında formu düzenlenecek dava ile doldurmak için kullanılır.
   const openEditModal = (c) => {
-    setEditingCase(c);
-    setFileNo(c.fileNo);
-    setCourt(c.court);
-    setOpposingParty(c.opposingParty);
-    setSubject(c.subject);
-    setStatus(c.status);
-    setLawyerId(c.lawyerId);
-    setClientId(c.clientId);
-    setDescription(c.description);
-    setValidationError(null);
-    setIsModalOpen(true);
+    setEditingCase(c); // düzenlenecek davayı kaydet
+    setFileNo(c.fileNo); // dosya numarasını getir
+    setCourt(c.court); // mahkeme adını getir
+    setOpposingParty(c.opposingParty); // karşı tarafın adını getir
+    setSubject(c.subject); // davanın konusunu getir
+    setStatus(c.status); // davanın durumunu getir
+    setLawyerId(c.lawyerId);  // avukatın kim olduğunu getir 
+    setClientId(c.clientId); // müvekkilin kim olduğunu getir 
+    setDescription(c.description); // davanın açıklamasını getir
+    setValidationError(null); // doğrulama hatasını sıfırla
+    setIsModalOpen(true); // modelı aç
   };
 
+  // form kayıt
   const handleFormSubmit = (e) => {
     e.preventDefault();
     setValidationError(null);
 
+    // müvekkil seçilmemişse hata verir.      
     if (!clientId) {
       setValidationError(
-        language === "TR" 
-          ? "Dosyayı ilişkilendirmek için bir müvekkil seçmelisiniz. Eğer listede müvekkil yoksa önce müvekkil oluşturun." 
+        language === "TR"
+          ? "Dosyayı ilişkilendirmek için bir müvekkil seçmelisiniz. Eğer listede müvekkil yoksa önce müvekkil oluşturun."
           : "You must select a client to associate this case with. Please add a client first if empty."
       );
       return;
@@ -130,19 +144,19 @@ export default function CasesTab() {
     }));
   };
 
-  // Filtering Logic
-  const filteredCases = cases.filter((c) => {
-    const term = searchTerm.toLowerCase();
-    const matchesSearch = 
-      c.fileNo.toLowerCase().includes(term) ||
-      c.court.toLowerCase().includes(term) ||
-      c.opposingParty.toLowerCase().includes(term) ||
-      c.subject.toLowerCase().includes(term);
+  // Kullanıcının seçtiği filtrelere göre hangi davaların ekranda gösterileceğini belirlemektir.
+  const filteredCases = cases.filter((c) => { // burada cases dizisindeki her dava tek tek kontrol edilir. eger koşullar sağlanırsa true döner ve ekrana yansıtılır.     
+    const term = searchTerm.toLowerCase(); // arama terimini küçültür.     
+    const matchesSearch =     // arama terimini filtreler.          
+      c.fileNo.toLowerCase().includes(term) || // dosya numarasını kontrol eder.     
+      c.court.toLowerCase().includes(term) || // mahkeme adını kontrol eder.     
+      c.opposingParty.toLowerCase().includes(term) || // karşı tarafın adını kontrol eder.     
+      c.subject.toLowerCase().includes(term); // davanın konusunu kontrol eder.     
 
-    const matchesStatus = statusFilter === "all" || c.status === statusFilter;
-    const matchesLawyer = isLawyer || lawyerFilter === "all" || c.lawyerId === lawyerFilter;
+    const matchesStatus = statusFilter === "all" || c.status === statusFilter; // davanın durumunu filtreler.     
+    const matchesLawyer = isLawyer || lawyerFilter === "all" || c.lawyerId === lawyerFilter; // avukatı filtreler.     
 
-    return matchesSearch && matchesStatus && matchesLawyer;
+    return matchesSearch && matchesStatus && matchesLawyer; // üç koşulda doğruysa true döner ve ekrana yansıtılır.     
   });
 
   return (
@@ -152,12 +166,13 @@ export default function CasesTab() {
         <div>
           <h2 className="font-serif text-lg font-bold text-[#1a237e]">{t.caseList}</h2>
           <p className="text-xs text-slate-500 mt-1 font-medium">
-            {language === "TR" 
-              ? "Bürodaki tüm dava dosyalarını, esas/karar numaralarını ve güncel aşamalarını buradan izleyebilirsiniz." 
+            {language === "TR"
+              ? "Bürodaki tüm dava dosyalarını, esas/karar numaralarını ve güncel aşamalarını buradan izleyebilirsiniz."
               : "Track all legal case files, docket/decision numbers, and their current stages here."}
           </p>
         </div>
-        
+
+        //dava ekle butonu
         <button
           onClick={openAddModal}
           className="px-4 py-2 bg-[#1a237e] hover:bg-[#12185c] text-[#d4af37] font-bold rounded-lg text-xs flex items-center gap-2 shadow-sm border border-[#d4af37]/30 transition-all cursor-pointer shrink-0"
@@ -167,17 +182,18 @@ export default function CasesTab() {
         </button>
       </div>
 
+      //arama kutusunu oluşturur. kullanıcı buraya yazdıkça dava listesi filtrelenir.
       {/* Search and Filters Grid */}
       <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-3">
         {/* Search Input */}
         <div className="relative md:col-span-6">
           <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
           <input
-            type="text"
-            placeholder={t.search}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e]"
+            type="text"  // arama kutusunun tipini belirtir.     
+            placeholder={t.search} // arama kutusunun placeholder metnini belirtir.     
+            value={searchTerm} // arama kutusunun değerini belirtir.     
+            onChange={(e) => setSearchTerm(e.target.value)} // arama kutusunun değerini günceller.     
+            className="w-full pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e]" // arama kutusunun stilini belirtir.     
           />
         </div>
 
@@ -217,6 +233,7 @@ export default function CasesTab() {
         </div>
       </div>
 
+//Filtrelenmiş davaları kartlar halinde ekranda göstermek. Eğer hiç dava yoksa "Veri Yok" mesajını göstermek.
       {/* Cases List */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {filteredCases.length === 0 ? (
@@ -224,30 +241,29 @@ export default function CasesTab() {
             {t.noData}
           </div>
         ) : (
-          filteredCases.map((c) => {
-            const client = clients.find((cl) => cl.id === c.clientId);
-            const lawyerObj = lawyers.find((l) => l.id === c.lawyerId);
+          filteredCases.map((c) => { // her dava için bir kart oluşturur.
+            const client = clients.find((cl) => cl.id === c.clientId); // davanın müvekkilini bulur.     
+            const lawyerObj = lawyers.find((l) => l.id === c.lawyerId); // davanın avukatını bulur.     
 
             return (
-              <div 
-                key={c.id} 
-                className="bg-white rounded-xl border border-slate-100 shadow-sm p-5 hover:shadow-md transition-shadow flex flex-col justify-between"
+              <div
+                key={c.id}  // her dava için kart oluşturur. 
+                className="bg-white rounded-xl border border-slate-100 shadow-sm p-5 hover:shadow-md transition-shadow flex flex-col justify-between" // davanın kartının stilini belirtir.     
               >
                 <div>
-                  {/* Card Header (FileNo + Status Badge) */}
+                  {/* Card Header (Dava dosya No + Durum Rozeti) */}
                   <div className="flex justify-between items-start gap-2 mb-3">
                     <span className="font-serif text-sm font-bold text-[#1a237e] tracking-tight bg-slate-100 px-2.5 py-1 rounded">
-                      {c.fileNo}
+                      {c.fileNo} // dosya numarası ekrana yazdırır.
                     </span>
-                    
-                    <span 
-                      className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                        c.status === "active" 
-                          ? "bg-blue-50 text-blue-700 border border-blue-100" 
+
+                    <span
+                      className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${c.status === "active"
+                          ? "bg-blue-50 text-blue-700 border border-blue-100"
                           : c.status === "pending"
-                          ? "bg-amber-50 text-amber-700 border border-amber-100"
-                          : "bg-slate-100 text-slate-500 border border-slate-200"
-                      }`}
+                            ? "bg-amber-50 text-amber-700 border border-amber-100"
+                            : "bg-slate-100 text-slate-500 border border-slate-200"
+                        }`}
                     >
                       {c.status === "active" && <Scale className="w-3 h-3" />}
                       {c.status === "pending" && <AlertCircle className="w-3 h-3" />}
@@ -256,13 +272,14 @@ export default function CasesTab() {
                     </span>
                   </div>
 
+//Bu bölüm, her dava kartının orta kısmını oluşturur. Burada sırasıyla dava konusu, mahkeme bilgisi ve dava açıklaması gösterilir.
                   {/* Subject and Court */}
                   <h3 className="text-sm font-bold text-slate-800 line-clamp-1 mb-1" title={c.subject}>
-                    {c.subject}
+                    {c.subject} //dava konusu yazar.
                   </h3>
                   <p className="text-xs text-[#d4af37] font-bold mb-3 flex items-center gap-1.5">
                     <MapPin className="w-3.5 h-3.5 shrink-0" />
-                    <span>{c.court}</span>
+                    <span>{c.court}</span> //mahkeme adı
                   </p>
 
                   <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed bg-slate-50 p-3 rounded border border-slate-100 mb-4 font-semibold">
@@ -279,7 +296,7 @@ export default function CasesTab() {
                     </p>
                     <p className="text-slate-600">
                       <span className="text-slate-400 font-normal">{t.assignedLawyer}: </span>
-                      <strong 
+                      <strong
                         className="font-bold"
                         style={{ color: lawyerObj?.color || "#1a237e" }}
                       >
