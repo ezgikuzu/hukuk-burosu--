@@ -7,7 +7,7 @@ import {
 } from "recharts";
 import { 
   Plus, Trash2, CheckCircle2, AlertCircle, Landmark, CreditCard, 
-  DollarSign, ChevronDown, Check, X, FileText, User, Calendar 
+  DollarSign, ChevronDown, Check, X, FileText, User, Calendar, Users, Percent 
 } from "lucide-react";
 
 export default function FinancesTab() {
@@ -19,6 +19,7 @@ export default function FinancesTab() {
   const rawPayments = useSelector((state) => state.payments.list);
   const rawClients = useSelector((state) => state.clients.list);
   const rawCases = useSelector((state) => state.cases.list);
+  const rawLawyers = useSelector((state) => state.lawyers?.list || []);
   const currentUser = useSelector((state) => state.auth.currentUser);
 
   const isLawyer = currentUser?.role === "lawyer";
@@ -45,6 +46,7 @@ export default function FinancesTab() {
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("pending");
+  const [lawyerSharePct, setLawyerSharePct] = useState(50);
 
   const openAddModal = () => {
     setClientId(clients[0]?.id || "");
@@ -341,6 +343,104 @@ export default function FinancesTab() {
           </div>
         )}
       </div>
+
+      
+      {!isLawyer && (
+        <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm animate-fade-in mt-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5 border-b border-slate-100 pb-4">
+            <div>
+              <h3 className="font-serif text-sm font-bold text-[#1a237e] flex items-center gap-2">
+                <Users className="w-4.5 h-4.5 text-[#d4af37]" />
+                {at("Kâr ve Pay Dağıtımı (Avukat Hak edişleri)")}
+              </h3>
+              <p className="text-xs text-slate-500 mt-1 font-medium">
+                {at("Tahsil edilen ödemeler (ödendi olanlar) üzerinden avukat ve büro paylarını hesaplayın.")}
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-3 bg-slate-50 p-2 rounded-lg border border-slate-200">
+              <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                <Percent className="w-3.5 h-3.5" />
+                {at("Avukat Komisyon Oranı:")}
+              </label>
+              <div className="flex items-center gap-2">
+                <input 
+                  type="range" 
+                  min="0" 
+                  max="100" 
+                  step="5"
+                  value={lawyerSharePct} 
+                  onChange={(e) => setLawyerSharePct(Number(e.target.value))}
+                  className="w-24 accent-[#1a237e] cursor-pointer"
+                />
+                <span className="text-sm font-extrabold text-[#1a237e] w-12 text-right">
+                  %{lawyerSharePct}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-y border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  <th className="py-3 px-4">{at("Avukat Adı")}</th>
+                  <th className="py-3 px-4 text-right">{at("Toplam Tahsilat")}</th>
+                  <th className="py-3 px-4 text-right text-[#1a237e]">{at("Büro Payı")} (%{100 - lawyerSharePct})</th>
+                  <th className="py-3 px-4 text-right text-emerald-600">{at("Avukat Hak Edisi")} (%{lawyerSharePct})</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-xs text-slate-700 font-semibold">
+                {rawLawyers.map(lawyer => {
+                  const lawyerClients = rawClients.filter(c => c.lawyerId === lawyer.id);
+                  const lawyerCollected = rawPayments
+                    .filter(p => lawyerClients.some(c => c.id === p.clientId))
+                    .filter(p => p.status === "paid" || p.type === "payment")
+                    .reduce((acc, p) => acc + p.amount, 0);
+                    
+                  if(lawyerCollected === 0) return null;
+                  
+                  const lawyerShare = lawyerCollected * (lawyerSharePct / 100);
+                  const firmShare = lawyerCollected - lawyerShare;
+                  
+                  return (
+                    <tr key={lawyer.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="py-3.5 px-4 font-bold flex items-center gap-2">
+                         <div className="w-6 h-6 rounded-full bg-[#1a237e] text-white flex items-center justify-center text-[10px] shrink-0">
+                           {lawyer.name.charAt(0)}
+                         </div>
+                         {lawyer.name}
+                      </td>
+                      <td className="py-3.5 px-4 text-right font-mono font-bold">
+                        {lawyerCollected.toLocaleString("tr-TR")} ₺
+                      </td>
+                      <td className="py-3.5 px-4 text-right font-mono font-bold text-[#1a237e]">
+                        {firmShare.toLocaleString("tr-TR")} ₺
+                      </td>
+                      <td className="py-3.5 px-4 text-right font-mono font-bold text-emerald-600 bg-emerald-50/30">
+                        {lawyerShare.toLocaleString("tr-TR")} ₺
+                      </td>
+                    </tr>
+                  )
+                })}
+                {rawLawyers.every(lawyer => {
+                   const lawyerClients = rawClients.filter(c => c.lawyerId === lawyer.id);
+                   return rawPayments
+                    .filter(p => lawyerClients.some(c => c.id === p.clientId))
+                    .filter(p => p.status === "paid" || p.type === "payment")
+                    .reduce((acc, p) => acc + p.amount, 0) === 0;
+                }) && (
+                  <tr>
+                    <td colSpan="4" className="py-8 text-center text-slate-400 text-xs font-bold">
+                      {at("Henüz hiçbir avukatın dosyasından tahsilat yapılmamış.")}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       
       {isModalOpen && (

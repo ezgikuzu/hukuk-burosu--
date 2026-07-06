@@ -310,9 +310,9 @@ export default function AdminDashboard() {
             { id: "clients", label: at("Tüm Müvekkiller"), icon: UserCheck },
             { id: "cases", label: at("Dosyalar"), icon: Briefcase },
             { id: "hearings", label: at("Duruşmalar / Randevular"), icon: Calendar },
-            { id: "finances", label: at("Finansal Alacaklar"), icon: DollarSign },
             { id: "document-generator", label: at("Evrak Oluştur"), icon: FileSignature },
             { id: "movements", label: at("Tüm Hareketler"), icon: RefreshCw },
+            { id: "finances", label: at("Finansal Alacaklar"), icon: DollarSign },
           ].map((tab) => {
             const Icon = tab.icon;
             return (
