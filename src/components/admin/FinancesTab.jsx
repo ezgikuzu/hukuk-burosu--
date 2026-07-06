@@ -33,7 +33,7 @@ export default function FinancesTab() {
     : rawCases;
 
   const payments = isLawyer
-    ? rawPayments.filter((p) => clients.some(c => c.id === p.clientId))
+    ? rawPayments.filter((p) => clients.some(c => c.id === p.clientId) || p.lawyerId === currentUser.id)
     : rawPayments;
 
   const [filterStatus, setFilterStatus] = useState("all");
@@ -47,6 +47,10 @@ export default function FinancesTab() {
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("pending");
   const [lawyerSharePct, setLawyerSharePct] = useState(50);
+  
+  const [isLawyerModalOpen, setIsLawyerModalOpen] = useState(false);
+  const [selectedLawyerId, setSelectedLawyerId] = useState("");
+  const [lawyerPaymentAmount, setLawyerPaymentAmount] = useState("");
 
   const openAddModal = () => {
     setClientId(clients[0]?.id || "");
@@ -57,6 +61,30 @@ export default function FinancesTab() {
     setDescription("");
     setStatus("pending");
     setIsModalOpen(true);
+  };
+
+  const handleLawyerPaymentSubmit = (e) => {
+    e.preventDefault();
+    const value = parseFloat(lawyerPaymentAmount);
+    if (isNaN(value) || value <= 0) {
+      dispatch(showToast({
+        message: language === "TR" ? "Lütfen geçerli bir tutar giriniz." : "Please enter a valid amount.",
+        type: "error"
+      }));
+      return;
+    }
+    const newPaymentObj = {
+      id: `pay_${Date.now()}`,
+      clientId: "SYSTEM",
+      lawyerId: selectedLawyerId,
+      amount: value,
+      type: "lawyer_payment",
+      date: new Date().toISOString().split("T")[0],
+      description: language === "TR" ? "Avukat Hak Ediş Ödemesi" : "Lawyer Commission Payment",
+      status: "paid",
+    };
+    dispatch(addPayment(newPaymentObj));
+    setIsLawyerModalOpen(false);
   };
 
   const handleFormSubmit = (e) => {
@@ -301,9 +329,11 @@ export default function FinancesTab() {
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
                           p.type === "payment" 
                             ? "bg-emerald-50 text-emerald-700" 
+                            : p.type === "lawyer_payment"
+                            ? "bg-purple-50 text-purple-700"
                             : "bg-indigo-50 text-indigo-700"
                         }`}>
-                          {p.type === "payment" ? t.finTypePayment.split(" (")[0] : t.finTypeInvoice.split(" (")[0]}
+                          {p.type === "payment" ? t.finTypePayment.split(" (")[0] : p.type === "lawyer_payment" ? at("Avukat Ödemesi") : t.finTypeInvoice.split(" (")[0]}
                         </span>
                       </td>
                       <td className={`py-3.5 px-4 font-mono font-bold ${isPaid ? "text-emerald-600" : "text-amber-600"}`}>
@@ -387,7 +417,10 @@ export default function FinancesTab() {
                   <th className="py-3 px-4">{at("Avukat Adı")}</th>
                   <th className="py-3 px-4 text-right">{at("Toplam Tahsilat")}</th>
                   <th className="py-3 px-4 text-right text-[#1a237e]">{at("Büro Payı")} (%{100 - lawyerSharePct})</th>
-                  <th className="py-3 px-4 text-right text-emerald-600">{at("Avukat Hak Edisi")} (%{lawyerSharePct})</th>
+                  <th className="py-3 px-4 text-right text-emerald-600">{at("Toplam Hak Edis")}</th>
+                  <th className="py-3 px-4 text-right text-purple-600">{at("Ödenen")}</th>
+                  <th className="py-3 px-4 text-right text-amber-600">{at("Kalan")}</th>
+                  <th className="py-3 px-4 text-right">{at("İşlem")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs text-slate-700 font-semibold">
@@ -402,6 +435,12 @@ export default function FinancesTab() {
                   
                   const lawyerShare = lawyerCollected * (lawyerSharePct / 100);
                   const firmShare = lawyerCollected - lawyerShare;
+                  
+                  const lawyerPaid = rawPayments
+                    .filter(p => p.type === "lawyer_payment" && p.lawyerId === lawyer.id)
+                    .reduce((acc, p) => acc + p.amount, 0);
+                    
+                  const lawyerRemaining = lawyerShare - lawyerPaid;
                   
                   return (
                     <tr key={lawyer.id} className="hover:bg-slate-50/50 transition-colors">
@@ -419,6 +458,24 @@ export default function FinancesTab() {
                       </td>
                       <td className="py-3.5 px-4 text-right font-mono font-bold text-emerald-600 bg-emerald-50/30">
                         {lawyerShare.toLocaleString("tr-TR")} ₺
+                      </td>
+                      <td className="py-3.5 px-4 text-right font-mono font-bold text-purple-600">
+                        {lawyerPaid.toLocaleString("tr-TR")} ₺
+                      </td>
+                      <td className="py-3.5 px-4 text-right font-mono font-bold text-amber-600 bg-amber-50/30">
+                        {lawyerRemaining.toLocaleString("tr-TR")} ₺
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        <button
+                          onClick={() => {
+                            setSelectedLawyerId(lawyer.id);
+                            setLawyerPaymentAmount(lawyerRemaining > 0 ? lawyerRemaining : "");
+                            setIsLawyerModalOpen(true);
+                          }}
+                          className="px-3 py-1 bg-[#1a237e] hover:bg-[#12185c] text-white text-[10px] font-bold rounded cursor-pointer transition-colors whitespace-nowrap"
+                        >
+                          {at("Ödeme Yap")}
+                        </button>
                       </td>
                     </tr>
                   )
@@ -585,6 +642,59 @@ export default function FinancesTab() {
                   className="px-4 py-2 bg-[#1a237e] hover:bg-[#12185c] text-white rounded-lg text-xs font-bold cursor-pointer border-b-2 border-indigo-950"
                 >
                   {t.save}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {isLawyerModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="px-6 py-4 bg-[#1a237e] text-white flex justify-between items-center border-b border-[#d4af37]/20">
+              <h3 className="font-serif text-base font-bold flex items-center gap-2">
+                <Landmark className="w-4.5 h-4.5 text-[#d4af37]" />
+                {at("Avukata Ödeme Yap")}
+              </h3>
+              <button
+                onClick={() => setIsLawyerModalOpen(false)}
+                className="text-white/80 hover:text-white hover:bg-white/10 p-1.5 rounded-full transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleLawyerPaymentSubmit} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  {at("Ödenecek Tutar")} (TRY) *
+                </label>
+                <input
+                  type="number"
+                  required
+                  min={1}
+                  step="0.01"
+                  value={lawyerPaymentAmount}
+                  onChange={(e) => setLawyerPaymentAmount(e.target.value)}
+                  placeholder="15000"
+                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1a237e] font-semibold"
+                />
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsLawyerModalOpen(false)}
+                  className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold cursor-pointer"
+                >
+                  {at("İptal")}
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-[#1a237e] hover:bg-[#12185c] text-white rounded-lg text-xs font-bold cursor-pointer border-b-2 border-indigo-950"
+                >
+                  {at("Ödemeyi Kaydet")}
                 </button>
               </div>
             </form>
