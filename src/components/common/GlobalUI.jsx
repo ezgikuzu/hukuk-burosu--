@@ -7,7 +7,7 @@ export default function GlobalUI() {
   const dispatch = useDispatch();
   const { toast, confirmDialog, language } = useSelector((state) => state.ui);
 
-  // Auto-hide toast after 4 seconds
+  // Bildirimi (toast) 4 saniye sonra otomatik olarak gizle
   useEffect(() => {
     if (toast.isVisible) {
       const timer = setTimeout(() => {

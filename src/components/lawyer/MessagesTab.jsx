@@ -20,28 +20,28 @@ export default function MessagesTab() {
 
   const isLawyer = currentUser?.role === "lawyer"; // giriş yapan kullanıcının avukat olup olmadığını kontrol eder.
 
-  // Filter clients list for lawyers (Excluding leads/visitors)
+  // Avukatlar için müvekkil listesini filtrele (Ziyaretçileri hariç tut)
   const clients = isLawyer
     ? rawClients.filter((cl) => cl.lawyerId === currentUser.id && !cl.id.startsWith("lead_"))
     : rawClients.filter((cl) => !cl.id.startsWith("lead_"));
 
-  // Chat States
+  // Sohbet Durumları (States)
   const [selectedClientId, setSelectedClientId] = useState(clients[0]?.id || "");
   const [typedMessage, setTypedMessage] = useState("");
 
-  // Memo States
+  // Duyuru Durumları (States)
   const [typedMemo, setTypedMemo] = useState("");
 
   const chatEndRef = useRef(null);
 
-  // Sync selectedClientId if clients list changes
+  // Müvekkil listesi değişirse selectedClientId'yi senkronize et
   useEffect(() => {
     if (clients.length > 0 && !clients.some(c => c.id === selectedClientId)) {
       setSelectedClientId(clients[0].id);
     }
   }, [clients]);
 
-  // Scroll to bottom when message list changes or client changes
+  // Mesaj listesi veya müvekkil değiştiğinde en alta kaydır
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, selectedClientId]);
@@ -86,12 +86,12 @@ export default function MessagesTab() {
     dispatch(deleteMemo(id));
   };
 
-  // Filter messages for current selected client & logged in lawyer
+  // Seçili müvekkil ve giriş yapmış avukat için mesajları filtrele
   const activeChatMessages = messages.filter((m) => {
     return (
       (m.senderId === selectedClientId && m.receiverId === currentUser?.id) ||
       (m.senderId === currentUser?.id && m.receiverId === selectedClientId) ||
-      // fallback in case of legacy initial messages that are linked between specific lawyers
+      // Belirli avukatlar arasında bağlantılı eski başlangıç mesajları olması durumunda yedek (fallback)
       (m.senderId === selectedClientId && m.receiverId === "lawyer_1" && currentUser?.id === "lawyer_1") ||
       (m.senderId === "lawyer_1" && m.receiverId === selectedClientId && currentUser?.id === "lawyer_1")
     );
@@ -102,9 +102,9 @@ export default function MessagesTab() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in">
 
-      {/* LEFT SECTION: Secure Client Chat (7 Cols) */}
+      {/* SOL BÖLÜM: Güvenli Müvekkil Sohbeti (7 Kolon) */}
       <div className="lg:col-span-7 bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden flex flex-col h-[560px]">
-        {/* Chat Header */}
+        {/* Sohbet Başlığı */}
         <div className="px-5 py-3.5 bg-gradient-to-r from-[#1a237e] to-[#283593] text-white border-b border-[#d4af37]/20 shrink-0 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center border border-[#d4af37]/30">
@@ -118,7 +118,7 @@ export default function MessagesTab() {
             </div>
           </div>
 
-          {/* Client Selector Dropdown */}
+          {/* Müvekkil Seçim Menüsü */}
           <select
             value={selectedClientId}
             onChange={(e) => setSelectedClientId(e.target.value)}
@@ -136,7 +136,7 @@ export default function MessagesTab() {
           </select>
         </div>
 
-        {/* Chat Messages Body */}
+        {/* Sohbet Mesajları Gövdesi */}
         <div className="flex-1 overflow-y-auto p-5 bg-slate-50 space-y-3.5">
           {clients.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-1.5 text-xs font-bold">
@@ -186,7 +186,7 @@ export default function MessagesTab() {
           <div ref={chatEndRef} />
         </div>
 
-        {/* Chat Input Footer */}
+        {/* Sohbet Girdi Alanı (Footer) */}
         <form onSubmit={handleSendMessage} className="p-3 bg-white border-t border-slate-100 shrink-0 flex gap-2">
           <input
             disabled={clients.length === 0}
@@ -206,9 +206,9 @@ export default function MessagesTab() {
         </form>
       </div>
 
-      {/* RIGHT SECTION: Lawyers Bulletin/Notice Board (5 Cols) */}
+      {/* SAĞ BÖLÜM: Avukatlar İlan/Duyuru Panosu (5 Kolon) */}
       <div className="lg:col-span-5 space-y-5">
-        {/* Memo Input Card */}
+        {/* Duyuru Ekleme Kartı */}
         <div className="p-5 bg-white rounded-xl border border-slate-100 shadow-sm space-y-4">
           <h3 className="font-serif text-sm font-bold text-slate-800 flex items-center gap-1.5">
             <Pin className="w-4.5 h-4.5 text-[#d4af37]" />
@@ -233,7 +233,7 @@ export default function MessagesTab() {
           </form>
         </div>
 
-        {/* Memos List */}
+        {/* Duyurular Listesi */}
         <div className="space-y-3 max-h-[340px] overflow-y-auto pr-1">
           {memos.map((m) => {
             const timeFormatted = new Date(m.timestamp).toLocaleDateString(language === "TR" ? "tr-TR" : "en-US", {

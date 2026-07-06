@@ -20,28 +20,28 @@ export default function ClientDashboard() {
   const t = DICTIONARY[language];
   const at = (text) => autoTranslate(text, language);
 
-  // Store lists
+  // Redux Store'dan alınan listeler
   const cases = useSelector((state) => state.cases.list);
   const documents = useSelector((state) => state.documents.list);
   const payments = useSelector((state) => state.payments.list);
   const lawyers = useSelector((state) => state.lawyers.list);
   const messages = useSelector((state) => state.messages.list);
 
-  // Active navigation tab
+  // Aktif navigasyon sekmesi
   const [activeTab, setActiveTab] = useState("overview");
 
-  // Selected case for details view
+  // Detay görünümü için seçili dava
   const [selectedCase, setSelectedCase] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [activeTab]);
 
-  // Selected document viewer
+  // Görüntülenmek üzere seçilmiş evrak
   const [viewingDoc, setViewingDoc] = useState(null);
   const [videoRoom, setVideoRoom] = useState(null);
 
-  // Payment States
+  // Ödeme Durumları (States)
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -68,35 +68,35 @@ export default function ClientDashboard() {
     }, 1500);
   };
 
-  // Chat message input
+  // Sohbet mesajı girdi alanı
   const [typedMessage, setTypedMessage] = useState("");
   const chatEndRef = useRef(null);
 
-  // Filter client-specific records
+  // Sadece bu müvekkile ait kayıtları filtrele
   const myCases = cases.filter(c => c.clientId === currentUser?.id);
   const myDocuments = documents.filter(d => d.clientId === currentUser?.id);
   const myPayments = payments.filter(p => p.clientId === currentUser?.id);
 
-  // Find my assigned lawyer
+  // Bana atanan avukatı bul
   const myLawyer = lawyers.find(l => l.id === currentUser?.lawyerId) || lawyers[0];
 
-  // My hearings (hearings linked to my cases)
+  // Benim duruşmalarım (davalarıma bağlı duruşmalar)
   const myCaseIds = myCases.map(c => c.id);
   const hearings = useSelector((state) => state.hearings.list);
   const myHearings = hearings.filter(h => myCaseIds.includes(h.caseId));
 
-  // Chat messages between me and my lawyer
+  // Benimle avukatım arasındaki sohbet mesajları
   const myChatMessages = messages.filter(m => {
     return (
       (m.senderId === currentUser?.id && m.receiverId === myLawyer.id) ||
       (m.senderId === myLawyer.id && m.receiverId === currentUser?.id) ||
-      // legacy initial messages logic
+      // eski başlangıç mesajları mantığı (yedek)
       (m.senderId === currentUser?.id && m.receiverId === "lawyer_1" && myLawyer.id === "lawyer_1") ||
       (m.senderId === "lawyer_1" && m.receiverId === currentUser?.id && myLawyer.id === "lawyer_1")
     );
   });
 
-  // Auto scroll chat to bottom
+  // Sohbeti otomatik olarak en alta kaydır
   useEffect(() => {
     if (activeTab === "messages") {
       chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -130,16 +130,16 @@ export default function ClientDashboard() {
   };
 
   const handleDownloadPDF = async (doc) => {
-    // Determine which document to download (either passed doc or the currently viewing doc)
+    // Hangi belgenin indirileceğini belirle (aktarılan belge veya şu an görüntülenen)
     const documentObj = doc && doc.id ? doc : viewingDoc;
     if (!documentObj) return;
 
-    // Create a temporary off-screen element for perfect formatting
+    // Kusursuz formatlama için geçici (ekran dışı) bir html elementi oluştur
     const tempDiv = document.createElement("div");
     tempDiv.style.position = "absolute";
     tempDiv.style.left = "-9999px";
     tempDiv.style.top = "0";
-    tempDiv.style.width = "800px"; // Fixed width for A4 aspect ratio approximation
+    tempDiv.style.width = "800px"; // A4 kağıt oranını yakalamak için sabit genişlik
     tempDiv.style.padding = "40px";
     tempDiv.style.backgroundColor = "white";
     tempDiv.style.fontFamily = "serif";
@@ -148,7 +148,7 @@ export default function ClientDashboard() {
     tempDiv.style.whiteSpace = "pre-wrap";
     tempDiv.style.color = "#1e293b";
 
-    // Header
+    // Başlık
     const header = document.createElement("h2");
     header.style.fontSize = "24px";
     header.style.fontWeight = "bold";
@@ -158,11 +158,11 @@ export default function ClientDashboard() {
     header.style.color = "#1a237e";
     header.innerText = documentObj.name;
 
-    // Content
+    // İçerik
     const content = document.createElement("div");
     content.innerText = documentObj.content || (language === "TR" ? "İçerik bulunamadı." : "No content found.");
 
-    // Footer
+    // Alt Bilgi (Footer)
     const footer = document.createElement("div");
     footer.style.marginTop = "40px";
     footer.style.paddingTop = "10px";
@@ -202,11 +202,11 @@ export default function ClientDashboard() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans animate-fade-in">
 
-      {/* 1. TOP HEADER NAVIGATION BAR */}
+      {/* 1. ÜST BAŞLIK NAVİGASYON ÇUBUĞU */}
       <header className="w-full bg-[#1a237e] text-white sticky top-0 z-30 border-b border-[#d4af37]/25 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
 
-          {/* Logo brand */}
+          {/* Logo ve Marka */}
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center border border-[#d4af37]/30">
               <Scale className="w-5 h-5 text-[#d4af37]" />
@@ -217,7 +217,7 @@ export default function ClientDashboard() {
             </div>
           </div>
 
-          {/* Quick tab switch (Tablet/Desktop) */}
+          {/* Hızlı sekme geçişi (Tablet/Masaüstü) */}
           <nav className="hidden md:flex gap-1.5 bg-white/5 p-1 rounded-lg border border-white/10 text-xs">
             <button
               onClick={() => { setActiveTab("overview"); setSelectedCase(null); }}
@@ -256,7 +256,7 @@ export default function ClientDashboard() {
             </button>
           </nav>
 
-          {/* Right Utilities */}
+          {/* Sağ Araçlar */}
           <div className="flex items-center gap-3">
             <LanguageSelector />
 
@@ -271,7 +271,7 @@ export default function ClientDashboard() {
         </div>
       </header>
 
-      {/* 2. MOBILE NAVIGATION TABS (Visible only on small screens) */}
+      {/* 2. MOBİL NAVİGASYON SEKMELERİ (Sadece küçük ekranlarda görünür) */}
       <div className="md:hidden bg-white border-b border-slate-100 flex overflow-x-auto p-2 scrollbar-none gap-1 shrink-0">
         <button
           onClick={() => { setActiveTab("overview"); setSelectedCase(null); }}
@@ -310,12 +310,12 @@ export default function ClientDashboard() {
         </button>
       </div>
 
-      {/* 3. DYNAMIC CONTENT AREA */}
+      {/* 3. DİNAMİK İÇERİK ALANI */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
         {activeTab === "overview" && (
           <div className="space-y-6">
 
-            {/* Welcome banner */}
+            {/* Karşılama Alanı */}
             <div className="p-6 bg-gradient-to-r from-[#1a237e] to-[#283593] rounded-2xl text-white border border-[#d4af37]/20 shadow-md">
               <span className="text-[10px] uppercase tracking-widest text-[#d4af37] font-bold">{at("Müvekkil Güvenli Portalı")}</span>
               <h2 className="font-serif text-2xl font-bold mt-1">
@@ -328,10 +328,10 @@ export default function ClientDashboard() {
               </p>
             </div>
 
-            {/* Subgrid: Assigned lawyer card + Next hearings */}
+            {/* Alt Grid: Atanan avukat kartı + Gelecek duruşmalar */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-              {/* My Lawyer (Assigned Attorney Card) */}
+              {/* Avukatım (Atanan Avukat Kartı) */}
               <div className="lg:col-span-5 bg-white rounded-xl border border-slate-100 shadow-sm p-6 flex flex-col justify-between">
                 <div>
                   <h3 className="font-serif text-sm font-bold text-[#1a237e] pb-3 border-b border-slate-100 mb-4 flex items-center gap-1.5">
@@ -374,7 +374,7 @@ export default function ClientDashboard() {
                 </button>
               </div>
 
-              {/* Next Court dates & Status */}
+              {/* Gelecek Duruşma tarihleri ve Durumları */}
               <div className="lg:col-span-7 bg-white rounded-xl border border-slate-100 shadow-sm p-6">
                 <h3 className="font-serif text-sm font-bold text-[#1a237e] pb-3 border-b border-slate-100 mb-4 flex items-center gap-1.5">
                   <Calendar className="w-4 h-4 text-[#d4af37]" />

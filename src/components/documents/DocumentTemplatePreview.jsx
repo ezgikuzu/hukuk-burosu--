@@ -19,7 +19,7 @@ export default function DocumentTemplatePreview({ draftContent, documentTitle, o
     if (!element) return;
 
     try {
-      // Create a clone to render purely for PDF without textarea scrollbars/borders
+      // Metin alanı kaydırma çubukları/kenarlıkları olmadan tamamen PDF için oluşturulmak üzere bir kopya oluşturun
       const tempDiv = document.createElement("div");
       tempDiv.style.position = "absolute";
       tempDiv.style.left = "-9999px";

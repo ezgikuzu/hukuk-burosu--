@@ -23,7 +23,7 @@ export default function FinancesTab() {
 
   const isLawyer = currentUser?.role === "lawyer";
 
-  // Filter clients, cases, and payments for active lawyer
+  // Aktif avukat için müvekkil, dava ve ödemeleri filtrele
   const clients = isLawyer 
     ? rawClients.filter((cl) => cl.lawyerId === currentUser.id)
     : rawClients;
@@ -36,10 +36,10 @@ export default function FinancesTab() {
     ? rawPayments.filter((p) => clients.some(c => c.id === p.clientId))
     : rawPayments;
 
-  // Filter
+  // Filtre
   const [filterStatus, setFilterStatus] = useState("all");
 
-  // Form states
+  // Form Durumları (States)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clientId, setClientId] = useState("");
   const [caseId, setCaseId] = useState("");
@@ -49,7 +49,7 @@ export default function FinancesTab() {
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("pending");
 
-  // Open modal
+  // Modalı aç
   const openAddModal = () => {
     setClientId(clients[0]?.id || "");
     setCaseId(cases[0]?.id || "");
@@ -88,7 +88,7 @@ export default function FinancesTab() {
       type,
       date,
       description,
-      status: type === "payment" ? "paid" : status, // Payments are always paid
+      status: type === "payment" ? "paid" : status, // Ödemeler her zaman ödendi olarak işaretlenir
     };
 
     dispatch(addPayment(newPaymentObj));
@@ -106,7 +106,7 @@ export default function FinancesTab() {
     }));
   };
 
-  // Compute Metrics
+  // Metrikleri Hesapla
   const totalInvoiced = payments
     .filter(p => p.type === "invoice")
     .reduce((acc, p) => acc + p.amount, 0);
@@ -119,7 +119,7 @@ export default function FinancesTab() {
     .filter(p => p.type === "invoice" && p.status === "pending")
     .reduce((acc, p) => acc + p.amount, 0);
 
-  // Filtered Payments
+  // Filtrelenmiş Ödemeler
   const filteredPayments = payments.filter((p) => {
     if (filterStatus === "all") return true;
     if (filterStatus === "paid") return p.status === "paid" || p.type === "payment";
@@ -127,7 +127,7 @@ export default function FinancesTab() {
     return true;
   }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  // Prepare chart data
+  // Grafik verilerini hazırla
   const chartData = clients.map((client) => {
     const clientPayments = payments.filter((p) => p.clientId === client.id);
     const paidSum = clientPayments
@@ -138,7 +138,7 @@ export default function FinancesTab() {
       .reduce((acc, p) => acc + p.amount, 0);
 
     return {
-      name: client.name.split(" ")[0], // first name for tidy labels
+      name: client.name.split(" ")[0], // düzenli etiketler için ilk isim
       [language === "TR" ? "Tahsil Edilen" : "Collected"]: paidSum,
       [language === "TR" ? "Bekleyen" : "Pending"]: pendingSum,
     };
@@ -146,7 +146,7 @@ export default function FinancesTab() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Header and Add Button */}
+      {/* Başlık ve Ekleme Butonu */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
         <div>
           <h2 className="font-serif text-lg font-bold text-[#1a237e]">{t.financeList}</h2>
@@ -166,9 +166,9 @@ export default function FinancesTab() {
         </button>
       </div>
 
-      {/* Financial Overview Metrics */}
+      {/* Finansal Özet Metrikleri */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Total Invoiced */}
+        {/* Toplam Talep Edilen */}
         <div className="p-5 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 animate-fade-in">
           <div className="p-3.5 rounded-lg bg-indigo-50 text-[#1a237e]">
             <FileText className="w-5.5 h-5.5" />
@@ -179,7 +179,7 @@ export default function FinancesTab() {
           </div>
         </div>
 
-        {/* Total Collected */}
+        {/* Toplam Tahsil Edilen */}
         <div className="p-5 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 animate-fade-in">
           <div className="p-3.5 rounded-lg bg-emerald-50 text-emerald-600">
             <CheckCircle2 className="w-5.5 h-5.5" />
@@ -190,7 +190,7 @@ export default function FinancesTab() {
           </div>
         </div>
 
-        {/* Total Pending */}
+        {/* Toplam Bekleyen */}
         <div className="p-5 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center gap-4 animate-fade-in">
           <div className="p-3.5 rounded-lg bg-amber-50 text-amber-600">
             <AlertCircle className="w-5.5 h-5.5" />
@@ -202,7 +202,7 @@ export default function FinancesTab() {
         </div>
       </div>
 
-      {/* Chart Section */}
+      {/* Grafik Bölümü */}
       <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm animate-fade-in">
         <h3 className="font-serif text-sm font-bold text-[#1a237e] mb-4">
           {t.revenueChart}
@@ -233,9 +233,9 @@ export default function FinancesTab() {
         </div>
       </div>
 
-      {/* Filter and Ledger Table */}
+      {/* Filtre ve Cari Hesap Tablosu */}
       <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden animate-fade-in">
-        {/* Filter Toolbar */}
+        {/* Filtreleme Araç Çubuğu */}
         <div className="p-4 bg-slate-50 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <h3 className="text-xs font-bold text-slate-700">
             {language === "TR" ? "Cari Hesap Ekstresi" : "Cari Account Statement"}
@@ -269,7 +269,7 @@ export default function FinancesTab() {
           </div>
         </div>
 
-        {/* Ledger Table */}
+        {/* Cari Hesap Tablosu */}
         {filteredPayments.length === 0 ? (
           <div className="py-12 text-center text-slate-400 text-xs font-bold">{t.noData}</div>
         ) : (
@@ -349,11 +349,11 @@ export default function FinancesTab() {
         )}
       </div>
 
-      {/* Add Finance Record Modal */}
+      {/* Finansal Kayıt Ekleme Modalı */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
           <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl w-full max-w-md overflow-hidden">
-            {/* Modal Header */}
+            {/* Modal Başlığı */}
             <div className="px-6 py-4 bg-[#1a237e] text-white flex justify-between items-center border-b border-[#d4af37]/20">
               <h3 className="font-serif text-base font-bold flex items-center gap-2">
                 <Landmark className="w-4.5 h-4.5 text-[#d4af37]" />
@@ -367,7 +367,7 @@ export default function FinancesTab() {
               </button>
             </div>
 
-            {/* Modal Body */}
+            {/* Modal Gövdesi */}
             <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
@@ -478,7 +478,7 @@ export default function FinancesTab() {
                 />
               </div>
 
-              {/* Footer */}
+              {/* Alt Bilgi (Footer) */}
               <div className="pt-4 border-t border-slate-100 flex justify-end gap-2">
                 <button
                   type="button"

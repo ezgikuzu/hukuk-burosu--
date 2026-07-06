@@ -101,7 +101,7 @@ export const documentCategories = [
   }
 ];
 
-// Helper to generate the default text template
+// Varsayılan metin şablonunu oluşturmak için yardımcı fonksiyon
 export function generateDraftContent(formData, categoryTitle, templateTitle, authority) {
   const dateStr = formData.date ? new Date(formData.date).toLocaleDateString("tr-TR") : "";
   const today = new Date().toLocaleDateString("tr-TR");

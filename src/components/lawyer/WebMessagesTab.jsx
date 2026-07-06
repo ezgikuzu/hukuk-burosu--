@@ -16,26 +16,26 @@ export default function WebMessagesTab() {
 
   const isLawyer = currentUser?.role === "lawyer";
 
-  // Filter clients list for lawyers, ONLY show leads (from contact form)
-  // If lawyerId is "all", all lawyers should see it.
+  // Avukatlar için müvekkil listesini filtrele, SADECE lead'leri (iletişim formundan gelenleri) göster
+  // Eğer lawyerId "all" ise, tüm avukatlar görebilir.
   const leads = isLawyer 
     ? rawClients.filter((cl) => (cl.lawyerId === currentUser.id || cl.lawyerId === "all") && cl.id.startsWith("lead_"))
     : rawClients.filter((cl) => cl.id.startsWith("lead_"));
 
-  // Chat States
+  // Sohbet Durumları (States)
   const [selectedLeadId, setSelectedLeadId] = useState(leads[0]?.id || "");
   const [typedMessage, setTypedMessage] = useState("");
 
   const chatEndRef = useRef(null);
 
-  // Sync selectedLeadId if leads list changes
+  // Lead listesi değişirse selectedLeadId'yi senkronize et
   useEffect(() => {
     if (leads.length > 0 && !leads.some(c => c.id === selectedLeadId)) {
       setSelectedLeadId(leads[0].id);
     }
   }, [leads]);
 
-  // Scroll to bottom when message list changes or lead changes
+  // Mesaj listesi veya lead değiştiğinde en alta kaydır
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, selectedLeadId]);
@@ -60,19 +60,19 @@ export default function WebMessagesTab() {
 
   const activeLead = leads.find(c => c.id === selectedLeadId);
 
-  // Filter messages for current selected lead
+  // Geçerli seçili lead için mesajları filtrele
   const activeChatMessages = messages.filter((m) => {
-    // If the message is from the lead
+    // Eğer mesaj lead'den geliyorsa
     if (m.senderId === selectedLeadId) {
       return m.receiverId === currentUser?.id || m.receiverId === "all";
     }
-    // If the message is to the lead
+    // Eğer mesaj lead'e gönderiliyorsa
     if (m.receiverId === selectedLeadId) {
-      // If the lead is assigned to "all", ANY lawyer can see ANY lawyer's reply to this lead
+      // Eğer lead "all" olarak atanmışsa, HERHANGİ BİR avukat bu lead'e verilen herhangi bir yanıtı görebilir
       if (activeLead?.lawyerId === "all") {
         return true;
       }
-      // Otherwise, only the assigned lawyer sees their own replies
+      // Aksi takdirde, sadece atanan avukat kendi yanıtlarını görür
       return m.senderId === currentUser?.id;
     }
     return false;
@@ -81,9 +81,9 @@ export default function WebMessagesTab() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in">
       
-      {/* LEFT SECTION: Lead Chat (12 Cols) */}
+      {/* SOL BÖLÜM: Lead Sohbeti (12 Sütun) */}
       <div className="lg:col-span-12 bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden flex flex-col h-[650px]">
-        {/* Chat Header */}
+        {/* Sohbet Başlığı */}
         <div className="px-5 py-4 bg-gradient-to-r from-[#1a237e] to-[#283593] text-white border-b border-[#d4af37]/20 shrink-0 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border border-white/30">
@@ -97,7 +97,7 @@ export default function WebMessagesTab() {
             </div>
           </div>
 
-          {/* Lead Selector Dropdown */}
+          {/* Lead Seçici Açılır Menü */}
           <select
             value={selectedLeadId}
             onChange={(e) => setSelectedLeadId(e.target.value)}
@@ -115,7 +115,7 @@ export default function WebMessagesTab() {
           </select>
         </div>
 
-        {/* Chat Messages Body */}
+        {/* Sohbet Mesajları Gövdesi */}
         <div className="flex-1 overflow-y-auto p-5 md:p-8 bg-slate-50 space-y-4">
           {leads.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-2 text-xs font-bold">
@@ -131,7 +131,7 @@ export default function WebMessagesTab() {
             activeChatMessages.map((msg, idx) => {
               const isMine = msg.senderId === currentUser?.id;
               
-              // Clean up the initial form message format for better readability
+              // Daha iyi okunabilirlik için ilk form mesajı biçimini temizle
               let displayContent = msg.content;
               if (!isMine && msg.content.includes("İletişim Formu:")) {
                 const parts = msg.content.split('\n');
@@ -167,7 +167,7 @@ export default function WebMessagesTab() {
           <div ref={chatEndRef} />
         </div>
 
-        {/* Chat Input */}
+        {/* Sohbet Girdisi */}
         {leads.length > 0 && (
           <div className="p-4 bg-white border-t border-slate-100 shrink-0">
             <form onSubmit={handleSendMessage} className="flex gap-2">

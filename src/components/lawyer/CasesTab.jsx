@@ -161,7 +161,7 @@ export default function CasesTab() {
 
   return (
     <div className="space-y-6">
-      {/* Header and Add Button */}
+      {/* Başlık ve Ekleme Butonu */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-xl border border-slate-100 shadow-sm animate-fade-in">
         <div>
           <h2 className="font-serif text-lg font-bold text-[#1a237e]">{t.caseList}</h2>
@@ -183,9 +183,9 @@ export default function CasesTab() {
       </div>
 
       //arama kutusunu oluşturur. kullanıcı buraya yazdıkça dava listesi filtrelenir.
-      {/* Search and Filters Grid */}
+      {/* Arama ve Filtreler Izgarası */}
       <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-3">
-        {/* Search Input */}
+        {/* Arama Girdisi (Input) */}
         <div className="relative md:col-span-6">
           <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
           <input
@@ -197,7 +197,7 @@ export default function CasesTab() {
           />
         </div>
 
-        {/* Status Filter */}
+        {/* Durum Filtresi */}
         <div className="md:col-span-3">
           <select
             value={statusFilter}
@@ -213,7 +213,7 @@ export default function CasesTab() {
           </select>
         </div>
 
-        {/* Lawyer Filter */}
+        {/* Avukat Filtresi */}
         <div className="md:col-span-3">
           <select
             disabled={isLawyer}
@@ -234,7 +234,7 @@ export default function CasesTab() {
       </div>
 
 //Filtrelenmiş davaları kartlar halinde ekranda göstermek. Eğer hiç dava yoksa "Veri Yok" mesajını göstermek.
-      {/* Cases List */}
+      {/* Davalar Listesi */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {filteredCases.length === 0 ? (
           <div className="lg:col-span-2 py-12 text-center text-slate-400 bg-white rounded-xl border border-slate-100 text-xs shadow-sm font-bold">
@@ -251,7 +251,7 @@ export default function CasesTab() {
                 className="bg-white rounded-xl border border-slate-100 shadow-sm p-5 hover:shadow-md transition-shadow flex flex-col justify-between" // davanın kartının stilini belirtir.     
               >
                 <div>
-                  {/* Card Header (Dava dosya No + Durum Rozeti) */}
+                  {/* Kart Başlığı (Dava dosya No + Durum Rozeti) */}
                   <div className="flex justify-between items-start gap-2 mb-3">
                     <span className="font-serif text-sm font-bold text-[#1a237e] tracking-tight bg-slate-100 px-2.5 py-1 rounded">
                       {c.fileNo} // dosya numarası ekrana yazdırır.
@@ -273,7 +273,7 @@ export default function CasesTab() {
                   </div>
 
 //Bu bölüm, her dava kartının orta kısmını oluşturur. Burada sırasıyla dava konusu, mahkeme bilgisi ve dava açıklaması gösterilir.
-                  {/* Subject and Court */}
+                  {/* Konu ve Mahkeme */}
                   <h3 className="text-sm font-bold text-slate-800 line-clamp-1 mb-1" title={c.subject}>
                     {c.subject} //dava konusu yazar.
                   </h3>
@@ -287,7 +287,7 @@ export default function CasesTab() {
                   </p>
                 </div>
 
-                {/* Card Footer: Metadata and Action Buttons */}
+                {/* Kart Alt Bilgisi: Meta Veriler ve Eylem Butonları */}
                 <div className="border-t border-slate-50 pt-4 flex flex-col sm:flex-row gap-3 justify-between items-stretch sm:items-center">
                   <div className="space-y-1 text-[11px] font-semibold">
                     <p className="text-slate-600">
@@ -328,11 +328,11 @@ export default function CasesTab() {
         )}
       </div>
 
-      {/* Add / Edit Case Modal */}
+      {/* Dava Ekle / Düzenle Modalı */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
           <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
-            {/* Modal Header */}
+            {/* Modal Başlığı */}
             <div className="px-6 py-4 bg-gradient-to-r from-[#1a237e] to-[#283593] text-white flex justify-between items-center border-b border-[#d4af37]/20">
               <h3 className="font-serif text-base font-bold flex items-center gap-2">
                 <Scale className="w-4 h-4 text-[#d4af37]" />
@@ -346,7 +346,7 @@ export default function CasesTab() {
               </button>
             </div>
 
-            {/* Modal Body */}
+            {/* Modal Gövdesi */}
             <form onSubmit={handleFormSubmit} className="p-6 space-y-4 flex-1">
               {validationError && (
                 <div className="p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-xs rounded flex items-center gap-2 font-bold animate-pulse">
@@ -495,7 +495,7 @@ export default function CasesTab() {
                 />
               </div>
 
-              {/* Modal Footer */}
+              {/* Modal Alt Bilgisi (Footer) */}
               <div className="pt-4 border-t border-slate-100 flex justify-end gap-2">
                 <button
                   type="button"

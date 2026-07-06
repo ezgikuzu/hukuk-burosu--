@@ -21,17 +21,17 @@ export default function CalendarTab() {
 
   const isLawyer = currentUser?.role === "lawyer";
 
-  // Filter cases and hearings for active lawyer
+  // Aktif avukat için davaları ve duruşmaları filtrele
   const cases = isLawyer
     ? rawCases.filter((c) => c.lawyerId === currentUser.id)
     : rawCases;
 
-  const hearings = rawHearings; // Allow all lawyers to view the global calendar pool
+  const hearings = rawHearings; // Tüm avukatların genel takvim havuzunu görmesine izin ver
 
-  // Filter
+  // Filtre
   const [selectedLawyerId, setSelectedLawyerId] = useState(isLawyer ? currentUser.id : "all");
 
-  // Form states
+  // Form Durumları (States)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [caseId, setCaseId] = useState("");
   const [title, setTitle] = useState("");
@@ -43,8 +43,8 @@ export default function CalendarTab() {
   const [validationError, setValidationError] = useState(null);
   const [videoRoom, setVideoRoom] = useState(null);
 
-  // Navigation of mock calendar months
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 6, 1)); // July 2026
+  // Sahte takvim aylarında gezinme
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 6, 1)); // Temmuz 2026
   const [selectedDate, setSelectedDate] = useState(null);
 
   // Yeni Duruşma penceresini temiz bir şekilde açmak ve tüm alanları başlangıç değerlerine döndürmektir.
@@ -111,7 +111,7 @@ export default function CalendarTab() {
   const daysInMonth = getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth());
   const firstDayIndex = getFirstDayOfMonth(currentDate.getFullYear(), currentDate.getMonth());
 
-  // Format Month Title
+  // Ay Başlığını Biçimlendir
   const monthNamesTR = [
     "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
     "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
@@ -144,12 +144,13 @@ export default function CalendarTab() {
 
   // Belirli bir takvim gününde duruşma olup olmadığını kontrol etme
   const getDayHearings = (day) => {
+    if (!currentDate) return [];
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, "0");
     const dayStr = String(day).padStart(2, "0");
     const datePrefix = `${year}-${month}-${dayStr}`;
 
-    return filteredHearings.filter(h => h.dateTime.startsWith(datePrefix));
+    return filteredHearings.filter(h => h && h.dateTime && h.dateTime.startsWith(datePrefix));
   };
 
   const displayedAgendaHearings = selectedDate
@@ -158,7 +159,7 @@ export default function CalendarTab() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Header and Add Button */}
+      {/* Başlık ve Ekleme Butonu */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
         <div>
           <h2 className="font-serif text-lg font-bold text-[#1a237e]">{t.calendarTitle}</h2>
@@ -178,9 +179,9 @@ export default function CalendarTab() {
         </button>
       </div>
 
-      {/* Main Grid: Mock Calendar Grid (Left 7 cols) & Scheduled List (Right 5 cols) */}
+      {/* Ana Izgara: Sahte Takvim Izgarası (Sol 7 sütun) ve Planlananlar Listesi (Sağ 5 sütun) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Side: Mock Interactive Grid */}
+        {/* Sol Taraf: Sahte Etkileşimli Izgara */}
         <div className="lg:col-span-7 bg-white rounded-xl border border-slate-100 shadow-sm p-5 space-y-4">
           <div className="flex justify-between items-center pb-2 border-b border-slate-50">
             <h3 className="font-serif text-base font-bold text-[#1a237e] flex items-center gap-2">
@@ -204,25 +205,25 @@ export default function CalendarTab() {
             </div>
           </div>
 
-          {/* Calendar Grid */}
+          {/* Takvim Izgarası */}
           <div className="grid grid-cols-7 text-center gap-1">
-            {/* Weekdays */}
+            {/* Haftanın Günleri */}
             {["Pz", "Pt", "Sa", "Ça", "Pe", "Cu", "Ct"].map((d, idx) => (
               <span key={idx} className="text-[10px] font-bold text-slate-400 uppercase py-1.5">
                 {language === "TR" ? d : ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"][idx]}
               </span>
             ))}
 
-            {/* Empty cells before month start */}
+            {/* Ay başlangıcından önceki boş hücreler */}
             {Array.from({ length: firstDayIndex }).map((_, idx) => (
               <div key={`empty-${idx}`} className="h-14 bg-slate-50/50 rounded-lg" />
             ))}
 
-            {/* Day cells */}
+            {/* Gün hücreleri */}
             {Array.from({ length: daysInMonth }).map((_, idx) => {
               const day = idx + 1;
               const dayHearings = getDayHearings(day);
-              const isToday = day === 30 && currentDate.getMonth() === 5; // June 30, 2026
+              const isToday = day === 30 && currentDate.getMonth() === 5; // 30 Haziran 2026
               const isSelected = selectedDate === day;
 
               return (
@@ -258,7 +259,7 @@ export default function CalendarTab() {
             })}
           </div>
 
-          {/* Legend */}
+          {/* Açıklama (Legend) */}
           <div className="pt-3 border-t border-slate-100 flex flex-wrap gap-4 text-[10px] text-slate-500 font-bold justify-center">
             {lawyers.map((l) => (
               <div key={l.id} className="flex items-center gap-1.5">
@@ -269,7 +270,7 @@ export default function CalendarTab() {
           </div>
         </div>
 
-        {/* Right Side: Agenda List */}
+        {/* Sağ Taraf: Ajanda Listesi */}
         <div className="lg:col-span-5 bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex flex-col justify-between">
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-50 pb-2">
@@ -288,7 +289,7 @@ export default function CalendarTab() {
                 )}
               </div>
 
-              {/* Lawyer Filter Selector */}
+              {/* Avukat Filtre Seçici */}
               <select
                 value={selectedLawyerId}
                 onChange={(e) => setSelectedLawyerId(e.target.value)}
@@ -360,7 +361,7 @@ export default function CalendarTab() {
                           </button>
                         )}
 
-                        {/* Delete button only if the lawyer is authorized */}
+                        {/* Sadece avukat yetkiliyse silme butonu */}
                         <button
                           onClick={() => handleDelete(h.id)}
                           className="text-slate-300 hover:text-red-600 p-0.5 rounded transition-colors cursor-pointer mt-1"
@@ -378,11 +379,11 @@ export default function CalendarTab() {
         </div>
       </div>
 
-      {/* Add Hearing Modal */}
+      {/* Duruşma Ekleme Modalı */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
           <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl w-full max-w-lg overflow-hidden">
-            {/* Modal Header */}
+            {/* Modal Başlığı */}
             <div className="px-6 py-4 bg-gradient-to-r from-[#1a237e] to-[#283593] text-white flex justify-between items-center border-b border-[#d4af37]/20">
               <h3 className="font-serif text-base font-bold flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#d4af37]" />
@@ -396,7 +397,7 @@ export default function CalendarTab() {
               </button>
             </div>
 
-            {/* Modal Body */}
+            {/* Modal Gövdesi */}
             <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
               {validationError && (
                 <div className="p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-xs rounded flex items-center gap-2 font-bold">
@@ -546,7 +547,7 @@ export default function CalendarTab() {
         </div>
       )}
 
-      {/* Video Meeting Fullscreen View */}
+      {/* Görüntülü Görüşme Tam Ekran Görünümü */}
       {videoRoom && ( // videoRoom && (...) → Eğer bir görüntülü görüşme odası varsa, görüşme ekranını göster.
         <VideoMeeting //<VideoMeeting /> → Görüntülü görüşme ekranını açar.
           roomName={videoRoom} // roomName={videoRoom} → Bağlanılacak toplantı odasını gönderir.

@@ -17,7 +17,7 @@ export default function LandingPage({ onLoginClick }) {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const currentUser = useSelector((state) => state.auth.currentUser);
 
-  // Slider State
+  // Slayt Durumu
   const [currentSlide, setCurrentSlide] = useState(0);
   const slides = [
     {
@@ -36,7 +36,7 @@ export default function LandingPage({ onLoginClick }) {
     }
   ];
 
-  // Auto slide every 5 seconds
+  // Her 5 saniyede bir otomatik kaydır
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -52,15 +52,15 @@ export default function LandingPage({ onLoginClick }) {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
-  // Contact Form State
+  // İletişim Formu Durumu
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "", lawyer: "" });
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  // Virtual Detail Router States (for Practice areas, Lawyers and Blogs)
+  // Sanal Detay Yönlendirici Durumları (Uzmanlık alanları, Avukatlar ve Bloglar için)
   const [activeDetail, setActiveDetail] = useState(null); // { type: 'practice'|'lawyer'|'blog', id: string }
   const [activeView, setActiveView] = useState("home"); // "home" | "contact" | "about"
 
-  // Practice Areas Data
+  // Uzmanlık Alanları Verileri
   const practiceAreas = [
     {
       id: "ticaret-hukuku",
@@ -144,7 +144,7 @@ export default function LandingPage({ onLoginClick }) {
     }
   ];
 
-  // Lawyers Data
+  // Avukat Verileri
   const lawyers = [
     {
       id: "lawyer_1",
@@ -205,7 +205,7 @@ export default function LandingPage({ onLoginClick }) {
     let senderName = currentUser?.name || formData.name;
     let senderRole = currentUser?.role || "client";
 
-    // If guest, create a temporary client profile so lawyers can reply
+    // Eğer misafirse, avukatların yanıt verebilmesi için geçici bir müvekkil profili oluştur
     if (!isAuthenticated) {
       senderId = `lead_${Date.now()}`;
       dispatch(addClient({
@@ -242,10 +242,10 @@ export default function LandingPage({ onLoginClick }) {
     }, 4000);
   };
 
-  // Blog Posts Data (Fetched from Redux)
+  // Blog Yazıları Verileri (Redux'tan getirilir)
   const blogPosts = useSelector((state) => state.blogs?.list) || [];
 
-  // Global translation function helper for static UI parts
+  // Statik kullanıcı arayüzü parçaları için global çeviri yardımcı fonksiyonu
   const tx = (key) => {
     const textMap = {
       "logo-text": { TR: "EDBM Hukuk Bürosu", EN: "EDBM Law Firm" },
@@ -364,7 +364,7 @@ export default function LandingPage({ onLoginClick }) {
 
   return (
     <div className="bg-slate-50 text-[#1b1c1c] font-sans min-h-screen relative overflow-x-hidden antialiased">
-      {/* TopNavBar */}
+      {/* Üst Navigasyon Çubuğu */}
       <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 h-20 shadow-sm transition-all">
         <nav className="max-w-7xl mx-auto px-6 lg:px-12 flex justify-between items-center h-full">
           <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => { setActiveView("home"); setActiveDetail(null); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
@@ -381,7 +381,7 @@ export default function LandingPage({ onLoginClick }) {
             <button onClick={() => { setActiveView("home"); window.scrollTo(0, 0); }} className="text-sm text-slate-800 hover:text-[#1a237e] transition-colors py-2 cursor-pointer">{tx("nav-home")}</button>
             <button onClick={() => { setActiveView("about"); window.scrollTo(0, 0); }} className="text-sm text-slate-800 hover:text-[#1a237e] transition-colors py-2 cursor-pointer">{tx("nav-about")}</button>
             
-            {/* Mega Menu Toggle (Practice Areas) */}
+            {/* Mega Menü Geçişi (Uzmanlık Alanları) */}
             <div className="relative group h-full flex items-center">
               <button className="text-sm text-slate-800 hover:text-[#1a237e] flex items-center gap-1 transition-colors">
                 <span>{tx("nav-practice")}</span>
@@ -432,7 +432,7 @@ export default function LandingPage({ onLoginClick }) {
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Language Selector Button */}
+            {/* Dil Seçici Butonu */}
             <button
               onClick={() => dispatch(toggleLanguage())}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all text-slate-700 font-sans text-xs font-semibold uppercase tracking-wider cursor-pointer"
@@ -441,7 +441,7 @@ export default function LandingPage({ onLoginClick }) {
               <span>{language}</span>
             </button>
 
-            {/* Login CTA */}
+            {/* Giriş CTA'sı (Çağrısı) */}
             <button
               onClick={onLoginClick}
               className="bg-[#1a237e] text-white hover:bg-[#12185c] font-semibold text-xs px-5 py-2.5 rounded-lg shadow-sm border-b-2 border-indigo-950 transition-all hover:scale-[1.02] cursor-pointer"
@@ -452,7 +452,7 @@ export default function LandingPage({ onLoginClick }) {
         </nav>
       </header>
 
-      {/* Hero Slider Section */}
+      {/* Kahraman Slayt Bölümü */}
       {activeView === "home" && (
         <>
           <section id="home" className="relative h-[85vh] sm:h-[90vh] flex items-center justify-center overflow-hidden pt-20">
@@ -466,14 +466,14 @@ export default function LandingPage({ onLoginClick }) {
                 }`}
                 style={{ backgroundImage: `url('${slide.image}')` }}
               >
-                {/* Elegant overlay to guarantee high-contrast text rendering */}
+                {/* Yüksek kontrastlı metin sunumunu garanti etmek için zarif kaplama */}
                 <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/65 to-slate-900/90" />
               </div>
             ))}
           </div>
         </div>
 
-        {/* Navigation Arrows */}
+        {/* Gezinme Okları */}
         <button
           onClick={prevSlide}
           className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 p-2.5 sm:p-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/15 transition-all cursor-pointer hover:scale-105"
@@ -487,7 +487,7 @@ export default function LandingPage({ onLoginClick }) {
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
 
-        {/* Content Box with stagger animation effect */}
+        {/* Kademeli animasyon efektli İçerik Kutusu */}
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto space-y-6">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#d4af37]/20 border border-[#d4af37]/35 text-[#d4af37] text-xs font-semibold uppercase tracking-widest mb-2">
             <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
@@ -509,7 +509,7 @@ export default function LandingPage({ onLoginClick }) {
           </div>
         </div>
 
-        {/* Slider Indicator Dots */}
+        {/* Slayt Gösterge Noktaları */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2.5 z-20">
           {slides.map((_, idx) => (
             <button
@@ -523,7 +523,7 @@ export default function LandingPage({ onLoginClick }) {
         </div>
       </section>
 
-      {/* About Section */}
+      {/* Hakkımızda Bölümü */}
       <section id="about" className="py-24 bg-white border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-6">
@@ -566,7 +566,7 @@ export default function LandingPage({ onLoginClick }) {
         </div>
       </section>
 
-      {/* Practice Areas Section */}
+      {/* Uzmanlık Alanları Bölümü */}
       <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
@@ -607,7 +607,7 @@ export default function LandingPage({ onLoginClick }) {
         </div>
       </section>
 
-      {/* Lawyers Section */}
+      {/* Avukatlar Bölümü */}
       <section className="py-24 bg-white border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
@@ -629,7 +629,7 @@ export default function LandingPage({ onLoginClick }) {
                   src={lawyer.image}
                   referrerPolicy="no-referrer"
                 />
-                {/* Visual rich gradient overlay */}
+                {/* Görsel olarak zengin gradyan kaplama */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1a237e] via-[#1a237e]/30 to-transparent opacity-85 group-hover:opacity-90 transition-opacity" />
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-white translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
                   <h4 className="font-serif text-base font-bold mb-1 tracking-tight">{lawyer.name}</h4>
@@ -646,7 +646,7 @@ export default function LandingPage({ onLoginClick }) {
         </div>
       </section>
 
-      {/* Blog Section */}
+      {/* Blog Bölümü */}
       <section id="blog" className="py-24 bg-slate-50 border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
@@ -699,7 +699,7 @@ export default function LandingPage({ onLoginClick }) {
       </>
       )}
 
-      {/* Contact & Map Section */}
+      {/* İletişim ve Harita Bölümü */}
       {activeView === "contact" && (
         <div className="pt-20 animate-fade-in min-h-[70vh]">
           <div className="bg-[#1a237e] text-white py-16 text-center shadow-inner relative overflow-hidden">
@@ -755,7 +755,7 @@ export default function LandingPage({ onLoginClick }) {
                 </div>
               </div>
 
-              {/* Minimal Aesthetic Vector Location placeholder representation */}
+              {/* Minimal Estetik Vektör Konum yer tutucu temsili */}
               <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm relative group h-44">
                 <img
                   alt="Office Location Levent Istanbul Map"

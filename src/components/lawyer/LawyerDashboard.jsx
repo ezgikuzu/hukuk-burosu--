@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import LanguageSelector from "../common/LanguageSelector";
 
-// Import tabs
+// Sekmeleri içe aktar (Import tabs)
 import OverviewTab from "../admin/OverviewTab";
 import ClientsTab from "../admin/ClientsTab";
 import CasesTab from "./CasesTab";

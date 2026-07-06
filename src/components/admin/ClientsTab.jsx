@@ -17,20 +17,20 @@ export default function ClientsTab() {
   const lawyers = useSelector((state) => state.lawyers.list);
   const currentUser = useSelector((state) => state.auth.currentUser);
 
-  // Filter clients based on lawyer role
+  // Avukat rolüne göre müvekkilleri filtrele
   const isLawyer = currentUser?.role === "lawyer";
   const clients = isLawyer 
     ? rawClients.filter((c) => c.lawyerId === currentUser.id)
     : rawClients;
 
-  // Search & Filter State
+  // Arama ve Filtreleme Durumları (State)
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Modal / Form States
+  // Modal / Form Durumları (State)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
 
-  // Form Field States
+  // Form Alanı Durumları (State)
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -47,7 +47,7 @@ export default function ClientsTab() {
     setPhone("");
     setAddress("");
     setNationalId("");
-    setPassword(Math.random().toString(36).slice(-6)); // auto-generate a sleek password
+    setPassword(Math.random().toString(36).slice(-6)); // şık bir şifre otomatik oluştur
     setLawyerId(currentUser?.id || "lawyer_1");
     setValidationError(null);
     setIsModalOpen(true);
@@ -70,7 +70,7 @@ export default function ClientsTab() {
     e.preventDefault();
     setValidationError(null);
 
-    // Basic validation
+    // Temel doğrulama
     if (nationalId.length !== 11 || !/^\d+$/.test(nationalId)) {
       setValidationError(
         language === "TR" 
@@ -117,7 +117,7 @@ export default function ClientsTab() {
     }));
   };
 
-  // Filter clients based on search
+  // Aramaya göre müvekkilleri filtrele
   const filteredClients = clients.filter((c) => {
     const term = searchTerm.toLowerCase();
     return (
@@ -130,7 +130,7 @@ export default function ClientsTab() {
 
   return (
     <div className="space-y-6">
-      {/* Header and Add Button */}
+      {/* Başlık ve Ekleme Butonu */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-xl border border-slate-100 shadow-sm animate-fade-in">
         <div>
           <h2 className="font-serif text-lg font-bold text-[#1a237e]">{t.clientList}</h2>
@@ -150,7 +150,7 @@ export default function ClientsTab() {
         </button>
       </div>
 
-      {/* Search and Filters */}
+      {/* Arama ve Filtreler */}
       <div className="flex bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
         <div className="relative flex-1">
           <Search className="absolute left-3.5 top-2.5 w-4.5 h-4.5 text-slate-400" />
@@ -164,7 +164,7 @@ export default function ClientsTab() {
         </div>
       </div>
 
-      {/* Clients Table / Grid */}
+      {/* Müvekkil Tablosu / Izgarası */}
       <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
         {filteredClients.length === 0 ? (
           <div className="py-12 text-center text-slate-400 text-xs font-bold">{t.noData}</div>
@@ -242,11 +242,11 @@ export default function ClientsTab() {
         )}
       </div>
 
-      {/* Add / Edit Client Modal */}
+      {/* Müvekkil Ekle / Düzenle Modalı */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
           <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
-            {/* Modal Header */}
+            {/* Modal Başlığı */}
             <div className="px-6 py-4 bg-gradient-to-r from-[#1a237e] to-[#283593] text-white flex justify-between items-center border-b border-[#d4af37]/20">
               <h3 className="font-serif text-base font-bold flex items-center gap-2">
                 <User className="w-4 h-4 text-[#d4af37]" />
@@ -260,7 +260,7 @@ export default function ClientsTab() {
               </button>
             </div>
 
-            {/* Modal Body */}
+            {/* Modal Gövdesi */}
             <form onSubmit={handleFormSubmit} className="p-6 space-y-4 flex-1">
               {validationError && (
                 <div className="p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-xs rounded flex items-center gap-2 font-bold animate-pulse">
@@ -378,7 +378,7 @@ export default function ClientsTab() {
                 </div>
               </div>
 
-              {/* Modal Footer */}
+              {/* Modal Alt Bilgisi (Footer) */}
               <div className="pt-4 border-t border-slate-100 flex justify-end gap-2">
                 <button
                   type="button"

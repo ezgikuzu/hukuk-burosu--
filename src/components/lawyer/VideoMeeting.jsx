@@ -43,7 +43,7 @@ export default function VideoMeeting({ roomName, onClose, subject }) {
             email: currentUser?.email || "", // jitside görünecek e-posta 
           }}
           onApiReady={(externalApi) => {  // jitsinin api ready olduğunda çalışacak fonksiyon  ----------------
-            // You can attach listeners here if needed  --------------------------------------------------------------
+            // Gerekirse buraya dinleyiciler (listeners) ekleyebilirsiniz --------------------------------------------------------------
           }}
           getIFrameRef={(iframeRef) => {
             iframeRef.style.height = "100%"; // iframe yüksekliğini ayarlar

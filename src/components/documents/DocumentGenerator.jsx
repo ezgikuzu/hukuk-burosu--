@@ -30,7 +30,7 @@ export default function DocumentGenerator() {
 
   const handleCategorySelect = (categoryId) => {
     setSelectedCategoryId(categoryId);
-    setSelectedTemplateId(""); // Reset template when category changes
+    setSelectedTemplateId(""); // Kategori değiştiğinde şablonu sıfırla
   };
 
   const handleInputChange = (e) => {
@@ -54,7 +54,7 @@ export default function DocumentGenerator() {
 
   const handleReset = () => {
     setGeneratedDraft("");
-    // Optionally keep formData or clear it. We'll clear it for a fresh start.
+    // İsteğe bağlı olarak formData'yı tutun veya temizleyin. Yeni bir başlangıç için temizleyeceğiz.
     setFormData({
       clientName: "", clientId: "", phone: "", address: "", opposingParty: "",
       date: "", location: "", subject: "", summary: "", request: "",
@@ -78,7 +78,7 @@ export default function DocumentGenerator() {
 
   return (
     <div className="space-y-6 animate-fade-in pb-12">
-      {/* Header */}
+      {/* Başlık (Header) */}
       <div>
         <h2 className="font-serif text-2xl font-bold text-[#1a237e] flex items-center gap-2">
           <FileSignature className="w-6 h-6 text-[#d4af37]" />
@@ -90,9 +90,9 @@ export default function DocumentGenerator() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Side: Selections */}
+        {/* Sol Taraf: Seçimler */}
         <div className="lg:col-span-4 space-y-6">
-          {/* Step 1: Category */}
+          {/* Adım 1: Kategori */}
           <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
             <h3 className="font-serif font-bold text-slate-800 text-sm mb-4 flex items-center justify-between">
               <span>1. Hukuk Alanı Seçin</span>
@@ -115,7 +115,7 @@ export default function DocumentGenerator() {
             </div>
           </div>
 
-          {/* Step 2: Template Type */}
+          {/* Adım 2: Şablon Tipi */}
           <div className={`bg-white p-5 rounded-xl border border-slate-100 shadow-sm transition-opacity duration-300 ${!selectedCategoryId ? "opacity-50 pointer-events-none" : ""}`}>
             <h3 className="font-serif font-bold text-slate-800 text-sm mb-4 flex items-center justify-between">
               <span>2. Evrak Tipi Seçin</span>
@@ -144,7 +144,7 @@ export default function DocumentGenerator() {
           </div>
         </div>
 
-        {/* Right Side: Form */}
+        {/* Sağ Taraf: Form */}
         <div className={`lg:col-span-8 transition-opacity duration-500 ${!selectedTemplateId ? "opacity-50 pointer-events-none" : ""}`}>
           <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
             <h3 className="font-serif font-bold text-[#1a237e] text-base mb-6 border-b border-slate-100 pb-3">
