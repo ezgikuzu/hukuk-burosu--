@@ -10,6 +10,7 @@ import {
 import LanguageSelector from "../common/LanguageSelector";
 import DocumentGenerator from "../documents/DocumentGenerator";
 import CalendarTab from "../lawyer/CalendarTab";
+import FinancesTab from "./FinancesTab";
 
 export default function AdminDashboard() {
   const dispatch = useDispatch();
@@ -630,43 +631,7 @@ export default function AdminDashboard() {
 
         
         {activeTab === "finances" && (
-          <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm space-y-6">
-            <h3 className="font-serif font-bold text-lg text-[#1a237e]">{at("Cari Hesap Ekstresi")} & {at("Tüm Ödemeler")} ({payments.length})</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
-                    <th className="p-3 font-semibold">{at("Açıklama")}</th>
-                    <th className="p-3 font-semibold">{at("Müvekkil")}</th>
-                    <th className="p-3 font-semibold">{at("Tarih")}</th>
-                    <th className="p-3 font-semibold">{at("Tutar")}</th>
-                    <th className="p-3 font-semibold">{at("İşlem Türü")}</th>
-                    <th className="p-3 font-semibold">{at("Ödeme Durumu")}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
-                  {payments.map(p => {
-                    const client = clients.find(cl => cl.id === p.clientId);
-                    return (
-                      <tr key={p.id} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="p-3 font-bold text-slate-800">{p.description}</td>
-                        <td className="p-3 font-semibold text-slate-900">{client?.name || "-"}</td>
-                        <td className="p-3 font-mono text-slate-500">{p.date}</td>
-                        <td className="p-3 font-bold text-slate-900">{p.amount.toLocaleString('tr-TR')} TRY</td>
-                        <td className="p-3 font-bold uppercase tracking-wider text-slate-500">{p.type}</td>
-                        <td className="p-3">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${p.status === "paid" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
-                            }`}>
-                            {p.status === "paid" ? at("Aktif") : at("Beklemede")}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <FinancesTab />
         )}
 
         
