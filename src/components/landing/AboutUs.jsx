@@ -18,7 +18,7 @@ export default function AboutUs() {
       missionDesc: "Karmaşık hukuki ihtilaflarda dahi anlaşılabilir, dürüst ve etkin çözümler üreterek adaletin tecellisine ve toplumun hukuka olan güvenine katkı sağlamak.",
       stats: [
         { value: "25+", label: "Yıllık Tecrübe", icon: Clock },
-        { value: "10K+", label: "Başarılı Dava", label: "Çözülen Uyuşmazlık", icon: Award },
+        { value: "10K+", label: "Başarılı Dava", icon: Award },
         { value: "50+", label: "Uzman Avukat", icon: Users },
         { value: "%98", label: "Müvekkil Memnuniyeti", icon: Target }
       ],
