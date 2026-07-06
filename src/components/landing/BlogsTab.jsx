@@ -50,7 +50,6 @@ export default function BlogsTab() {
     dispatch(addBlog(newBlog));
     setSuccess(true);
 
-    // Reset form
     setTitleTR(""); setTitleEN(""); setExcerptTR(""); setExcerptEN("");
     setContentTR(""); setContentEN(""); setImage("");
 
@@ -82,7 +81,7 @@ export default function BlogsTab() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* TR FIELDS */}
+            
             <div className="space-y-4">
               <h3 className="font-bold text-[#1a237e] border-b pb-2">Türkçe İçerik</h3>
               <div>
@@ -119,7 +118,7 @@ export default function BlogsTab() {
               </div>
             </div>
 
-            {/* EN FIELDS */}
+            
             <div className="space-y-4">
               <h3 className="font-bold text-[#1a237e] border-b pb-2">English Content</h3>
               <div>

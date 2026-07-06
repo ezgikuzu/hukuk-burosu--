@@ -19,7 +19,6 @@ export default function OverviewTab() {
   const rawHearings = useSelector((state) => state.hearings.list);
   const rawPayments = useSelector((state) => state.payments.list);
 
-  // Listeleri aktif avukata göre filtrele
   const isLawyer = currentUser?.role === "lawyer";
   
   const clients = isLawyer 
@@ -38,7 +37,6 @@ export default function OverviewTab() {
     ? rawPayments.filter(p => clients.some(c => c.id === p.clientId))
     : rawPayments;
 
-  // Metrikleri filtrele veya işle
   const activeCasesCount = cases.filter(c => c.status === "active").length;
   
   const totalReceived = payments
@@ -49,18 +47,16 @@ export default function OverviewTab() {
     .filter(p => p.status === "pending")
     .reduce((acc, p) => acc + p.amount, 0);
 
-  // Aktif avukat için yaklaşan duruşmalar
   const lawyerHearings = hearings
     .sort((a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime());
 
-  // Son ödemeler
   const recentPayments = [...payments]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 4);
 
   return (
     <div className="space-y-6">
-      {/* Karşılama Alanı */}
+      
       <div className="p-6 bg-gradient-to-r from-[#1a237e] to-[#283593] rounded-xl text-white shadow-md relative overflow-hidden border border-[#d4af37]/20 animate-fade-in">
         <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full translate-x-8 -translate-y-8" />
         <h2 className="font-serif text-2xl font-bold">
@@ -73,9 +69,9 @@ export default function OverviewTab() {
         </p>
       </div>
 
-      {/* Metrikler Izgarası */}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Müvekkiller Metriği */}
+        
         <div className="p-5 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">{t.totalClients}</p>
@@ -86,7 +82,7 @@ export default function OverviewTab() {
           </div>
         </div>
 
-        {/* Aktif Davalar Metriği */}
+        
         <div className="p-5 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">{t.totalCases}</p>
@@ -97,7 +93,7 @@ export default function OverviewTab() {
           </div>
         </div>
 
-        {/* Duruşmalar Metriği */}
+        
         <div className="p-5 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">{t.totalHearings}</p>
@@ -108,7 +104,7 @@ export default function OverviewTab() {
           </div>
         </div>
 
-        {/* Finans Metriği */}
+        
         <div className="p-5 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">{t.totalRevenue}</p>
@@ -120,9 +116,9 @@ export default function OverviewTab() {
         </div>
       </div>
 
-      {/* Ana Izgara: Yaklaşan Duruşmalar + Finans ve Hızlı İşlemler */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Sol Sütun: Duruşmalar (7 sütun) */}
+        
         <div className="lg:col-span-7 space-y-6">
           <div className="p-5 bg-white rounded-xl border border-slate-100 shadow-sm">
             <div className="flex justify-between items-center mb-4 border-b border-slate-50 pb-3">
@@ -190,7 +186,7 @@ export default function OverviewTab() {
             )}
           </div>
 
-          {/* Hızlı İşlem Paneli */}
+          
           <div className="p-5 bg-white rounded-xl border border-slate-100 shadow-sm">
             <h3 className="font-serif text-base font-bold text-slate-800 mb-4 pb-3 border-b border-slate-50">
               {t.quickActions}
@@ -231,7 +227,7 @@ export default function OverviewTab() {
           </div>
         </div>
 
-        {/* Sağ Sütun: Finansal Özet ve Cari Liste (5 sütun) */}
+        
         <div className="lg:col-span-5 space-y-6">
           <div className="p-5 bg-white rounded-xl border border-slate-100 shadow-sm flex flex-col justify-between">
             <div>
@@ -240,7 +236,7 @@ export default function OverviewTab() {
                 {t.financialSummary}
               </h3>
 
-              {/* Mini Fatura Halkası */}
+              
               <div className="space-y-4">
                 <div className="p-4 rounded-lg bg-slate-50 border border-slate-100">
                   <div className="flex justify-between items-center">
@@ -285,7 +281,7 @@ export default function OverviewTab() {
             </div>
           </div>
 
-          {/* Son Cari Hareket Günlükleri */}
+          
           <div className="p-5 bg-white rounded-xl border border-slate-100 shadow-sm">
             <h3 className="font-serif text-sm font-bold text-slate-800 mb-3 pb-2 border-b border-slate-50">
               {at("Son Cari Hareketler")}

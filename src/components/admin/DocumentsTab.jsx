@@ -22,7 +22,6 @@ export default function DocumentsTab() {
 
   const isLawyer = currentUser?.role === "lawyer";
 
-  // Aktif avukat için müvekkil ve evrakları filtrele
   const clients = isLawyer 
     ? rawClients.filter((cl) => cl.lawyerId === currentUser.id)
     : rawClients;
@@ -34,14 +33,11 @@ export default function DocumentsTab() {
       )
     : rawDocuments;
 
-  // Filtre Durumu (State)
   const [activeCategory, setActiveCategory] = useState("all");
 
-  // Sürükle ve Bırak Durumları (States)
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
 
-  // Editör durumları (satır içi şablon oluşturma)
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [docName, setDocName] = useState("");
   const [docCategory, setDocCategory] = useState("pleading");
@@ -49,10 +45,8 @@ export default function DocumentsTab() {
   const [editorContent, setEditorContent] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState("blank");
 
-  // Görüntüleyici durumları (States)
   const [viewingDoc, setViewingDoc] = useState(null);
 
-  // Form şablonları tanımı
   const TEMPLATES = {
     blank: "",
     ihtarname: `İHTARNAME\n\nİHTAR EDEN: [Müvekkil Adı]\nVEKİLİ: Av. ${currentUser?.name}\nMUHATAP: [Karşı Taraf Adı]\n\nKONU: Ödenmeyen alacakların ihtarından ibarettir.\n\nAÇIKLAMALAR:\n1- Müvekkilimiz ile aranızdaki ticari ilişki kapsamında faturası kesilen ... tutarlı alacak vadesinde ödenmemiştir.\n2- İşbu ihtarnamenin tebliğinden itibaren 3 (üç) gün içinde söz konusu borcun ödenmesini, aksi halde yasal yollara başvurulacağını ihtar ederiz.\n\nİHTAR EDEN VEKİLİ\nAv. ${currentUser?.name}`,
@@ -64,7 +58,6 @@ export default function DocumentsTab() {
     const val = e.target.value;
     setSelectedTemplate(val);
     
-    // Şablon yer tutucularını otomatik doldur
     const currentClient = clients.find(c => c.id === clientId)?.name || "[Müvekkil Adı]";
     let rawText = TEMPLATES[val] || "";
     rawText = rawText.replace("[Müvekkil Adı]", currentClient);
@@ -75,14 +68,12 @@ export default function DocumentsTab() {
     const cId = e.target.value;
     setClientId(cId);
     
-    // Müvekkil adını otomatik değiştir
     const selectedName = clients.find(c => c.id === cId)?.name || "[Müvekkil Adı]";
     let text = editorContent;
     text = text.replace("[Müvekkil Adı]", selectedName);
     setEditorContent(text);
   };
 
-  // Sürükle ve bırak işleyicileri
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -138,7 +129,6 @@ export default function DocumentsTab() {
     fileInputRef.current?.click();
   };
 
-  // Satır içi taslak kaydetme
   const handleSaveDraft = (e) => {
     e.preventDefault();
     if (!docName) {
@@ -189,7 +179,6 @@ export default function DocumentsTab() {
     const documentObj = doc && doc.id ? doc : viewingDoc;
     if (!documentObj) return;
 
-    // Mükemmel biçimlendirme için geçici bir ekran dışı öğe oluştur
     const tempDiv = document.createElement("div");
     tempDiv.style.position = "absolute";
     tempDiv.style.left = "-9999px";
@@ -203,7 +192,6 @@ export default function DocumentsTab() {
     tempDiv.style.whiteSpace = "pre-wrap";
     tempDiv.style.color = "#1e293b";
     
-    // Başlık
     const header = document.createElement("h2");
     header.style.fontSize = "24px";
     header.style.fontWeight = "bold";
@@ -213,11 +201,9 @@ export default function DocumentsTab() {
     header.style.color = "#1a237e";
     header.innerText = documentObj.name;
     
-    // İçerik
     const content = document.createElement("div");
     content.innerText = documentObj.content || (language === "TR" ? "İçerik bulunamadı." : "No content found.");
     
-    // Alt Bilgi (Footer)
     const footer = document.createElement("div");
     footer.style.marginTop = "40px";
     footer.style.paddingTop = "10px";
@@ -254,12 +240,11 @@ export default function DocumentsTab() {
     }
   };
 
-  // Listeyi Filtrele
   const filteredDocs = documents.filter(d => activeCategory === "all" || d.category === activeCategory);
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Başlık ve Taslak Ekleme Butonu */}
+      
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
         <div>
           <h2 className="font-serif text-lg font-bold text-[#1a237e]">{t.documentList}</h2>
@@ -285,12 +270,12 @@ export default function DocumentsTab() {
         </button>
       </div>
 
-      {/* Ana Izgara: Yükleme Alanı ve Kategori Geçişleri (Üst) + Belge Tablosu ve Görüntüleyici (Alt) */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Sol Taraf: Belge Havuzu Listesi (8 Sütun) */}
+        
         <div className="lg:col-span-8 space-y-4">
-          {/* Kategoriler Sekme Çubuğu */}
+          
           <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 overflow-x-auto gap-1">
             <button
               onClick={() => setActiveCategory("all")}
@@ -326,7 +311,7 @@ export default function DocumentsTab() {
             </button>
           </div>
 
-          {/* Liste Kartı */}
+          
           <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
             {filteredDocs.length === 0 ? (
               <div className="py-12 text-center text-slate-400 text-xs font-bold">{t.noData}</div>
@@ -411,14 +396,14 @@ export default function DocumentsTab() {
           </div>
         </div>
 
-        {/* Sağ Taraf: Sahte Sürükle Bırak Dosya Yükleyici (4 Sütun) */}
+        
         <div className="lg:col-span-4 space-y-4">
           <div className="p-5 bg-white rounded-xl border border-slate-100 shadow-sm space-y-4 animate-fade-in">
             <h3 className="font-serif text-sm font-bold text-slate-800">
               {t.uploadDocBtn}
             </h3>
 
-            {/* Sürükle Bırak Alanı */}
+            
             <div 
               id="file-drop-area"
               onDragEnter={handleDrag}
@@ -450,7 +435,7 @@ export default function DocumentsTab() {
             </div>
           </div>
 
-          {/* Hızlı Bilgi Kutusu */}
+          
           <div className="p-4 rounded-xl bg-slate-100/60 border border-slate-200/40 text-xs text-slate-600 leading-relaxed space-y-2 font-medium">
             <h4 className="font-bold text-slate-700 flex items-center gap-1.5">
               <Folder className="w-4 h-4 text-[#d4af37]" />
@@ -465,7 +450,7 @@ export default function DocumentsTab() {
         </div>
       </div>
 
-      {/* Belge Görüntüleme Modalı */}
+      
       {viewingDoc && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
           <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col h-[85vh]">
@@ -519,11 +504,11 @@ export default function DocumentsTab() {
         </div>
       )}
 
-      {/* Editör Modalı (Dilekçe Taslağı) */}
+      
       {isEditorOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
           <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col h-[90vh]">
-            {/* Başlık */}
+            
             <div className="px-6 py-4 bg-gradient-to-r from-[#1a237e] to-[#283593] text-white flex justify-between items-center border-b border-[#d4af37]/20">
               <h3 className="font-serif text-base font-bold flex items-center gap-2">
                 <Edit3 className="w-4.5 h-4.5 text-[#d4af37]" />
@@ -537,7 +522,7 @@ export default function DocumentsTab() {
               </button>
             </div>
 
-            {/* Girdi (Input) çubuğu */}
+            
             <div className="p-4 bg-slate-100 border-b border-slate-200 grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
               <div>
                 <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">
@@ -602,7 +587,7 @@ export default function DocumentsTab() {
               </div>
             </div>
 
-            {/* Metin Editörü Alanı */}
+            
             <div className="flex-1 p-6 bg-slate-50 overflow-y-auto">
               <textarea
                 value={editorContent}
@@ -612,7 +597,7 @@ export default function DocumentsTab() {
               />
             </div>
 
-            {/* Alt Bilgi (Footer) */}
+            
             <div className="px-6 py-4 bg-white border-t border-slate-100 flex justify-between items-center shrink-0">
               <button
                 type="button"

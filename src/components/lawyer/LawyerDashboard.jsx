@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import LanguageSelector from "../common/LanguageSelector";
 
-// Sekmeleri içe aktar (Import tabs)
 import OverviewTab from "../admin/OverviewTab";
 import ClientsTab from "../admin/ClientsTab";
 import CasesTab from "./CasesTab";
@@ -21,78 +20,77 @@ import BlogsTab from "../landing/BlogsTab";
 import DocumentGenerator from "../documents/DocumentGenerator";
 
 export default function LawyerDashboard() {
-  const dispatch = useDispatch(); // store'a müdahale etmek için kullanılır. 
-  const language = useSelector((state) => state.ui.language); // seçilen dili tutar. 
-  const currentUser = useSelector((state) => state.auth.currentUser); // giriş yapan kullanıcıyı tutar. 
-  const activeTab = useSelector((state) => state.ui.activeTab); // şu an hangi sekmedeyiz onu tutar. 
-  const t = DICTIONARY[language]; // seçilen dile ait metinleri çevirir. 
-  const at = (text) => autoTranslate(text, language); // yazıları otomatik çevirir. 
+  const dispatch = useDispatch();
+  const language = useSelector((state) => state.ui.language);
+  const currentUser = useSelector((state) => state.auth.currentUser);
+  const activeTab = useSelector((state) => state.ui.activeTab);
+  const t = DICTIONARY[language];
+  const at = (text) => autoTranslate(text, language);
 
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false); // mobil menünün açık olup olmadığını tutar. 
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
-  React.useEffect(() => { // her sayfaya giriş yapıldığında sayfanın en üstüne kaydırır. 
-    window.scrollTo(0, 0); // sayfa en üstü 
-  }, [activeTab]); // aktif sekmeye göre çalışır.  
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [activeTab]);
 
-  // kullanıcı sekme değiştirdiğinde sayfanın en üstüne çık. 
 
-  const menuItems = [ // sol taraftaki menü 
-    { id: "overview", label: t.tabOverview, icon: LayoutDashboard }, // ana sayfa 
-    { id: "clients", label: t.tabClients, icon: Users }, // müvekkiller 
-    { id: "cases", label: t.tabCases, icon: FolderOpen }, // davalar 
-    { id: "calendar", label: t.tabCalendar, icon: Calendar }, // takvim 
-    { id: "documents", label: t.tabDocuments, icon: FileText }, // dökümanlar 
-    { id: "finances", label: t.tabFinances, icon: Landmark }, // finans
-    { id: "document-generator", label: at("Evrak Oluştur"), icon: FileSignature }, // evrak oluşturma 
-    { id: "messages", label: t.tabMessages, icon: MessageCircle }, // mesajlar 
-    { id: "web_messages", label: language === "TR" ? "Web Mesajları" : "Web Messages", icon: Mail }, // web mesajları 
-    { id: "blogs", label: language === "TR" ? "Blog Yönetimi" : "Blog Management", icon: Edit3 }, // blog yönetimi 
+  const menuItems = [
+    { id: "overview", label: t.tabOverview, icon: LayoutDashboard },
+    { id: "clients", label: t.tabClients, icon: Users },
+    { id: "cases", label: t.tabCases, icon: FolderOpen },
+    { id: "calendar", label: t.tabCalendar, icon: Calendar },
+    { id: "documents", label: t.tabDocuments, icon: FileText },
+    { id: "finances", label: t.tabFinances, icon: Landmark },
+    { id: "document-generator", label: at("Evrak Oluştur"), icon: FileSignature },
+    { id: "messages", label: t.tabMessages, icon: MessageCircle },
+    { id: "web_messages", label: language === "TR" ? "Web Mesajları" : "Web Messages", icon: Mail },
+    { id: "blogs", label: language === "TR" ? "Blog Yönetimi" : "Blog Management", icon: Edit3 },
   ];
 
-  const renderActiveTab = () => { // hangi sekmeye tıklandıysa o sekmeyi render eder.
-    switch (activeTab) { // sekmeleri kontrol eder. 
-      case "overview": // ana sayfa 
+  const renderActiveTab = () => {
+    switch (activeTab) {
+      case "overview":
         return <OverviewTab />;
-      case "clients": // müvekkiller 
+      case "clients":
         return <ClientsTab />;
-      case "cases": // davalar
+      case "cases":
         return <CasesTab />;
-      case "calendar": // takvim
+      case "calendar":
         return <CalendarTab />;
-      case "documents": // dökümanlar
+      case "documents":
         return <DocumentsTab />;
-      case "finances": // finans
+      case "finances":
         return <FinancesTab />;
-      case "document-generator": // evrak oluşturma 
+      case "document-generator":
         return <DocumentGenerator />;
-      case "messages": // mesajlar
+      case "messages":
         return <MessagesTab />;
-      case "web_messages": // web mesajları 
+      case "web_messages":
         return <WebMessagesTab />;
-      case "blogs": // blog yönetimi 
+      case "blogs":
         return <BlogsTab />;
-      default: // ana sayfa 
+      default:
         return <OverviewTab />;
     }
   };
 
-  const handleTabClick = (tabId) => { // kullanıcı menüde bir sekmeye tıkladığında çalışan fonskiyondur. 
-    dispatch(setActiveTab(tabId)); // tıklanan sekmeyi reduxtaki activetaba kaydeder. böylece uygulama hangi sayfanın açılacağını bilir.  
-    setMobileMenuOpen(false); //eğer uygulama mobilde açıksa, sekme seçildikten sonra yan menüyü kapatır ve kullanıcı seçtiği sayfayı görür. 
+  const handleTabClick = (tabId) => {
+    dispatch(setActiveTab(tabId));
+    setMobileMenuOpen(false);
   };
 
-  const handleLogout = () => { // çıkış yap butonu tıklandığında çalışır. 
-    dispatch(logout()); // çıkış yap 
-    setMobileMenuOpen(false); // mobil menüyü kapatır.  ve giriş ekranına yönlendirir. 
+  const handleLogout = () => {
+    dispatch(logout());
+    setMobileMenuOpen(false);
   };
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row font-sans">
 
-      {/* 1. SIDEBAR (Desktop) */}
+      
       <aside className="hidden lg:flex flex-col w-64 bg-[#1a237e] text-white border-r border-[#d4af37]/20 shrink-0 sticky top-0 h-screen justify-between z-20">
         <div className="space-y-6 pt-6 flex-1 flex flex-col">
-          {/* Logo Brand */}
+          
           <div className="px-6 flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center border border-[#d4af37]/30">
               <Scale className="w-5 h-5 text-[#d4af37]" />
@@ -105,7 +103,7 @@ export default function LawyerDashboard() {
             </div>
           </div>
 
-          {/* Active Lawyer Mini profile */}
+          
           <div className="px-4 py-3 mx-4 rounded-xl bg-white/5 border border-white/10 flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-[#d4af37]/20 text-[#d4af37] flex items-center justify-center font-bold border border-[#d4af37]/30 text-sm">
               {currentUser?.name.charAt(0)}
@@ -118,7 +116,7 @@ export default function LawyerDashboard() {
             </div>
           </div>
 
-          {/* Navigation Menu */}
+          
           <nav className="flex-1 px-3 space-y-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
@@ -140,7 +138,7 @@ export default function LawyerDashboard() {
           </nav>
         </div>
 
-        {/* Sidebar Footer */}
+        
         <div className="p-4 border-t border-white/10 bg-[#0a1045] space-y-2">
           <div className="flex justify-center">
             <LanguageSelector />
@@ -155,7 +153,7 @@ export default function LawyerDashboard() {
         </div>
       </aside>
 
-      {/* 2. MOBILE TOP-BAR */}
+      
       <header className="lg:hidden w-full bg-[#1a237e] text-white px-5 py-4 flex justify-between items-center z-30 sticky top-0 border-b border-[#d4af37]/20 shadow-md">
         <div className="flex items-center gap-2.5">
           <Scale className="w-5 h-5 text-[#d4af37]" />
@@ -176,7 +174,7 @@ export default function LawyerDashboard() {
         </div>
       </header>
 
-      {/* MOBILE PANEL NAVIGATION MENU DRAWER */}
+      
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 top-[60px] bg-[#1a237e] z-30 flex flex-col justify-between border-t border-white/5">
           <nav className="p-4 space-y-1">
@@ -217,10 +215,10 @@ export default function LawyerDashboard() {
         </div>
       )}
 
-      {/* 3. MAIN WORKSPACE CONTENT */}
+      
       <main className="flex-1 flex flex-col min-w-0">
 
-        {/* Desktop Top Nav Bar */}
+        
         <div className="hidden lg:flex h-16 bg-white border-b border-slate-100 justify-between items-center px-8 z-10 sticky top-0 shadow-sm">
           <h2 className="font-serif text-base font-bold text-[#1a237e]">
             {menuItems.find(i => i.id === activeTab)?.label}
@@ -234,12 +232,12 @@ export default function LawyerDashboard() {
           </div>
         </div>
 
-        {/* Dynamic Panel Canvas */}
+        
         <div className="flex-1 p-4 lg:p-8 overflow-y-auto max-w-7xl w-full mx-auto">
           {renderActiveTab()}
         </div>
 
-        {/* Sticky footer */}
+        
         <footer className="py-4 px-8 text-center text-[10px] text-slate-400 font-medium border-t border-slate-100 bg-white">
           EDBM Hukuk Bürosu • Kurumsal Otomasyon Çözümü • Tüm veriler LocalStorage ve Redux ile yerel olarak senkronize edilmektedir.
         </footer>

@@ -32,7 +32,7 @@ export default function ClientCaseDetail({ caseId, onBack }) {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Back Button & Header */}
+      
       <div className="flex items-center gap-4">
         <button
           onClick={onBack}
@@ -48,9 +48,9 @@ export default function ClientCaseDetail({ caseId, onBack }) {
         </div>
       </div>
 
-      {/* Main Info Card */}
+      
       <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6 relative overflow-hidden">
-        {/* Decorative background element */}
+        
         <div className="absolute top-0 right-0 p-8 opacity-5">
           <Scale className="w-48 h-48" />
         </div>
@@ -114,7 +114,7 @@ export default function ClientCaseDetail({ caseId, onBack }) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Hearings */}
+        
         <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6">
           <h4 className="font-serif text-sm font-bold text-[#1a237e] pb-3 border-b border-slate-100 mb-4 flex items-center gap-2">
             <Calendar className="w-4 h-4 text-[#d4af37]" />
@@ -180,7 +180,7 @@ export default function ClientCaseDetail({ caseId, onBack }) {
           )}
         </div>
 
-        {/* Payments / Financials */}
+        
         <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-6">
           <h4 className="font-serif text-sm font-bold text-[#1a237e] pb-3 border-b border-slate-100 mb-4 flex items-center gap-2">
             <Landmark className="w-4 h-4 text-[#d4af37]" />
@@ -218,7 +218,7 @@ export default function ClientCaseDetail({ caseId, onBack }) {
         </div>
       </div>
 
-      {/* Video Meeting */}
+      
       {videoRoom && (
         <VideoMeeting
           roomName={videoRoom}

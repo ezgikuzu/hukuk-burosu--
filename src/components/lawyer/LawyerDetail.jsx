@@ -8,13 +8,11 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
   const messages = useSelector((state) => state.messages?.list || []);
   const dispatch = useDispatch();
 
-  //onBack -> geri butonuna bastığında çalışacak fonskiyondur. tıklanınca ana sayfaya geri döner.
-  //onContactClick ->  kişiye ulaş butonuna basıldıüında çalışıcak fonskiyondur. 
 
-  const lawyerMessages = messages.filter(m => m.receiverId === lawyerId && m.senderId === "guest"); //Bu kod, tüm mesajların içinden sadece ilgili avukata ziyaretçiler (guest) tarafından gönderilen mesajları seçer.
+  const lawyerMessages = messages.filter(m => m.receiverId === lawyerId && m.senderId === "guest");
 
-  useEffect(() => { // sayfa her yüklendiğinde çalışır.
-    window.scrollTo(0, 0); // sayfanın en üstüne kaydırır.
+  useEffect(() => {
+    window.scrollTo(0, 0);
   }, []);
 
   const lawyers = [
@@ -64,7 +62,7 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
-      {/* Header */}
+      
       <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-50 h-20 shadow-sm transition-all flex items-center">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full flex justify-between items-center">
           <button
@@ -86,7 +84,7 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
         </div>
       </header>
 
-      {/* Hero Section */}
+      
       <section className="relative pt-24 pb-16 overflow-hidden bg-[#1a237e]">
         <div className="absolute inset-0 bg-gradient-to-r from-[#1a237e] to-[#283593] z-0" />
 
@@ -122,7 +120,7 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
         </div>
       </section>
 
-      {/* Content Section */}
+      
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-6 lg:px-12">
           <div className="bg-white border border-slate-100 rounded-3xl p-8 sm:p-12 shadow-xl -mt-16 relative z-30">
@@ -147,7 +145,7 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
             </div>
           </div>
 
-          {/* Messages Section */}
+          
           {lawyerMessages.length > 0 && (
             <div className="bg-white border border-slate-100 rounded-3xl p-8 sm:p-12 shadow-xl relative z-30 mt-12">
               <h2 className="text-[#1a237e] font-serif text-2xl sm:text-3xl font-bold mb-6">
@@ -178,7 +176,7 @@ export default function LawyerDetail({ lawyerId, onBack, onContactClick }) {
         </div>
       </section>
 
-      {/* Footer (Simplified) */}
+      
       <footer className="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center flex flex-col items-center gap-6">
           <div className="flex items-center gap-2 text-white">

@@ -16,7 +16,6 @@ export default function AdminDashboard() {
   const language = useSelector((state) => state.ui.language);
   const currentUser = useSelector((state) => state.auth.currentUser);
 
-  // Redux store'dan büro geneli listeleri çek
   const lawyers = useSelector((state) => state.lawyers.list);
   const clients = useSelector((state) => state.clients.list);
   const cases = useSelector((state) => state.cases.list);
@@ -25,10 +24,8 @@ export default function AdminDashboard() {
   const payments = useSelector((state) => state.payments.list);
   const memos = useSelector((state) => state.messages.memos);
 
-  // Çeviri yardımcısı
   const at = (text) => autoTranslate(text, language);
 
-  // Yerel durumlar (States)
   const [activeTab, setActiveTab] = useState("overview");
 
   React.useEffect(() => {
@@ -36,7 +33,6 @@ export default function AdminDashboard() {
   }, [activeTab]);
   const [showAddLawyerModal, setShowAddLawyerModal] = useState(false);
 
-  // Yeni avukat için form durumları (States)
   const [newLawyerName, setNewLawyerName] = useState("");
   const [newLawyerEmail, setNewLawyerEmail] = useState("");
   const [newLawyerPhone, setNewLawyerPhone] = useState("");
@@ -69,7 +65,6 @@ export default function AdminDashboard() {
 
     dispatch(addLawyer(newL));
 
-    // Formu sıfırla
     setNewLawyerName("");
     setNewLawyerEmail("");
     setNewLawyerPhone("");
@@ -80,7 +75,6 @@ export default function AdminDashboard() {
     setTimeout(() => setSuccessMsg(""), 3000);
   };
 
-  // Müvekkil Yönetimi Durumları (States)
   const [showClientModal, setShowClientModal] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
   const [clientName, setClientName] = useState("");
@@ -171,23 +165,20 @@ export default function AdminDashboard() {
     setTimeout(() => setSuccessMsg(""), 3000);
   };
 
-  // Genel hesaplamalar
   const totalBilled = payments.reduce((sum, p) => sum + p.amount, 0);
   const totalPaid = payments.filter(p => p.status === "paid").reduce((sum, p) => sum + p.amount, 0);
   const totalPending = payments.filter(p => p.status === "pending").reduce((sum, p) => sum + p.amount, 0);
 
-  // Avukatlar ve müvekkiller genelindeki Tüm Hareketler Günlüğünü oluştur (kronolojik sıralı)
   const systemMovements = [
     ...clients.map(cl => {
       const assignedLawyer = lawyers.find(l => l.id === cl.lawyerId)?.name || "Avukat / Form";
-      // Eğer createdAt eksikse ID'den zaman damgasını çıkarmayı dene
       let timestamp = cl.createdAt;
       if (!timestamp) {
         const idTime = parseInt(cl.id.split('_').pop());
         if (!isNaN(idTime) && idTime > 1600000000000) {
           timestamp = new Date(idTime).toISOString();
         } else {
-          timestamp = "2026-06-01T10:00:00.000Z"; // Başlangıç mock verisi için yedek (fallback)
+          timestamp = "2026-06-01T10:00:00.000Z";
         }
       }
       return {
@@ -245,7 +236,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
-      {/* Dinamik Başlık */}
+      
       <header className="sticky top-0 z-40 bg-[#1a237e] text-white border-b border-[#d4af37]/30 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
           <div className="flex items-center gap-3">
@@ -280,7 +271,7 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      {/* Ana İçerik Gövdesi */}
+      
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         {successMsg && (
           <div className="p-3.5 bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 text-xs font-bold rounded flex items-center gap-2 shadow-sm animate-bounce">
@@ -289,7 +280,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Yönetim Paneli Tanıtım Uyarı Kartı */}
+        
         <div className="bg-gradient-to-r from-slate-900 to-[#1a237e] text-white p-5 rounded-2xl shadow-lg border border-[#d4af37]/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
@@ -311,7 +302,7 @@ export default function AdminDashboard() {
           </button>
         </div>
 
-        {/* Navigasyon Sekmeleri */}
+        
         <div className="flex flex-wrap gap-1.5 border-b border-slate-200 pb-px">
           {[
             { id: "overview", label: at("Genel Özet"), icon: Layers },
@@ -340,10 +331,10 @@ export default function AdminDashboard() {
           })}
         </div>
 
-        {/* SEKME 1: GENEL ÖZET */}
+        
         {activeTab === "overview" && (
           <div className="space-y-6">
-            {/* Hızlı İstatistik Izgarası */}
+            
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex items-center justify-between">
                 <div>
@@ -386,7 +377,7 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Finansal Özet Kartları */}
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-gradient-to-br from-white to-indigo-50/20 p-6 rounded-xl border border-indigo-100 shadow-sm">
                 <div className="flex items-center justify-between">
@@ -423,9 +414,9 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Genel Listeler önizlemesi */}
+            
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Avukatlar özeti */}
+              
               <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-serif font-bold text-base text-[#1a237e]">{at("Büro Ortakları")} ({lawyers.length})</h3>
@@ -447,7 +438,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Duyurular Özeti */}
+              
               <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-serif font-bold text-base text-[#1a237e]">{at("Büro Evrak Standartları")} & {at("Duyurular")}</h3>
@@ -469,7 +460,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* SEKME 2: AVUKATLAR LİSTESİ */}
+        
         {activeTab === "lawyers" && (
           <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm space-y-6">
             <div className="flex justify-between items-center">
@@ -511,7 +502,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* SEKME 3: MÜVEKKİLLER LİSTESİ */}
+        
         {activeTab === "clients" && (
           <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm space-y-6">
             <div className="flex justify-between items-center pb-2 border-b border-slate-100">
@@ -583,7 +574,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* SEKME 4: DAVA DOSYALARI */}
+        
         {activeTab === "cases" && (
           <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm space-y-6">
             <h3 className="font-serif font-bold text-lg text-[#1a237e]">{at("Dava Dosyaları")} ({cases.length})</h3>
@@ -630,14 +621,14 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* SEKME 5: DURUŞMALAR */}
+        
         {activeTab === "hearings" && (
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
             <CalendarTab />
           </div>
         )}
 
-        {/* SEKME 6: FİNANS */}
+        
         {activeTab === "finances" && (
           <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm space-y-6">
             <h3 className="font-serif font-bold text-lg text-[#1a237e]">{at("Cari Hesap Ekstresi")} & {at("Tüm Ödemeler")} ({payments.length})</h3>
@@ -678,7 +669,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* SEKME 7: TÜM HAREKETLER / AKTİVİTE GÜNLÜĞÜ */}
+        
         {activeTab === "movements" && (
           <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm space-y-6">
             <div>
@@ -691,7 +682,7 @@ export default function AdminDashboard() {
             <div className="relative border-l border-slate-200 pl-6 ml-3 space-y-6">
               {systemMovements.map(move => (
                 <div key={move.id} className="relative">
-                  {/* Zaman tüneli işareti */}
+                  
                   <span className="absolute -left-9.5 top-0.5 bg-white border-2 border-[#1a237e] w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-sm">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#d4af37]" />
                   </span>
@@ -712,7 +703,7 @@ export default function AdminDashboard() {
               ))}
             </div>
           </div>
-        {/* SEKME 8: EVRAK OLUŞTURUCU */}
+        
         {activeTab === "document-generator" && (
           <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm">
             <DocumentGenerator />
@@ -720,12 +711,12 @@ export default function AdminDashboard() {
         )}
       </main>
 
-      {/* ALT BİLGİ (FOOTER) */}
+      
       <footer className="bg-white border-t border-slate-100 py-6 text-center text-xs text-slate-400 mt-auto">
         <p>© 2026 EDBM Hukuk Bürosu. Tüm Hakları Saklıdır. | Global Administrator Interface</p>
       </footer>
 
-      {/* MODAL: AVUKAT EKLE */}
+      
       {showAddLawyerModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-slate-200">
@@ -827,11 +818,11 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Müvekkil Ekle / Düzenle Modalı (Admin) */}
+      
       {showClientModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
           <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
-            {/* Modal Başlığı */}
+            
             <div className="px-6 py-4 bg-gradient-to-r from-[#1a237e] to-[#283593] text-white flex justify-between items-center border-b border-[#d4af37]/20">
               <h3 className="font-serif text-base font-bold flex items-center gap-2">
                 <UserCheck className="w-4 h-4 text-[#d4af37]" />
@@ -845,7 +836,7 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            {/* Modal Gövdesi */}
+            
             <form onSubmit={handleClientSubmit} className="p-6 space-y-4 flex-1">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -957,7 +948,7 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              {/* Modal Alt Bilgisi (Footer) */}
+              
               <div className="pt-4 border-t border-slate-100 flex justify-end gap-2">
                 <button
                   type="button"

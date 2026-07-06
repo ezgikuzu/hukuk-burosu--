@@ -26,7 +26,6 @@ export const store = configureStore({
   },
 });
 
-// Export all actions to maintain backwards compatibility for the rest of the application
 export { 
   login, logout,
   toggleLanguage, setLanguage, setActiveTab, setSelectedClient, showToast, hideToast, showConfirm, hideConfirm,

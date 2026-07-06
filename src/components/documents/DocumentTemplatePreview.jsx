@@ -19,7 +19,6 @@ export default function DocumentTemplatePreview({ draftContent, documentTitle, o
     if (!element) return;
 
     try {
-      // Metin alanı kaydırma çubukları/kenarlıkları olmadan tamamen PDF için oluşturulmak üzere bir kopya oluşturun
       const tempDiv = document.createElement("div");
       tempDiv.style.position = "absolute";
       tempDiv.style.left = "-9999px";
@@ -70,7 +69,7 @@ export default function DocumentTemplatePreview({ draftContent, documentTitle, o
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 animate-fade-in">
-      {/* LEFT: Actions panel */}
+      
       <div className="w-full lg:w-64 space-y-4 shrink-0 print:hidden">
         <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm space-y-3">
           <h3 className="font-serif font-bold text-[#1a237e] text-sm border-b border-slate-100 pb-2">
@@ -113,11 +112,11 @@ export default function DocumentTemplatePreview({ draftContent, documentTitle, o
         </div>
       </div>
 
-      {/* RIGHT: A4 Preview Container */}
+      
       <div className="flex-1 bg-slate-100/50 p-4 rounded-xl flex justify-center overflow-auto print:p-0 print:bg-transparent">
         <div className="w-full max-w-[210mm] space-y-4">
           
-          {/* Warning Banner */}
+          
           <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg flex gap-3 print:hidden shadow-sm">
             <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
             <p className="text-xs text-amber-800 font-medium leading-relaxed">
@@ -128,7 +127,7 @@ export default function DocumentTemplatePreview({ draftContent, documentTitle, o
             </p>
           </div>
 
-          {/* A4 Paper */}
+          
           <div 
             className="bg-white shadow-lg print:shadow-none w-full min-h-[297mm] p-[20mm] mx-auto print:m-0 print:p-0"
           >

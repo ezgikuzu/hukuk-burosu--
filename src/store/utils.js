@@ -15,6 +15,5 @@ export const saveState = (key, state) => {
     const serializedState = JSON.stringify(state);
     localStorage.setItem(`edbm_${key}`, serializedState);
   } catch (err) {
-    // Yazma hatalarını yoksay
   }
 };

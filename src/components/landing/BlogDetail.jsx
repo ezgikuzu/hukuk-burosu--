@@ -21,7 +21,7 @@ export default function BlogDetail({ blogId, onBack, onContactClick }) {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
-      {/* Header */}
+      
       <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-50 h-20 shadow-sm transition-all flex items-center">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full flex justify-between items-center">
           <button 
@@ -43,7 +43,7 @@ export default function BlogDetail({ blogId, onBack, onContactClick }) {
         </div>
       </header>
 
-      {/* Hero Section */}
+      
       <section className="relative h-[40vh] sm:h-[50vh] flex items-end pb-12 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center z-0" 
@@ -63,7 +63,7 @@ export default function BlogDetail({ blogId, onBack, onContactClick }) {
         </div>
       </section>
 
-      {/* Content Section */}
+      
       <section className="py-20 bg-white">
         <div className="max-w-3xl mx-auto px-6 lg:px-12">
           
@@ -107,7 +107,7 @@ export default function BlogDetail({ blogId, onBack, onContactClick }) {
         </div>
       </section>
       
-      {/* Footer (Simplified) */}
+      
       <footer className="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center flex flex-col items-center gap-6">
           <div className="flex items-center gap-2 text-white">

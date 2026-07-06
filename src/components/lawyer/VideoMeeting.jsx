@@ -4,15 +4,15 @@ import { X } from "lucide-react";
 import { useSelector } from "react-redux";
 
 export default function VideoMeeting({ roomName, onClose, subject }) {
-  const currentUser = useSelector((state) => state.auth.currentUser); // redux'tan giriş yapan kullanıcıyı alır. bu bilgiler daha sonra jitsiye gönderilir. 
+  const currentUser = useSelector((state) => state.auth.currentUser);
 
   return (
     <div className="fixed inset-0 bg-slate-900 z-50 flex flex-col animate-fade-in">
-      {/* Header */}
+      
       <div className="px-6 py-4 bg-[#1a237e] text-white flex justify-between items-center shadow-md">
         <div>
           <h3 className="font-serif text-lg font-bold">EDBM Görüntülü Görüşme Sistemi</h3>
-          {subject && <p className="text-xs text-slate-300 font-semibold">{subject}</p>} // görüşme konusu
+          {subject && <p className="text-xs text-slate-300 font-semibold">{subject}</p>}
         </div>
         <button
           onClick={onClose}
@@ -23,42 +23,33 @@ export default function VideoMeeting({ roomName, onClose, subject }) {
         </button>
       </div>
 
-      {/* Jitsi Meeting Container */}
+      
       <div className="flex-1 bg-black">
         <JitsiMeeting
-          roomName={roomName} // görüşme odası // bu componenet jitsi sunucusuna baplanır. 
-          configOverwrite={{ //jitsinin çalışma ayarlarını değiştirir. 
-            startWithAudioMuted: false, // görüşme başladığında ses açık olsun 
-            startWithVideoMuted: false, // görüşme başladığında video açık olsun 
-            disableModeratorIndicator: true, // moderatör göstergesini kapatır 
-            prejoinPageEnabled: false, // görüşmeye katılmadan önceki sayfayı kapatır 
+          roomName={roomName}
+          configOverwrite={{
+            startWithAudioMuted: false,
+            startWithVideoMuted: false,
+            disableModeratorIndicator: true,
+            prejoinPageEnabled: false,
           }}
-          interfaceConfigOverwrite={{ //jitsinin arayüz ayarlarını değiştirir. 
-            DISABLE_JOIN_LEAVE_NOTIFICATIONS: true, // giriş çıkış bildirimlerini kapatır   
-            SHOW_JITSI_WATERMARK: false, // jitsi logosunu kapatır 
-            SHOW_WATERMARK_FOR_GUESTS: false, // misafir logosunu kapatır 
+          interfaceConfigOverwrite={{
+            DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
+            SHOW_JITSI_WATERMARK: false,
+            SHOW_WATERMARK_FOR_GUESTS: false,
           }}
           userInfo={{
-            displayName: currentUser?.name || "Kullanıcı", // jitside görünecek isim 
-            email: currentUser?.email || "", // jitside görünecek e-posta 
+            displayName: currentUser?.name || "Kullanıcı",
+            email: currentUser?.email || "",
           }}
-          onApiReady={(externalApi) => {  // jitsinin api ready olduğunda çalışacak fonksiyon  ----------------
-            // Gerekirse buraya dinleyiciler (listeners) ekleyebilirsiniz --------------------------------------------------------------
+          onApiReady={(externalApi) => {
           }}
           getIFrameRef={(iframeRef) => {
-            iframeRef.style.height = "100%"; // iframe yüksekliğini ayarlar
-            iframeRef.style.width = "100%"; // iframe genişliğini ayarlar
+            iframeRef.style.height = "100%";
+            iframeRef.style.width = "100%";
           }}
         />
       </div>
     </div>
   );
 }
-//getIframeRef -> görüntülü görüşme pencersini tam ekran olacak şekilde ayarlar. ----------------------------
-//onApiReady -> jitsinin api ready olduğunda çalışacak fonksiyon  ----------------------------------------------
-//userInfo -> jitside görünecek isim ve e-posta  ----------------------------------------------------------
-//interfaceConfigOverwrite -> jitsinin arayüz ayarlarını değiştirir.   ----------------------------------------
-//configOverwrite -> jitsinin çalışma ayarlarını değiştirir.  ------------------------------------------------
-//roomName -> görüşme odası // bu componenet jitsi sunucusuna baplanır. --------------------------------------
-//flex-1 bg-black -> görüşmenin yapılacağı yer ------------------------------------------------------------
-//header -> görüşme başlığı ve kapatma butonu  --------------------------------------------------------------

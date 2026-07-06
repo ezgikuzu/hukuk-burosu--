@@ -5,7 +5,7 @@ export const INITIAL_LAWYERS = [
     email: "beyza.mensur@edbm.com",
     phone: "+90 532 123 4567",
     specialization: "İş Hukuku & Ticaret Hukuku (Labor & Commercial Law)",
-    color: "#1e3a8a", // lacivert
+    color: "#1e3a8a",
   },
   {
     id: "lawyer_2",
@@ -13,7 +13,7 @@ export const INITIAL_LAWYERS = [
     email: "ezgi.kuzu@edbm.com",
     phone: "+90 533 987 6543",
     specialization: "Aile Hukuku & Boşanma (Family & Divorce Law)",
-    color: "#0f766e", // deniz mavisi
+    color: "#0f766e",
   },
   {
     id: "lawyer_3",
@@ -21,7 +21,7 @@ export const INITIAL_LAWYERS = [
     email: "gorkem.iskenceli@edbm.com",
     phone: "+90 535 456 7890",
     specialization: "İdare Hukuku & Vergi Hukuku (Administrative & Tax Law)",
-    color: "#b45309", // kehribar
+    color: "#b45309",
   },
   {
     id: "lawyer_4",
@@ -29,7 +29,7 @@ export const INITIAL_LAWYERS = [
     email: "dilek.ince@edbm.com",
     phone: "+90 536 789 1234",
     specialization: "Tazminat & Sigorta Hukuku (Insurance & Tort Law)",
-    color: "#6d28d9", // mor
+    color: "#6d28d9",
   },
 ];
 
@@ -42,7 +42,7 @@ export const INITIAL_CLIENTS = [
     address: "Kadıköy, İstanbul",
     nationalId: "12345678901",
     password: "ahmet123",
-    lawyerId: "lawyer_1", // Beyza'ya atandı
+    lawyerId: "lawyer_1",
   },
   {
     id: "client_2",
@@ -52,7 +52,7 @@ export const INITIAL_CLIENTS = [
     address: "Çankaya, Ankara",
     nationalId: "98765432109",
     password: "zeynep123",
-    lawyerId: "lawyer_2", // Ezgi'ye atandı
+    lawyerId: "lawyer_2",
   },
   {
     id: "client_3",
@@ -62,7 +62,7 @@ export const INITIAL_CLIENTS = [
     address: "Beşiktaş, İstanbul",
     nationalId: "45612378945",
     password: "mehmet123",
-    lawyerId: "lawyer_3", // Görkem'e atandı
+    lawyerId: "lawyer_3",
   },
   {
     id: "client_4",
@@ -72,7 +72,7 @@ export const INITIAL_CLIENTS = [
     address: "Karşıyaka, İzmir",
     nationalId: "78945612301",
     password: "elif123",
-    lawyerId: "lawyer_4", // Dilek'e atandı
+    lawyerId: "lawyer_4",
   },
 ];
 
@@ -370,7 +370,6 @@ export const DICTIONARY = {
     tabFinances: "Finans & Cari",
     tabMessages: "Haberleşme & Mesaj",
     
-    // Genel Özet Metrikleri
     totalClients: "Kayıtlı Müvekkil",
     totalCases: "Aktif Dava Dosyası",
     totalHearings: "Yaklaşan Duruşma",
@@ -381,7 +380,6 @@ export const DICTIONARY = {
     recentActions: "Son İşlemler",
     noHearings: "Yakın zamanda duruşma bulunmuyor.",
     
-    // Müvekkil Bölümü
     clientList: "Müvekkil Listesi",
     clientName: "Müvekkil Adı",
     clientPhone: "Telefon",
@@ -394,7 +392,6 @@ export const DICTIONARY = {
     editClientTitle: "Müvekkil Bilgilerini Güncelle",
     deleteClientConfirm: "Bu müvekkili silmek istediğinize emin misiniz?",
     
-    // Dava Bölümü
     caseList: "Dava Dosyaları",
     caseFileNo: "Esas / Karar No",
     caseCourt: "Mahkeme / Merci",
@@ -411,7 +408,6 @@ export const DICTIONARY = {
     editCaseTitle: "Dosyayı Düzenle",
     deleteCaseConfirm: "Bu dava dosyasını silmek istediğinize emin misiniz?",
 
-    // Duruşma Bölümü
     hearingTitle: "Duruşma Başlığı / Konusu",
     hearingDateTime: "Tarih & Saat",
     hearingLocation: "Adliye / Salon / Yer",
@@ -421,7 +417,6 @@ export const DICTIONARY = {
     videoCallTitle: "Görüntülü Görüşme",
     joinVideoCall: "Toplantıya Katıl",
 
-    // Evrak Bölümü
     documentList: "Evrak ve Belgeler",
     docName: "Belge Adı",
     docCategory: "Kategori",
@@ -438,7 +433,6 @@ export const DICTIONARY = {
     dragDropText: "Buraya sürükleyip bırakın veya seçmek için tıklayın",
     viewDocTitle: "Belge Görüntüleyici",
 
-    // Finans Bölümü
     financeList: "Finansal İşlemler ve Cari Hesaplar",
     finAmount: "Tutar",
     finType: "İşlem Türü",
@@ -452,7 +446,6 @@ export const DICTIONARY = {
     addFinanceBtn: "Finans Kaydı Ekle",
     revenueChart: "Aylık Gelir Dağılımı",
     
-    // Mesajlaşma Bölümü
     messagesTitle: "Güvenli Müvekkil ve Avukat Haberleşme Hattı",
     messagePlaceholder: "Mesajınızı yazınız...",
     sendMessage: "Gönder",
@@ -460,7 +453,6 @@ export const DICTIONARY = {
     addMemoBtn: "Duyuru Yayınla",
     memoPlaceholder: "Duyuru metni...",
 
-    // Genel Kelimeler
     actions: "İşlemler",
     edit: "Düzenle",
     delete: "Sil",
@@ -506,7 +498,6 @@ export const DICTIONARY = {
     tabFinances: "Finances & Accounts",
     tabMessages: "Secure Messages",
 
-    // Genel Özet Metrikleri
     totalClients: "Registered Clients",
     totalCases: "Active Cases",
     totalHearings: "Upcoming Hearings",
@@ -517,7 +508,6 @@ export const DICTIONARY = {
     recentActions: "Recent Actions",
     noHearings: "No hearings scheduled in the near future.",
 
-    // Müvekkil Bölümü
     clientList: "Client Directory",
     clientName: "Client Name",
     clientPhone: "Phone",
@@ -530,7 +520,6 @@ export const DICTIONARY = {
     editClientTitle: "Update Client Details",
     deleteClientConfirm: "Are you sure you want to delete this client?",
 
-    // Dava Bölümü
     caseList: "Case Files",
     caseFileNo: "File / Docket No",
     caseCourt: "Court / Authority",
@@ -547,7 +536,6 @@ export const DICTIONARY = {
     editCaseTitle: "Edit Case File",
     deleteCaseConfirm: "Are you sure you want to delete this case file?",
 
-    // Duruşma Bölümü
     hearingTitle: "Hearing Subject / Title",
     hearingDateTime: "Date & Time",
     hearingLocation: "Court House / Room / Venue",
@@ -557,7 +545,6 @@ export const DICTIONARY = {
     videoCallTitle: "Online Video Call",
     joinVideoCall: "Join Meeting",
 
-    // Evrak Bölümü
     documentList: "Documents & Files",
     docName: "Document Name",
     docCategory: "Category",
@@ -574,7 +561,6 @@ export const DICTIONARY = {
     dragDropText: "Drag and drop file here, or click to select",
     viewDocTitle: "Document Viewer",
 
-    // Finans Bölümü
     financeList: "Financial Records & Client Accounts",
     finAmount: "Amount",
     finType: "Transaction Type",
@@ -588,7 +574,6 @@ export const DICTIONARY = {
     addFinanceBtn: "Add Financial Entry",
     revenueChart: "Monthly Income Breakdown",
 
-    // Mesajlaşma Bölümü
     messagesTitle: "Secure Client & Attorney Messaging Channel",
     messagePlaceholder: "Type your message here...",
     sendMessage: "Send",
@@ -596,7 +581,6 @@ export const DICTIONARY = {
     addMemoBtn: "Post Notice",
     memoPlaceholder: "Notice text...",
 
-    // Genel Kelimeler
     actions: "Actions",
     edit: "Edit",
     delete: "Delete",
@@ -616,7 +600,6 @@ export const autoTranslate = (text, language) => {
   
   const textStr = String(text).trim();
   
-  // Türkçeden İngilizceye kapsamlı çeviri haritası
   const mapping = {
     "Hukuk Otomasyon Sistemi": "Legal Automation System",
     "Lütfen sistem kimlik bilgilerinizle giriş yapınız.": "Please sign in with your system credentials.",

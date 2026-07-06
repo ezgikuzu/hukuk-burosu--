@@ -20,81 +20,65 @@ export default function CasesTab() {
 
   const isLawyer = currentUser?.role === "lawyer";
 
-  // davalar ve müvekkiller filtrelenir. 
   const cases = isLawyer
     ? rawCases.filter((c) => c.lawyerId === currentUser.id)
     : rawCases;
 
-  // giriş yapan avukat mı değil mi? avukatsa true olur ve o avukata ait davalar alınır. 
-  // eğer yöneticiyse filtre uygulama 
-  // kullanıcı avukatsa sadece kendi davalarını görür.
 
-  // müvekkil filtreleme
   const clients = isLawyer
     ? rawClients.filter((cl) => cl.lawyerId === currentUser.id)
     : rawClients;
 
-  // buradada davalar yerine müvekkiller filtreleniyor. 
-  // avukatsa yalnızca kendi müvekkillerini görür. 
-  // yöneticiyse tüm müvekkilleri görür. 
-  // yetkilendirme sağlanır. 
 
-  // arama ve filtreleme için kullanılan stateleri oluşturur. yani kullanıcı sayfada arama yaptığında veya filtre seçtiğinde bu değişkenler güncellenir. 
-  const [searchTerm, setSearchTerm] = useState(""); // kullanıcının arama kutusuna yazdığı metni saklar. 
-  const [statusFilter, setStatusFilter] = useState("all"); // davanın durumunu filtreler. 
-  const [lawyerFilter, setLawyerFilter] = useState(isLawyer ? currentUser.id : "all"); // avukatı filtreler. 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [lawyerFilter, setLawyerFilter] = useState(isLawyer ? currentUser.id : "all");
 
-  // "Dava Ekle / Dava Düzenle" modalının açılıp kapanmasını ve formdaki tüm bilgileri yönetmektir.
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCase, setEditingCase] = useState(null); // hangi davanın düzenlendiğini tutar. 
+  const [editingCase, setEditingCase] = useState(null);
 
-  // Formdaki giriş alanlarının değerlerini tutar.
-  const [fileNo, setFileNo] = useState(""); // dosya numarası
-  const [court, setCourt] = useState(""); // mahkeme adı
-  const [opposingParty, setOpposingParty] = useState(""); // karşı tarafın adı 
-  const [subject, setSubject] = useState(""); // davanın konusu 
-  const [status, setStatus] = useState("active"); // davanın durumu 
-  const [lawyerId, setLawyerId] = useState(currentUser?.id || "lawyer_1"); // avukatın kim olduğu 
-  const [clientId, setClientId] = useState(""); // müvekkilin kim olduğu 
-  const [description, setDescription] = useState(""); // davanın açıklaması 
-  const [validationError, setValidationError] = useState(null); // doğrulama hatası 
+  const [fileNo, setFileNo] = useState("");
+  const [court, setCourt] = useState("");
+  const [opposingParty, setOpposingParty] = useState("");
+  const [subject, setSubject] = useState("");
+  const [status, setStatus] = useState("active");
+  const [lawyerId, setLawyerId] = useState(currentUser?.id || "lawyer_1");
+  const [clientId, setClientId] = useState("");
+  const [description, setDescription] = useState("");
+  const [validationError, setValidationError] = useState(null);
 
-  // yeni dava ekle butonuna basıldığında formu sıfırlayıp modelı açmak için kullanılır. 
   const openAddModal = () => {
-    setEditingCase(null); // düzenlenecek dava yok. 
-    setFileNo(""); // dosya numarasını sıfırla 
-    setCourt(""); // mahkeme adını sıfırla 
-    setOpposingParty(""); // karşı tarafın adını sıfırla
-    setSubject(""); // davanın konusunu sıfırla 
-    setStatus("active"); // davanın durumunu sıfırla 
-    setLawyerId(currentUser?.id || "lawyer_1"); // avukatın kim olduğunu sıfırla 
-    setClientId(clients[0]?.id || ""); // müvekkilin kim olduğunu sıfırla 
-    setDescription(""); // davanın açıklamasını sıfırla 
-    setValidationError(null); // doğrulama hatasını sıfırla
-    setIsModalOpen(true); // modelı aç
+    setEditingCase(null);
+    setFileNo("");
+    setCourt("");
+    setOpposingParty("");
+    setSubject("");
+    setStatus("active");
+    setLawyerId(currentUser?.id || "lawyer_1");
+    setClientId(clients[0]?.id || "");
+    setDescription("");
+    setValidationError(null);
+    setIsModalOpen(true);
   };
 
-  // dava düzenle butonuna basıldığında formu düzenlenecek dava ile doldurmak için kullanılır.
   const openEditModal = (c) => {
-    setEditingCase(c); // düzenlenecek davayı kaydet
-    setFileNo(c.fileNo); // dosya numarasını getir
-    setCourt(c.court); // mahkeme adını getir
-    setOpposingParty(c.opposingParty); // karşı tarafın adını getir
-    setSubject(c.subject); // davanın konusunu getir
-    setStatus(c.status); // davanın durumunu getir
-    setLawyerId(c.lawyerId);  // avukatın kim olduğunu getir 
-    setClientId(c.clientId); // müvekkilin kim olduğunu getir 
-    setDescription(c.description); // davanın açıklamasını getir
-    setValidationError(null); // doğrulama hatasını sıfırla
-    setIsModalOpen(true); // modelı aç
+    setEditingCase(c);
+    setFileNo(c.fileNo);
+    setCourt(c.court);
+    setOpposingParty(c.opposingParty);
+    setSubject(c.subject);
+    setStatus(c.status);
+    setLawyerId(c.lawyerId);
+    setClientId(c.clientId);
+    setDescription(c.description);
+    setValidationError(null);
+    setIsModalOpen(true);
   };
 
-  // form kayıt
   const handleFormSubmit = (e) => {
     e.preventDefault();
     setValidationError(null);
 
-    // müvekkil seçilmemişse hata verir.      
     if (!clientId) {
       setValidationError(
         language === "TR"
@@ -144,24 +128,23 @@ export default function CasesTab() {
     }));
   };
 
-  // Kullanıcının seçtiği filtrelere göre hangi davaların ekranda gösterileceğini belirlemektir.
-  const filteredCases = cases.filter((c) => { // burada cases dizisindeki her dava tek tek kontrol edilir. eger koşullar sağlanırsa true döner ve ekrana yansıtılır.     
-    const term = searchTerm.toLowerCase(); // arama terimini küçültür.     
-    const matchesSearch =     // arama terimini filtreler.          
-      c.fileNo.toLowerCase().includes(term) || // dosya numarasını kontrol eder.     
-      c.court.toLowerCase().includes(term) || // mahkeme adını kontrol eder.     
-      c.opposingParty.toLowerCase().includes(term) || // karşı tarafın adını kontrol eder.     
-      c.subject.toLowerCase().includes(term); // davanın konusunu kontrol eder.     
+  const filteredCases = cases.filter((c) => {
+    const term = searchTerm.toLowerCase();
+    const matchesSearch =
+      c.fileNo.toLowerCase().includes(term) ||
+      c.court.toLowerCase().includes(term) ||
+      c.opposingParty.toLowerCase().includes(term) ||
+      c.subject.toLowerCase().includes(term);
 
-    const matchesStatus = statusFilter === "all" || c.status === statusFilter; // davanın durumunu filtreler.     
-    const matchesLawyer = isLawyer || lawyerFilter === "all" || c.lawyerId === lawyerFilter; // avukatı filtreler.     
+    const matchesStatus = statusFilter === "all" || c.status === statusFilter;
+    const matchesLawyer = isLawyer || lawyerFilter === "all" || c.lawyerId === lawyerFilter;
 
-    return matchesSearch && matchesStatus && matchesLawyer; // üç koşulda doğruysa true döner ve ekrana yansıtılır.     
+    return matchesSearch && matchesStatus && matchesLawyer;
   });
 
   return (
     <div className="space-y-6">
-      {/* Başlık ve Ekleme Butonu */}
+      
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-xl border border-slate-100 shadow-sm animate-fade-in">
         <div>
           <h2 className="font-serif text-lg font-bold text-[#1a237e]">{t.caseList}</h2>
@@ -181,21 +164,21 @@ export default function CasesTab() {
         </button>
       </div>
 
-      {/* Arama ve Filtreler Izgarası */}
+      
       <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-3">
-        {/* Arama Girdisi (Input) */}
+        
         <div className="relative md:col-span-6">
           <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
           <input
-            type="text"  // arama kutusunun tipini belirtir.     
-            placeholder={t.search} // arama kutusunun placeholder metnini belirtir.     
-            value={searchTerm} // arama kutusunun değerini belirtir.     
-            onChange={(e) => setSearchTerm(e.target.value)} // arama kutusunun değerini günceller.     
-            className="w-full pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e]" // arama kutusunun stilini belirtir.     
+            type="text"
+            placeholder={t.search}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1a237e] focus:border-[#1a237e]"
           />
         </div>
 
-        {/* Durum Filtresi */}
+        
         <div className="md:col-span-3">
           <select
             value={statusFilter}
@@ -211,7 +194,7 @@ export default function CasesTab() {
           </select>
         </div>
 
-        {/* Avukat Filtresi */}
+        
         <div className="md:col-span-3">
           <select
             disabled={isLawyer}
@@ -231,24 +214,24 @@ export default function CasesTab() {
         </div>
       </div>
 
-      {/* Davalar Listesi */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {filteredCases.length === 0 ? (
           <div className="lg:col-span-2 py-12 text-center text-slate-400 bg-white rounded-xl border border-slate-100 text-xs shadow-sm font-bold">
             {t.noData}
           </div>
         ) : (
-          filteredCases.map((c) => { // her dava için bir kart oluşturur.
-            const client = clients.find((cl) => cl.id === c.clientId); // davanın müvekkilini bulur.     
-            const lawyerObj = lawyers.find((l) => l.id === c.lawyerId); // davanın avukatını bulur.     
+          filteredCases.map((c) => {
+            const client = clients.find((cl) => cl.id === c.clientId);
+            const lawyerObj = lawyers.find((l) => l.id === c.lawyerId);
 
             return (
               <div
-                key={c.id}  // her dava için kart oluşturur. 
-                className="bg-white rounded-xl border border-slate-100 shadow-sm p-5 hover:shadow-md transition-shadow flex flex-col justify-between" // davanın kartının stilini belirtir.     
+                key={c.id}
+                className="bg-white rounded-xl border border-slate-100 shadow-sm p-5 hover:shadow-md transition-shadow flex flex-col justify-between"
               >
                 <div>
-                  {/* Kart Başlığı (Dava dosya No + Durum Rozeti) */}
+                  
                   <div className="flex justify-between items-start gap-2 mb-3">
                     <span className="font-serif text-sm font-bold text-[#1a237e] tracking-tight bg-slate-100 px-2.5 py-1 rounded">
                       {c.fileNo}
@@ -269,7 +252,7 @@ export default function CasesTab() {
                     </span>
                   </div>
 
-                  {/* Konu ve Mahkeme */}
+                  
                   <h3 className="text-sm font-bold text-slate-800 line-clamp-1 mb-1" title={c.subject}>
                     {c.subject}
                   </h3>
@@ -283,7 +266,7 @@ export default function CasesTab() {
                   </p>
                 </div>
 
-                {/* Kart Alt Bilgisi: Meta Veriler ve Eylem Butonları */}
+                
                 <div className="border-t border-slate-50 pt-4 flex flex-col sm:flex-row gap-3 justify-between items-stretch sm:items-center">
                   <div className="space-y-1 text-[11px] font-semibold">
                     <p className="text-slate-600">
@@ -324,11 +307,11 @@ export default function CasesTab() {
         )}
       </div>
 
-      {/* Dava Ekle / Düzenle Modalı */}
+      
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
           <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
-            {/* Modal Başlığı */}
+            
             <div className="px-6 py-4 bg-gradient-to-r from-[#1a237e] to-[#283593] text-white flex justify-between items-center border-b border-[#d4af37]/20">
               <h3 className="font-serif text-base font-bold flex items-center gap-2">
                 <Scale className="w-4 h-4 text-[#d4af37]" />
@@ -342,7 +325,7 @@ export default function CasesTab() {
               </button>
             </div>
 
-            {/* Modal Gövdesi */}
+            
             <form onSubmit={handleFormSubmit} className="p-6 space-y-4 flex-1">
               {validationError && (
                 <div className="p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-xs rounded flex items-center gap-2 font-bold animate-pulse">
@@ -491,7 +474,7 @@ export default function CasesTab() {
                 />
               </div>
 
-              {/* Modal Alt Bilgisi (Footer) */}
+              
               <div className="pt-4 border-t border-slate-100 flex justify-end gap-2">
                 <button
                   type="button"

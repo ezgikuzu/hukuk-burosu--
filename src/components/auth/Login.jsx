@@ -10,7 +10,6 @@ export default function Login({ onBackToLanding }) {
   const language = useSelector((state) => state.ui.language);
   const t = DICTIONARY[language];
 
-  // Sekmeler: "lawyer" | "client" | "admin"
   const [activeTab, setActiveTab] = useState("admin");
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [signupName, setSignupName] = useState("");
@@ -24,7 +23,6 @@ export default function Login({ onBackToLanding }) {
 
   const at = (text) => autoTranslate(text, language);
 
-  // Hızlı Girişler
   const handleQuickLawyerLogin = (lawyerEmail) => {
     const lawyer = INITIAL_LAWYERS.find((l) => l.email === lawyerEmail);
     if (lawyer) {
@@ -174,11 +172,11 @@ export default function Login({ onBackToLanding }) {
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-slate-50 relative overflow-hidden font-sans">
-      {/* Arka Plan Dekoratif Desenleri */}
+      
       <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#1a237e]/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[#d4af37]/5 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Üst Başlık / Navigasyon */}
+      
       <header className="w-full max-w-7xl mx-auto px-6 py-5 flex justify-between items-center z-10">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#1a237e] to-[#283593] flex items-center justify-center border border-[#d4af37]/30 shadow-md">
@@ -207,10 +205,10 @@ export default function Login({ onBackToLanding }) {
         </div>
       </header>
 
-      {/* Ana Gövde */}
+      
       <main className="flex-1 flex items-center justify-center px-4 py-8 z-10">
         <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 min-h-[580px]">
-          {/* Marka/Kahraman Bölümü (Sol Taraf) */}
+          
           <div className="lg:col-span-5 bg-gradient-to-br from-[#1a237e] to-[#0a1045] p-8 lg:p-12 flex flex-col justify-between text-white relative">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full translate-x-12 -translate-y-12" />
 
@@ -260,7 +258,7 @@ export default function Login({ onBackToLanding }) {
             </div>
           </div>
 
-          {/* Form ve Değiştirici Bölümü (Sağ Taraf) */}
+          
           <div className="lg:col-span-7 p-8 lg:p-12 flex flex-col justify-center bg-white">
             <div className="mb-6">
               <h3 className="font-serif text-2xl font-bold text-slate-800">
@@ -271,7 +269,7 @@ export default function Login({ onBackToLanding }) {
               </p>
             </div>
 
-            {/* Özel Sekme Değiştirici (3 Sekme: Avukat, Müvekkil, Yönetici) */}
+            
             <div className="grid grid-cols-3 p-1 bg-slate-100 rounded-lg mb-6 border border-slate-200">
               <button
                 type="button"
@@ -471,7 +469,7 @@ export default function Login({ onBackToLanding }) {
               )}
             </form>
 
-            {/* Hızlı Giriş Yardımcı Paneli */}
+            
             <div className="mt-6 pt-5 border-t border-slate-100">
               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-3">
                 {at("Hızlı Demo Giriş Paneli")}
@@ -529,7 +527,7 @@ export default function Login({ onBackToLanding }) {
         </div>
       </main>
 
-      {/* Alt Bilgi (Footer) */}
+      
       <footer className="w-full text-center py-6 text-xs text-slate-400 border-t border-slate-100 bg-white">
         <p>© 2026 EDBM Hukuk Bürosu. Tüm Hakları Saklıdır. | Justice & Reliability</p>
       </footer>

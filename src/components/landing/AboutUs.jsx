@@ -57,7 +57,7 @@ export default function AboutUs() {
   return (
     <div className="animate-fade-in bg-slate-50 min-h-screen pt-28 pb-20">
       
-      {/* Hero Section */}
+      
       <div className="max-w-5xl mx-auto px-6 lg:px-12 text-center space-y-6 mb-20">
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/20 text-[#d4af37] text-xs font-semibold uppercase tracking-widest">
           <Sparkles className="w-3.5 h-3.5" />
@@ -71,7 +71,7 @@ export default function AboutUs() {
         </p>
       </div>
 
-      {/* Story Section */}
+      
       <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-24">
         <div className="relative">
           <div className="absolute inset-0 bg-[#d4af37] transform rotate-3 rounded-2xl opacity-20 -z-10"></div>
@@ -94,7 +94,7 @@ export default function AboutUs() {
         </div>
       </div>
 
-      {/* Stats Section */}
+      
       <div className="bg-[#1a237e] py-16 mb-24 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -113,7 +113,7 @@ export default function AboutUs() {
         </div>
       </div>
 
-      {/* Vision & Mission */}
+      
       <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
         <div className="bg-white p-10 rounded-2xl border border-slate-100 shadow-xl hover:-translate-y-1 transition-transform">
           <div className="w-14 h-14 bg-indigo-50 rounded-xl flex items-center justify-center mb-6">
@@ -132,7 +132,7 @@ export default function AboutUs() {
         </div>
       </div>
 
-      {/* Core Values */}
+      
       <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
         <h2 className="font-serif text-3xl font-bold text-[#1a237e] mb-12">
           {language === "TR" ? "Temel Değerlerimiz" : "Our Core Values"}

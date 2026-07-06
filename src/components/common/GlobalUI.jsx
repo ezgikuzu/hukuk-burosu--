@@ -7,7 +7,6 @@ export default function GlobalUI() {
   const dispatch = useDispatch();
   const { toast, confirmDialog, language } = useSelector((state) => state.ui);
 
-  // Bildirimi (toast) 4 saniye sonra otomatik olarak gizle
   useEffect(() => {
     if (toast.isVisible) {
       const timer = setTimeout(() => {
@@ -30,7 +29,7 @@ export default function GlobalUI() {
 
   return (
     <>
-      {/* Toast Notification */}
+      
       <div 
         className={`fixed top-4 right-4 z-[9999] transition-all duration-300 transform ${
           toast.isVisible ? "translate-x-0 opacity-100" : "translate-x-full opacity-0 pointer-events-none"
@@ -50,7 +49,7 @@ export default function GlobalUI() {
         </div>
       </div>
 
-      {/* Confirmation Modal */}
+      
       {confirmDialog.isVisible && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden transform scale-100 transition-transform">

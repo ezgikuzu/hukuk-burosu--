@@ -7,7 +7,7 @@ export default function LegalDetail({ legalId, onBack }) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [legalId]); // Yeni bir hukuki metin açıldığında sayfayı en üste götürmektir.
+  }, [legalId]);
 
   const tx = (tr, en) => (language === "TR" ? tr : en);
 
@@ -35,10 +35,10 @@ export default function LegalDetail({ legalId, onBack }) {
     }
   };
 
-  const data = legalContent[legalId]; //legalContent içindeki ilgili metni seçer.
-  if (!data) return null; // metin yoksa hiçbir şey döndürmez.
+  const data = legalContent[legalId];
+  if (!data) return null;
 
-  const IconComp = data.icon; // ikon componentini seçer. 
+  const IconComp = data.icon;
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 flex flex-col">
