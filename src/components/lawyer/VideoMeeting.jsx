@@ -7,7 +7,7 @@ export default function VideoMeeting({ roomName, onClose, subject }) {
   const currentUser = useSelector((state) => state.auth.currentUser); // redux'tan giriş yapan kullanıcıyı alır. bu bilgiler daha sonra jitsiye gönderilir. 
 
   return (
-    <div className="fixed inset-0 bg-slate-900 z-50 flex flex-col animate-fade-in"> // tam ekran bir pencere oluşturur.
+    <div className="fixed inset-0 bg-slate-900 z-50 flex flex-col animate-fade-in">
       {/* Header */}
       <div className="px-6 py-4 bg-[#1a237e] text-white flex justify-between items-center shadow-md">
         <div>
@@ -24,7 +24,7 @@ export default function VideoMeeting({ roomName, onClose, subject }) {
       </div>
 
       {/* Jitsi Meeting Container */}
-      <div className="flex-1 bg-black"> // görüşmenin yapılacağı yer --------------------
+      <div className="flex-1 bg-black">
         <JitsiMeeting
           roomName={roomName} // görüşme odası // bu componenet jitsi sunucusuna baplanır. 
           configOverwrite={{ //jitsinin çalışma ayarlarını değiştirir. 

@@ -172,7 +172,6 @@ export default function CasesTab() {
           </p>
         </div>
 
-        //dava ekle butonu
         <button
           onClick={openAddModal}
           className="px-4 py-2 bg-[#1a237e] hover:bg-[#12185c] text-[#d4af37] font-bold rounded-lg text-xs flex items-center gap-2 shadow-sm border border-[#d4af37]/30 transition-all cursor-pointer shrink-0"
@@ -182,7 +181,6 @@ export default function CasesTab() {
         </button>
       </div>
 
-      //arama kutusunu oluşturur. kullanıcı buraya yazdıkça dava listesi filtrelenir.
       {/* Arama ve Filtreler Izgarası */}
       <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-3">
         {/* Arama Girdisi (Input) */}
@@ -233,7 +231,6 @@ export default function CasesTab() {
         </div>
       </div>
 
-//Filtrelenmiş davaları kartlar halinde ekranda göstermek. Eğer hiç dava yoksa "Veri Yok" mesajını göstermek.
       {/* Davalar Listesi */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {filteredCases.length === 0 ? (
@@ -254,7 +251,7 @@ export default function CasesTab() {
                   {/* Kart Başlığı (Dava dosya No + Durum Rozeti) */}
                   <div className="flex justify-between items-start gap-2 mb-3">
                     <span className="font-serif text-sm font-bold text-[#1a237e] tracking-tight bg-slate-100 px-2.5 py-1 rounded">
-                      {c.fileNo} // dosya numarası ekrana yazdırır.
+                      {c.fileNo}
                     </span>
 
                     <span
@@ -272,14 +269,13 @@ export default function CasesTab() {
                     </span>
                   </div>
 
-//Bu bölüm, her dava kartının orta kısmını oluşturur. Burada sırasıyla dava konusu, mahkeme bilgisi ve dava açıklaması gösterilir.
                   {/* Konu ve Mahkeme */}
                   <h3 className="text-sm font-bold text-slate-800 line-clamp-1 mb-1" title={c.subject}>
-                    {c.subject} //dava konusu yazar.
+                    {c.subject}
                   </h3>
                   <p className="text-xs text-[#d4af37] font-bold mb-3 flex items-center gap-1.5">
                     <MapPin className="w-3.5 h-3.5 shrink-0" />
-                    <span>{c.court}</span> //mahkeme adı
+                    <span>{c.court}</span>
                   </p>
 
                   <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed bg-slate-50 p-3 rounded border border-slate-100 mb-4 font-semibold">
